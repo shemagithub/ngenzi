@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Star, ArrowLeft, ArrowRight, Quote, Heart, Sparkles, TrendingUp, Users, Award, Zap } from 'lucide-react';
+import { Star, ArrowLeft, ArrowRight, Quote, Heart, Sparkles, TrendingUp, Users, Award, Zap, Loader } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { testimonials } from '../assets/testimonialdata';
+import axios from 'axios';
+import { Backendurl } from '../App.jsx';
 import PropTypes from 'prop-types';
 
 // Enhanced Animation Variants
@@ -72,7 +73,7 @@ const pulseAnimation = {
   }
 };
 
-const TestimonialCard = ({ testimonial, index, direction }) => {
+const TestimonialCard = ({ testimonial, index, direction, totalTestimonials }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -127,7 +128,7 @@ const TestimonialCard = ({ testimonial, index, direction }) => {
           className="text-gray-700 text-lg leading-relaxed mb-8 font-medium relative"
         >
           <span className="text-4xl text-blue-400 font-serif absolute -top-2 -left-2 opacity-50">&ldquo;</span>
-          <span className="ml-4">{testimonial.text}</span>
+          <span className="ml-4">{testimonial.content || testimonial.text}</span>
           <span className="text-4xl text-blue-400 font-serif absolute -bottom-6 right-0 opacity-50">&rdquo;</span>
         </motion.p>
       </div>
@@ -147,10 +148,13 @@ const TestimonialCard = ({ testimonial, index, direction }) => {
               className="relative"
             >
               <img
-                src={testimonial.image}
+                src={testimonial.image || 'https://via.placeholder.com/100?text=Client'}
                 alt={testimonial.name}
                 className="w-16 h-16 rounded-full object-cover border-3 border-white shadow-lg group-hover/avatar:shadow-xl transition-shadow duration-300"
                 loading="lazy"
+                onError={(e) => {
+                  e.target.src = 'https://via.placeholder.com/100?text=Client';
+                }}
               />
               <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-blue-400/20 to-purple-400/20 opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-300" />
             </motion.div>
@@ -173,7 +177,7 @@ const TestimonialCard = ({ testimonial, index, direction }) => {
             </h3>
             <p className="text-sm text-gray-600 flex items-center mb-2">
               <span className="inline-block w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 mr-2 animate-pulse" />
-              {testimonial.location}
+              {testimonial.location || [testimonial.position, testimonial.company].filter(Boolean).join(', ') || 'Client'}
             </p>
             
             {/* Enhanced Star Rating */}
@@ -188,7 +192,7 @@ const TestimonialCard = ({ testimonial, index, direction }) => {
                 >
                   <Star
                     className={`w-4 h-4 transition-all duration-200 ${
-                      i < testimonial.rating 
+                      i < (testimonial.rating || 5)
                         ? 'text-yellow-400 fill-current drop-shadow-sm' 
                         : 'text-gray-300'
                     }`}
@@ -196,7 +200,7 @@ const TestimonialCard = ({ testimonial, index, direction }) => {
                 </motion.div>
               ))}
               <span className="ml-2 text-xs text-gray-500 font-medium">
-                {testimonial.rating}.0
+                {testimonial.rating || 5}.0
               </span>
             </div>
           </div>
@@ -204,21 +208,23 @@ const TestimonialCard = ({ testimonial, index, direction }) => {
       </motion.div>
 
       {/* Position Indicators for Mobile */}
-      <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 md:hidden">
-        {testimonials.map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.8 + i * 0.05 }}
-            className={`rounded-full transition-all duration-300 ${
-              i === index 
-                ? 'w-6 h-2 bg-blue-600 shadow-md' 
-                : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'
-            }`}
-          />
-        ))}
-      </div>
+      {totalTestimonials > 1 && (
+        <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 md:hidden">
+          {[...Array(totalTestimonials)].map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.8 + i * 0.05 }}
+              className={`rounded-full transition-all duration-300 ${
+                i === index 
+                  ? 'w-6 h-2 bg-blue-600 shadow-md' 
+                  : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'
+              }`}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Hover Effect Overlay */}
       <motion.div
@@ -231,22 +237,159 @@ const TestimonialCard = ({ testimonial, index, direction }) => {
 };
 
 const Testimonials = () => {
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState('right');
   const [autoplay, setAutoplay] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Statistics for enhanced visual appeal
+  // Fetch testimonials from API
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        console.log('🔄 Fetching testimonials from:', `${Backendurl}/api/testimonials/list`);
+        
+        const response = await axios.get(`${Backendurl}/api/testimonials/list`, {
+          params: {
+            isActive: true
+          }
+        });
+
+        console.log('✅ Testimonials API response:', response.data);
+
+        if (response.data.success && response.data.testimonials) {
+          // Validate and map backend data to frontend format
+          const testimonialsData = Array.isArray(response.data.testimonials) 
+            ? response.data.testimonials 
+            : [];
+
+          if (testimonialsData.length === 0) {
+            console.warn('⚠️ No active testimonials found');
+            setTestimonials([]);
+            setError(null); // Don't show error if no testimonials, just empty state
+            return;
+          }
+
+          // Map backend data to frontend format
+          const mappedTestimonials = testimonialsData
+            .filter(testimonial => testimonial && testimonial.id) // Filter out invalid entries
+            .map((testimonial) => {
+              // Build location string from position and company
+              const locationParts = [testimonial.position, testimonial.company]
+                .filter(Boolean)
+                .map(part => part.trim())
+                .filter(part => part.length > 0);
+              
+              const location = locationParts.length > 0 
+                ? locationParts.join(', ') 
+                : 'Client';
+
+              // Ensure rating is between 1 and 5
+              const rating = testimonial.rating 
+                ? Math.max(1, Math.min(5, parseInt(testimonial.rating))) 
+                : 5;
+
+              // Handle image URL - backend already converts local paths to full URLs
+              let imageUrl = testimonial.image;
+              if (!imageUrl || imageUrl.trim() === '') {
+                imageUrl = 'https://via.placeholder.com/100?text=Client';
+              } else if (imageUrl.startsWith('/uploads/testimonials/')) {
+                // If it's still a local path, prepend backend URL
+                imageUrl = `${Backendurl}${imageUrl}`;
+              }
+
+              return {
+                id: testimonial.id,
+                name: testimonial.name || 'Anonymous',
+                text: testimonial.content || '',
+                content: testimonial.content || '',
+                location: location,
+                position: testimonial.position || null,
+                company: testimonial.company || null,
+                image: imageUrl,
+                rating: rating,
+                isFeatured: testimonial.isFeatured === true || testimonial.isFeatured === 1,
+                order: parseInt(testimonial.order) || 0,
+                isActive: testimonial.isActive !== false
+              };
+            });
+
+          console.log('📝 Mapped testimonials:', mappedTestimonials.length);
+
+          // Sort testimonials: featured first, then by order (backend already sorts, but we ensure consistency)
+          const sortedTestimonials = mappedTestimonials.sort((a, b) => {
+            // Featured testimonials first
+            if (a.isFeatured && !b.isFeatured) return -1;
+            if (!a.isFeatured && b.isFeatured) return 1;
+            // Then by order
+            const orderDiff = (a.order || 0) - (b.order || 0);
+            if (orderDiff !== 0) return orderDiff;
+            // Finally by ID (newest first)
+            return b.id - a.id;
+          });
+
+          setTestimonials(sortedTestimonials);
+          setActiveIndex(0); // Reset to first testimonial
+          console.log('✅ Testimonials loaded successfully:', sortedTestimonials.length);
+        } else {
+          console.warn('⚠️ Invalid response structure');
+          setError(response.data.message || 'Failed to load testimonials');
+          setTestimonials([]);
+        }
+      } catch (err) {
+        console.error('❌ Error fetching testimonials:', err);
+        const errorMessage = err.response?.data?.message 
+          || err.message 
+          || 'Failed to fetch testimonials. Please try again later.';
+        setError(errorMessage);
+        setTestimonials([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
+
+  // Calculate statistics from actual data
   const stats = [
-    { icon: Users, value: "10K+", label: "Happy Clients", color: "from-blue-500 to-cyan-500" },
-    { icon: Star, value: "4.9", label: "Average Rating", color: "from-yellow-500 to-orange-500" },
-    { icon: Award, value: "50+", label: "Awards Won", color: "from-purple-500 to-pink-500" },
-    { icon: TrendingUp, value: "98%", label: "Success Rate", color: "from-green-500 to-emerald-500" }
+    { 
+      icon: Users, 
+      value: testimonials.length > 0 ? `${testimonials.length}+` : "10K+", 
+      label: "Happy Clients", 
+      color: "from-blue-500 to-cyan-500" 
+    },
+    { 
+      icon: Star, 
+      value: testimonials.length > 0 
+        ? (testimonials.reduce((sum, t) => sum + (t.rating || 5), 0) / testimonials.length).toFixed(1)
+        : "4.9", 
+      label: "Average Rating", 
+      color: "from-yellow-500 to-orange-500" 
+    },
+    { 
+      icon: Award, 
+      value: testimonials.filter(t => t.isFeatured).length > 0 
+        ? `${testimonials.filter(t => t.isFeatured).length}+`
+        : "50+", 
+      label: "Featured Reviews", 
+      color: "from-purple-500 to-pink-500" 
+    },
+    { 
+      icon: TrendingUp, 
+      value: "98%", 
+      label: "Success Rate", 
+      color: "from-green-500 to-emerald-500" 
+    }
   ];
 
   // Auto-rotate testimonials
   useEffect(() => {
-    if (!autoplay || isHovered) return;
+    if (!autoplay || isHovered || testimonials.length === 0) return;
     
     const interval = setInterval(() => {
       setDirection('right');
@@ -254,9 +397,10 @@ const Testimonials = () => {
     }, 5000);
     
     return () => clearInterval(interval);
-  }, [autoplay, isHovered]);
+  }, [autoplay, isHovered, testimonials.length]);
 
   const handlePrev = () => {
+    if (testimonials.length === 0) return;
     setDirection('left');
     setActiveIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
     setAutoplay(false);
@@ -264,6 +408,7 @@ const Testimonials = () => {
   };
 
   const handleNext = () => {
+    if (testimonials.length === 0) return;
     setDirection('right');
     setActiveIndex((prev) => (prev + 1) % testimonials.length);
     setAutoplay(false);
@@ -271,11 +416,64 @@ const Testimonials = () => {
   };
 
   const handleDotClick = (index) => {
+    if (testimonials.length === 0) return;
     setDirection(index > activeIndex ? 'right' : 'left');
     setActiveIndex(index);
     setAutoplay(false);
     setTimeout(() => setAutoplay(true), 10000);
   };
+
+  if (loading) {
+    return (
+      <section className="relative py-32 bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center py-20">
+            <Loader className="w-8 h-8 animate-spin text-blue-600" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="relative py-32 bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-20"
+          >
+            <h2 className="text-4xl font-bold mb-4 text-gray-900">Client Testimonials</h2>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Retry
+            </button>
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
+
+  if (testimonials.length === 0) {
+    return (
+      <section className="relative py-32 bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-20"
+          >
+            <h2 className="text-4xl font-bold mb-4 text-gray-900">Client Testimonials</h2>
+            <p className="text-gray-600">Testimonials will be displayed here soon.</p>
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative py-32 bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50 overflow-hidden">
@@ -353,7 +551,7 @@ const Testimonials = () => {
             transition={{ delay: 0.5 }}
             className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
           >
-            Discover why thousands of homeowners trust BuildEstate to find their perfect property. 
+            Discover why thousands of homeowners trust NGENZI REALESTATE to find their perfect property. 
             Our commitment to excellence speaks through their experiences.
           </motion.p>
         </motion.div>
@@ -437,7 +635,7 @@ const Testimonials = () => {
                 <div className="relative z-10 mt-12">
                   <p className="text-gray-700 text-lg leading-relaxed mb-8 font-medium relative">
                     <span className="text-4xl text-blue-400 font-serif absolute -top-2 -left-2 opacity-50">&ldquo;</span>
-                    <span className="ml-4">{testimonial.text}</span>
+                    <span className="ml-4">{testimonial.content || testimonial.text}</span>
                     <span className="text-4xl text-blue-400 font-serif absolute -bottom-6 right-0 opacity-50">&rdquo;</span>
                   </p>
                 </div>
@@ -445,11 +643,14 @@ const Testimonials = () => {
                 {/* Client information */}
                 <div className="flex items-center space-x-4">
                   <div className="relative group/avatar">
-                    <img
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      className="w-16 h-16 rounded-full object-cover border-3 border-white shadow-lg group-hover/avatar:shadow-xl transition-shadow duration-300"
-                    />
+            <img
+                src={testimonial.image || 'https://via.placeholder.com/100?text=Client'}
+                alt={testimonial.name}
+                className="w-16 h-16 rounded-full object-cover border-3 border-white shadow-lg group-hover/avatar:shadow-xl transition-shadow duration-300"
+                onError={(e) => {
+                  e.target.src = 'https://via.placeholder.com/100?text=Client';
+                }}
+              />
                     <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-blue-400/20 to-purple-400/20 opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-300" />
                     <div className="absolute -bottom-1 -right-1 bg-green-500 border-2 border-white rounded-full w-5 h-5 flex items-center justify-center">
                       <div className="w-2 h-2 bg-white rounded-full" />
@@ -462,7 +663,7 @@ const Testimonials = () => {
                     </h3>
                     <p className="text-sm text-gray-600 flex items-center mb-2">
                       <span className="inline-block w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 mr-2 animate-pulse" />
-                      {testimonial.location}
+                      {testimonial.location || [testimonial.position, testimonial.company].filter(Boolean).join(', ') || 'Client'}
                     </p>
                     
                     <div className="flex items-center space-x-1">
@@ -470,14 +671,14 @@ const Testimonials = () => {
                         <Star
                           key={i}
                           className={`w-4 h-4 transition-all duration-200 ${
-                            i < testimonial.rating 
+                            i < (testimonial.rating || 5)
                               ? 'text-yellow-400 fill-current drop-shadow-sm' 
                               : 'text-gray-300'
                           }`}
                         />
                       ))}
                       <span className="ml-2 text-xs text-gray-500 font-medium">
-                        {testimonial.rating}.0
+                        {testimonial.rating || 5}.0
                       </span>
                     </div>
                   </div>
@@ -495,12 +696,15 @@ const Testimonials = () => {
             onMouseLeave={() => setIsHovered(false)}
           >
             <AnimatePresence mode="wait" initial={false}>
-              <TestimonialCard 
-                testimonial={testimonials[activeIndex]} 
-                index={activeIndex}
-                direction={direction}
-                key={activeIndex}
-              />
+              {testimonials[activeIndex] && (
+                <TestimonialCard 
+                  testimonial={testimonials[activeIndex]} 
+                  index={activeIndex}
+                  direction={direction}
+                  totalTestimonials={testimonials.length}
+                  key={activeIndex}
+                />
+              )}
             </AnimatePresence>
           </div>
 
@@ -588,14 +792,18 @@ const Testimonials = () => {
 TestimonialCard.propTypes = {
   testimonial: PropTypes.shape({
     id: PropTypes.number.isRequired,
-    text: PropTypes.string.isRequired,
+    text: PropTypes.string,
+    content: PropTypes.string,
     name: PropTypes.string.isRequired,
-    location: PropTypes.string.isRequired,
-    image: PropTypes.string.isRequired,
-    rating: PropTypes.number.isRequired,
+    location: PropTypes.string,
+    position: PropTypes.string,
+    company: PropTypes.string,
+    image: PropTypes.string,
+    rating: PropTypes.number,
   }).isRequired,
   index: PropTypes.number.isRequired,
   direction: PropTypes.string.isRequired,
+  totalTestimonials: PropTypes.number.isRequired,
 };
 
 export default Testimonials;
