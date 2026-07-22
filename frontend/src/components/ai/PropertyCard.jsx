@@ -2,9 +2,11 @@ import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 import { Building, MapPin, Maximize, Tag, Plus, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
+import { useCurrency } from '../../context/CurrencyContext';
 
 const PropertyCard = ({ property }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { formatPrice } = useCurrency();
 
   return (
     <motion.div 
@@ -12,7 +14,7 @@ const PropertyCard = ({ property }) => {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -6 }}
       transition={{ duration: 0.3 }}
-      className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl border border-gray-100 flex flex-col h-full"
+      className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-xl border border-gray-100 dark:border-gray-700 flex flex-col h-full"
     >
       {/* Header with gradient background */}
       <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-4 sm:p-5 relative">
@@ -42,16 +44,18 @@ const PropertyCard = ({ property }) => {
         {/* Price and area information */}
         <div className="flex items-center gap-3 mb-4 sm:mb-5">
           <div className="flex-1">
-            <p className="text-xs text-gray-500 uppercase tracking-wider mb-0.5 sm:mb-1">Price</p>
-            <p className="text-lg sm:text-xl font-bold text-gray-900">{property.price}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-0.5 sm:mb-1">Price</p>
+            <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">
+              {property.price ? (typeof property.price === 'number' || !isNaN(property.price) ? formatPrice(Number(property.price)) : property.price) : 'N/A'}
+            </p>
           </div>
           
           {property.area_sqft && (
             <div className="flex flex-col items-end">
-              <p className="text-xs text-gray-500 uppercase tracking-wider mb-0.5 sm:mb-1">Area</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-0.5 sm:mb-1">Area</p>
               <div className="flex items-center">
-                <Maximize className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-500 mr-1" />
-                <p className="text-sm sm:text-base font-medium text-gray-800">{property.area_sqft}</p>
+                <Maximize className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-500 dark:text-gray-400 mr-1" />
+                <p className="text-sm sm:text-base font-medium text-gray-800 dark:text-gray-200">{property.area_sqft}</p>
               </div>
             </div>
           )}
@@ -63,8 +67,8 @@ const PropertyCard = ({ property }) => {
             onClick={() => setIsExpanded(!isExpanded)}
             className="flex w-full items-center justify-between text-left sm:pointer-events-none"
           >
-            <h4 className="text-sm font-medium text-gray-700 flex items-center">
-              <Building className="w-4 h-4 text-blue-500 mr-1.5" />
+            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+              <Building className="w-4 h-4 text-blue-500 dark:text-blue-400 mr-1.5" />
               Overview
             </h4>
             <motion.div 
@@ -72,7 +76,7 @@ const PropertyCard = ({ property }) => {
               transition={{ duration: 0.2 }}
               className="sm:hidden"
             >
-              <ArrowRight className="w-4 h-4 text-gray-400" />
+              <ArrowRight className="w-4 h-4 text-gray-400 dark:text-gray-500" />
             </motion.div>
           </button>
           
@@ -85,7 +89,7 @@ const PropertyCard = ({ property }) => {
             transition={{ duration: 0.3 }}
             className={`overflow-hidden ${isExpanded ? '' : 'max-h-12 sm:max-h-none'}`}
           >
-            <p className={`text-gray-600 text-xs sm:text-sm mt-2 ${isExpanded ? '' : 'line-clamp-3'}`}>
+            <p className={`text-gray-600 dark:text-gray-400 text-xs sm:text-sm mt-2 ${isExpanded ? '' : 'line-clamp-3'}`}>
               {property.description}
             </p>
           </motion.div>
@@ -95,7 +99,7 @@ const PropertyCard = ({ property }) => {
         {property.amenities && property.amenities.length > 0 && (
           <div className="mt-auto">
             <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center">
-              <Tag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500 mr-1.5" />
+              <Tag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500 dark:text-blue-400 mr-1.5" />
               Amenities
             </h4>
             <div className="flex flex-wrap gap-1.5 sm:gap-2">
@@ -104,7 +108,7 @@ const PropertyCard = ({ property }) => {
                   key={index}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border border-blue-100"
+                  className="bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border border-blue-100 dark:border-blue-800"
                 >
                   {amenity}
                 </motion.span>
@@ -114,7 +118,7 @@ const PropertyCard = ({ property }) => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setIsExpanded(true)}
-                  className="bg-gray-50 text-gray-600 text-xs px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full flex items-center border border-gray-100 cursor-pointer"
+                  className="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full flex items-center border border-gray-100 dark:border-gray-600 cursor-pointer"
                 >
                   <Plus className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />
                   {property.amenities.length - 2} more

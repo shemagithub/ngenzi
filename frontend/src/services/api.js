@@ -1,8 +1,9 @@
 // frontend/src/services/api.js
 import axios from 'axios';
 
-// Change this to match your backend server port (4000)
-const API_URL = import.meta.env.VITE_API_BASE_URL;
+// Backend API URL - Always use the production API
+// Hardcoded to prevent environment variable caching issues
+const API_URL = 'https://myambi.wildjourneysrwanda.com';
 
 const api = axios.create({
   baseURL: API_URL,

@@ -5,6 +5,7 @@ import upload from '../middleware/multer.js';
 const propertyrouter = express.Router();
 
 propertyrouter.post('/add', upload.fields([
+    { name: "frontImage", maxCount: 1 },
     { name: "image1", maxCount: 1 },
     { name: "image2", maxCount: 1 },
     { name: "image3", maxCount: 1 },
@@ -13,11 +14,17 @@ propertyrouter.post('/add', upload.fields([
 propertyrouter.get('/list', listproperty);
 propertyrouter.post('/remove', removeproperty);
 propertyrouter.post('/update', upload.fields([
+    { name: "frontImage", maxCount: 1 },
     { name: "image1", maxCount: 1 },
     { name: "image2", maxCount: 1 },
     { name: "image3", maxCount: 1 },
     { name: "image4", maxCount: 1 },
 ]), updateproperty);
-propertyrouter.get('/single/:id', singleproperty);
+propertyrouter.get('/single/:id', (req, res, next) => {
+    console.log(`📍 Route hit: GET /api/products/single/${req.params.id}`);
+    console.log(`   Request params:`, req.params);
+    console.log(`   Property ID: ${req.params.id}`);
+    next();
+}, singleproperty);
 
 export default propertyrouter;

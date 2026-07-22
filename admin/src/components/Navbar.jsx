@@ -13,7 +13,13 @@ import {
   Settings,
   Bell,
   User,
-  ChevronDown
+  ChevronDown,
+  Map,
+  Car,
+  Briefcase,
+  FileText,
+  MessageSquare,
+  Users
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -55,8 +61,15 @@ const Navbar = () => {
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/list', label: 'Properties', icon: List },
-    { path: '/add', label: 'Add Property', icon: PlusSquare },
+    { path: '/list-plots', label: 'Plots', icon: Map },
+    { path: '/list-cars', label: 'Cars', icon: Car },
+    { path: '/services', label: 'Services', icon: Briefcase },
+    { path: '/blogs', label: 'Blogs', icon: FileText },
+    { path: '/team', label: 'Team', icon: Users },
+    { path: '/testimonials', label: 'Testimonials', icon: MessageSquare },
+    { path: '/users', label: 'Users', icon: User },
     { path: '/appointments', label: 'Appointments', icon: Calendar },
+    { path: '/settings', label: 'Settings', icon: Settings },
   ];
 
   const containerVariants = {
@@ -101,7 +114,7 @@ const Navbar = () => {
             </motion.div>
             <div className="ml-3">
               <span className="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                BuildEstate
+                NGENZI REALESTATE
               </span>
               <div className="text-xs text-gray-500 font-medium">Admin Panel</div>
             </div>
@@ -182,12 +195,14 @@ const Navbar = () => {
                       <div className="text-sm font-medium text-gray-900">Admin Panel</div>
                       <div className="text-xs text-gray-500">Manage your properties</div>
                     </div>
-                    <button
+                    <Link
+                      to="/settings"
                       className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                      onClick={() => setIsProfileOpen(false)}
                     >
                       <Settings className="h-4 w-4 mr-2" />
                       Settings
-                    </button>
+                    </Link>
                     <button
                       onClick={handleLogout}
                       className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center"
@@ -266,12 +281,14 @@ const Navbar = () => {
                   </div>
                 </div>
                 
-                <button
+                <Link
+                  to="/settings"
                   className="w-full text-left px-4 py-3 rounded-xl text-sm text-gray-700 hover:bg-gray-50 flex items-center mb-2"
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   <Settings className="h-4 w-4 mr-3" />
                   Settings
-                </button>
+                </Link>
                 
                 <button
                   onClick={handleLogout}

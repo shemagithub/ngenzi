@@ -3,7 +3,7 @@ import { Calendar, Clock, Loader, X, Info, CheckCircle, Users, MapPin } from 'lu
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { Backendurl } from '../../App';
+import { Backendurl } from '../../utils/backendUrl';
 
 const ScheduleViewing = ({ propertyId, propertyTitle, propertyLocation, propertyImage, onClose }) => {
   const [formData, setFormData] = useState({

@@ -15,7 +15,8 @@ import {
   AlertCircle
 } from "lucide-react";
 import { toast } from "react-toastify";
-import { Backendurl } from "../App";
+import { Backendurl } from "../utils/backendUrl";
+import logo from "../assets/images/logo.JPEG";
 
 // Enhanced Animation Variants
 const containerVariants = {
@@ -251,9 +252,11 @@ const ResetPassword = () => {
                 >
                   <Sparkles className="w-full h-full" />
                 </motion.div>
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  BuildEstate
-                </h2>
+                <img 
+                  src={logo} 
+                  alt="NGENZI REAL ESTATE" 
+                  className="h-16 w-auto object-contain"
+                />
               </motion.div>
             </Link>
             

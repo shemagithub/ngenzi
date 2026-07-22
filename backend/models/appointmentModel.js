@@ -1,65 +1,81 @@
-import mongoose from 'mongoose';
+import { DataTypes } from 'sequelize';
+import { sequelize } from '../config/mysql.js';
+import Property from './propertymodel.js';
+import User from './Usermodel.js';
 
-const appointmentSchema = new mongoose.Schema({
+const Appointment = sequelize.define('Appointment', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
   propertyId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Property',
-    required: true
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Property,
+      key: 'id'
+    }
   },
   userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: 'id'
+    }
   },
   date: {
-    type: Date,
-    required: true
+    type: DataTypes.DATE,
+    allowNull: false
   },
   time: {
-    type: String,
-    required: true
+    type: DataTypes.STRING,
+    allowNull: false
   },
   status: {
-    type: String,
-    enum: ['pending', 'confirmed', 'cancelled', 'completed'],
-    default: 'pending'
+    type: DataTypes.ENUM('pending', 'confirmed', 'cancelled', 'completed'),
+    defaultValue: 'pending'
   },
   meetingLink: {
-    type: String,
-    trim: true
+    type: DataTypes.STRING,
+    allowNull: true
   },
   meetingPlatform: {
-    type: String,
-    enum: ['zoom', 'google-meet', 'teams', 'other'],
-    default: 'other'
+    type: DataTypes.ENUM('zoom', 'google-meet', 'teams', 'other'),
+    defaultValue: 'other'
   },
   notes: {
-    type: String
+    type: DataTypes.TEXT,
+    allowNull: true
   },
   cancelReason: {
-    type: String
+    type: DataTypes.TEXT,
+    allowNull: true
   },
   reminderSent: {
-    type: Boolean,
-    default: false
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   },
   feedback: {
-    rating: {
-      type: Number,
-      min: 1,
-      max: 5
-    },
-    comment: String
+    type: DataTypes.JSON,
+    allowNull: true
   }
 }, {
-  timestamps: true
+  tableName: 'appointments',
+  timestamps: true,
+  indexes: [
+    { fields: ['userId', 'date'] },
+    { fields: ['propertyId', 'date'] },
+    { fields: ['status'] }
+  ]
 });
 
-// Add indexes for better query performance
-appointmentSchema.index({ userId: 1, date: -1 });
-appointmentSchema.index({ propertyId: 1, date: -1 });
-appointmentSchema.index({ status: 1 });
+// Define associations
+Appointment.belongsTo(Property, { foreignKey: 'propertyId', as: 'property' });
+Appointment.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
-const Appointment = mongoose.model('Appointment', appointmentSchema);
+Property.hasMany(Appointment, { foreignKey: 'propertyId', as: 'appointments' });
+User.hasMany(Appointment, { foreignKey: 'userId', as: 'appointments' });
 
 export default Appointment;

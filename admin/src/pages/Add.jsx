@@ -3,11 +3,13 @@ import { toast } from 'react-hot-toast';
 import axios from 'axios';
 import { backendurl } from '../config/constants';
 import { Upload, X } from 'lucide-react';
+import { useCurrency } from '../contexts/CurrencyContext';
 
 const PROPERTY_TYPES = ['House', 'Apartment', 'Office', 'Villa'];
 const AVAILABILITY_TYPES = ['rent', 'buy'];
 
 const PropertyForm = () => {
+  const { getCurrencySymbol, currency } = useCurrency();
   const [formData, setFormData] = useState({
     title: '',
     type: '',
@@ -20,9 +22,15 @@ const PropertyForm = () => {
     phone: '',
     availability: '',
     amenities: [],
-    images: []
+    frontImage: null,
+    image1: null,
+    image2: null,
+    image3: null,
+    image4: null,
+    youtubeUrl: ''
   });
 
+  const [frontImagePreview, setFrontImagePreview] = useState(null);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newAmenity, setNewAmenity] = useState('');
@@ -44,26 +52,70 @@ const PropertyForm = () => {
     }));
   };
 
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length + previewUrls.length > 4) {
-      alert('Maximum 4 images allowed');
-      return;
+  const handleFrontImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFrontImagePreview(URL.createObjectURL(file));
+      setFormData(prev => ({
+        ...prev,
+        frontImage: file
+      }));
     }
+  };
 
-    const newPreviewUrls = files.map(file => URL.createObjectURL(file));
-    setPreviewUrls(prev => [...prev, ...newPreviewUrls]);
+  const removeFrontImage = () => {
+    if (frontImagePreview) {
+      URL.revokeObjectURL(frontImagePreview);
+    }
+    setFrontImagePreview(null);
     setFormData(prev => ({
       ...prev,
-      images: [...prev.images, ...files]
+      frontImage: null
     }));
   };
 
+  const handleImageChange = (imageNumber, e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageKey = `image${imageNumber}`;
+      const previewIndex = imageNumber - 1;
+      
+      // Update preview
+      const newPreviewUrls = [...previewUrls];
+      if (newPreviewUrls[previewIndex]) {
+        URL.revokeObjectURL(newPreviewUrls[previewIndex]);
+      }
+      newPreviewUrls[previewIndex] = URL.createObjectURL(file);
+      setPreviewUrls(newPreviewUrls);
+      
+      // Update form data
+      setFormData(prev => ({
+        ...prev,
+        [imageKey]: file
+      }));
+    }
+  };
+
   const removeImage = (index) => {
-    setPreviewUrls(prev => prev.filter((_, i) => i !== index));
+    const imageNumber = index + 1;
+    const imageKey = `image${imageNumber}`;
+    
+    // Revoke URL if exists
+    if (previewUrls[index]) {
+      URL.revokeObjectURL(previewUrls[index]);
+    }
+    
+    // Remove from preview array
+    const newPreviewUrls = [...previewUrls];
+    newPreviewUrls[index] = null;
+    // Filter out nulls but maintain array length for proper indexing
+    const filteredUrls = newPreviewUrls.map((url, idx) => idx === index ? null : url);
+    setPreviewUrls(filteredUrls);
+    
+    // Update form data
     setFormData(prev => ({
       ...prev,
-      images: prev.images.filter((_, i) => i !== index)
+      [imageKey]: null
     }));
   };
 
@@ -96,13 +148,27 @@ const PropertyForm = () => {
       formData.amenities.forEach((amenity, index) => {
         formdata.append(`amenities[${index}]`, amenity);
       });
-      formData.images.forEach((image, index) => {
-        formdata.append(`image${index + 1}`, image);
-      });
 
-      const response = await axios.post(`${backendurl}/api/products/add`, formdata, {
+      const yt = (formData.youtubeUrl || '').trim();
+      formdata.append('youtubeUrl', yt);
+      
+      // Append frontImage (after text fields — youtube before files for reliable multipart parsing)
+      if (formData.frontImage) {
+        formdata.append('frontImage', formData.frontImage);
+      }
+      
+      if (formData.image1) formdata.append('image1', formData.image1);
+      if (formData.image2) formdata.append('image2', formData.image2);
+      if (formData.image3) formdata.append('image3', formData.image3);
+      if (formData.image4) formdata.append('image4', formData.image4);
+
+      const qs = yt ? `youtubeUrl=${encodeURIComponent(yt)}` : 'youtubeUrl=';
+
+      // Do not set Content-Type manually — axios must add the multipart boundary.
+      const response = await axios.post(`${backendurl}/api/products/add?${qs}`, formdata, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'X-Property-Youtube-Url': yt,
+          'X-Youtube-Url': yt
         }
       });
 
@@ -120,16 +186,45 @@ const PropertyForm = () => {
           phone: '',
           availability: '',
           amenities: [],
-          images: []
+          frontImage: null,
+          image1: null,
+          image2: null,
+          image3: null,
+          image4: null,
+          youtubeUrl: ''
         });
+        setFrontImagePreview(null);
         setPreviewUrls([]);
-        toast.success('Property added successfully');
+        // toast.success is already called on line 169 with response.data.message
       } else {
-        toast.error(response.data.message);
+        toast.error(response.data.message || "Failed to add property");
       }
     } catch (error) {
       console.error('Error adding property:', error);
-      toast.error('An error occurred. Please try again.');
+      
+      // Show more specific error messages
+      if (error.response) {
+        // Server responded with error status
+        const errorMessage = error.response.data?.message || 
+                            error.response.data?.error || 
+                            `Server error: ${error.response.status}`;
+        
+        // Check for validation errors
+        if (error.response.data?.validationErrors) {
+          const validationMessages = error.response.data.validationErrors
+            .map((err) => `${err.field}: ${err.message}`)
+            .join('\n');
+          toast.error(`Validation Error:\n${validationMessages}`);
+        } else {
+          toast.error(errorMessage);
+        }
+      } else if (error.request) {
+        // Request was made but no response received
+        toast.error("Network error: Unable to connect to server. Please check your connection.");
+      } else {
+        // Something else happened
+        toast.error(error.message || "Failed to add property. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -220,18 +315,24 @@ const PropertyForm = () => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label htmlFor="price" className="block text-sm font-medium text-gray-700">
-                  Price
+                  Price ({getCurrencySymbol()})
                 </label>
-                <input
-                  type="number"
-                  id="price"
-                  name="price"
-                  required
-                  min="0"
-                  value={formData.price}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                />
+                <div className="mt-1 relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span className="text-gray-500 sm:text-sm">{getCurrencySymbol()}</span>
+                  </div>
+                  <input
+                    type="number"
+                    id="price"
+                    name="price"
+                    required
+                    min="0"
+                    value={formData.price}
+                    onChange={handleInputChange}
+                    className="block w-full pl-8 rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    placeholder="Enter price"
+                  />
+                </div>
               </div>
 
               <div>
@@ -314,6 +415,24 @@ const PropertyForm = () => {
                 className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
+
+            <div>
+              <label htmlFor="youtubeUrl" className="block text-sm font-medium text-gray-700">
+                YouTube video (optional)
+              </label>
+              <input
+                type="url"
+                id="youtubeUrl"
+                name="youtubeUrl"
+                value={formData.youtubeUrl}
+                onChange={handleInputChange}
+                placeholder="https://www.youtube.com/watch?v=… or youtu.be/…"
+                className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                Shown as an embedded video on the public property page.
+              </p>
+            </div>
           </div>
 
           {/* Amenities */}
@@ -357,44 +476,41 @@ const PropertyForm = () => {
             </div>
           </div>
 
-          {/* Image Upload */}
+          {/* Front Image Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Property Images (Max 4)
+              Front Image (Main Display Image) *
             </label>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              {previewUrls.map((url, index) => (
-                <div key={index} className="relative">
-                  <img
-                    src={url}
-                    alt={`Preview ${index + 1}`}
-                    className="h-40 w-full object-cover rounded-lg"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeImage(index)}
-                    className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-              ))}
-            </div>
-            {previewUrls.length < 4 && (
+            {frontImagePreview ? (
+              <div className="relative inline-block">
+                <img
+                  src={frontImagePreview}
+                  alt="Front image preview"
+                  className="h-48 w-full object-cover rounded-lg border-2 border-gray-200"
+                />
+                <button
+                  type="button"
+                  onClick={removeFrontImage}
+                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            ) : (
               <div className="flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                 <div className="space-y-1 text-center">
                   <Upload className="mx-auto h-12 w-12 text-gray-400" />
                   <div className="flex text-sm text-gray-600">
-                    <label htmlFor="images" className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
-                      <span>Upload images</span>
+                    <label htmlFor="frontImage" className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                      <span>Upload front image</span>
                       <input
-                        id="images"
-                        name="images"
+                        id="frontImage"
+                        name="frontImage"
                         type="file"
-                        multiple
                         accept="image/*"
-                        onChange={handleImageChange}
+                        onChange={handleFrontImageChange}
                         className="sr-only"
+                        required
                       />
                     </label>
                   </div>
@@ -402,6 +518,53 @@ const PropertyForm = () => {
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Additional Images Upload (Image 1-4) */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Additional Images (Optional - Up to 4)
+            </label>
+            <div className="grid grid-cols-2 gap-4">
+              {[1, 2, 3, 4].map((num) => (
+                <div key={num} className="space-y-2">
+                  <label className="block text-xs text-gray-600">
+                    Image {num}
+                  </label>
+                  {previewUrls[num - 1] ? (
+                    <div className="relative">
+                      <img
+                        src={previewUrls[num - 1]}
+                        alt={`Preview ${num}`}
+                        className="h-32 w-full object-cover rounded-lg border-2 border-gray-200"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(num - 1)}
+                        className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex justify-center px-4 pt-3 pb-3 border-2 border-gray-300 border-dashed rounded-md">
+                      <label htmlFor={`image${num}`} className="cursor-pointer text-center">
+                        <Upload className="mx-auto h-8 w-8 text-gray-400" />
+                        <span className="text-xs text-gray-600 mt-1 block">Upload</span>
+                        <input
+                          id={`image${num}`}
+                          name={`image${num}`}
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleImageChange(num, e)}
+                          className="sr-only"
+                        />
+                      </label>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Submit Button */}

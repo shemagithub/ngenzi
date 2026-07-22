@@ -51,10 +51,13 @@ const Appointments = () => {
 
   const handleStatusChange = async (appointmentId, newStatus) => {
     try {
+      // Ensure we're using the correct ID format (MySQL uses numeric id, not _id)
+      const id = appointmentId?.id || appointmentId;
+      
       const response = await axios.put(
         `${backendurl}/api/appointments/status`,
         {
-          appointmentId,
+          appointmentId: id,
           status: newStatus,
         },
         {
@@ -81,10 +84,13 @@ const Appointments = () => {
         return;
       }
 
+      // Ensure we're using the correct ID format (MySQL uses numeric id, not _id)
+      const id = appointmentId?.id || appointmentId;
+
       const response = await axios.put(
         `${backendurl}/api/appointments/update-meeting`,
         {
-          appointmentId,
+          appointmentId: id,
           meetingLink,
         },
         {
@@ -213,7 +219,7 @@ const Appointments = () => {
               <tbody className="divide-y divide-gray-200">
                 {filteredAppointments.map((appointment) => (
                   <motion.tr
-                    key={appointment._id}
+                    key={appointment.id || appointment._id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="hover:bg-gray-50"
@@ -278,7 +284,7 @@ const Appointments = () => {
 
                     {/* Meeting Link */}
                     <td className="px-6 py-4">
-                      {editingMeetingLink === appointment._id ? (
+                      {editingMeetingLink === (appointment.id || appointment._id) ? (
                         <div className="flex items-center gap-2">
                           <input
                             type="url"
@@ -289,7 +295,7 @@ const Appointments = () => {
                           />
                           <button
                             onClick={() =>
-                              handleMeetingLinkUpdate(appointment._id)
+                              handleMeetingLinkUpdate(appointment.id || appointment._id)
                             }
                             className="p-1 bg-blue-500 text-white rounded hover:bg-blue-600"
                           >
@@ -323,7 +329,7 @@ const Appointments = () => {
                           {appointment.status === "confirmed" && (
                             <button
                               onClick={() => {
-                                setEditingMeetingLink(appointment._id);
+                                setEditingMeetingLink(appointment.id || appointment._id);
                                 setMeetingLink(appointment.meetingLink || "");
                               }}
                               className="ml-2 text-gray-400 hover:text-gray-600"
@@ -341,7 +347,7 @@ const Appointments = () => {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() =>
-                              handleStatusChange(appointment._id, "confirmed")
+                              handleStatusChange(appointment.id || appointment._id, "confirmed")
                             }
                             className="p-1 bg-green-500 text-white rounded hover:bg-green-600"
                           >
@@ -349,7 +355,7 @@ const Appointments = () => {
                           </button>
                           <button
                             onClick={() =>
-                              handleStatusChange(appointment._id, "cancelled")
+                              handleStatusChange(appointment.id || appointment._id, "cancelled")
                             }
                             className="p-1 bg-red-500 text-white rounded hover:bg-red-600"
                           >

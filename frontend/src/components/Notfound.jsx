@@ -14,6 +14,7 @@ import {
   Shield
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 // Enhanced Animation Variants
 const containerVariants = {
@@ -76,7 +77,7 @@ const glowAnimation = {
 
 export default function NotFoundPage() {
   const navigate = useNavigate();
-  const [darkMode, setDarkMode] = useState(false);
+  const { isDark, toggleTheme } = useTheme();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -97,8 +98,8 @@ export default function NotFoundPage() {
 
   return (
     <div className={`min-h-screen relative overflow-hidden transition-all duration-700 ${
-      darkMode 
-        ? 'bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900' 
+      isDark
+        ? 'bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900'
         : 'bg-gradient-to-br from-blue-50 via-white to-purple-50'
     }`}>
       {/* Animated Background Elements */}
@@ -107,7 +108,7 @@ export default function NotFoundPage() {
           <motion.div
             key={i}
             className={`absolute w-1 h-1 rounded-full ${
-              darkMode ? 'bg-blue-400/30' : 'bg-blue-500/20'
+              isDark ? 'bg-blue-400/30' : 'bg-blue-500/20'
             }`}
             style={{
               left: `${Math.random() * 100}%`,
@@ -130,7 +131,7 @@ export default function NotFoundPage() {
       <motion.div
         className="fixed pointer-events-none z-10 w-32 h-32 rounded-full opacity-20"
         style={{
-          background: `radial-gradient(circle, ${darkMode ? 'rgba(59, 130, 246, 0.3)' : 'rgba(59, 130, 246, 0.2)'} 0%, transparent 70%)`,
+          background: `radial-gradient(circle, ${isDark ? 'rgba(59, 130, 246, 0.3)' : 'rgba(59, 130, 246, 0.2)'} 0%, transparent 70%)`,
           left: mousePosition.x - 64,
           top: mousePosition.y - 64,
         }}
@@ -148,16 +149,16 @@ export default function NotFoundPage() {
       <motion.button
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
-        onClick={() => setDarkMode(!darkMode)}
+        onClick={toggleTheme}
         className={`fixed top-6 right-6 z-20 p-3 rounded-full transition-all duration-300 ${
-          darkMode 
-            ? 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30' 
+          isDark
+            ? 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30'
             : 'bg-gray-800/20 text-gray-700 hover:bg-gray-800/30'
         }`}
         whileHover={{ scale: 1.1, rotate: 180 }}
         whileTap={{ scale: 0.95 }}
       >
-        {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+        {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
       </motion.button>
 
       {/* Main Content */}
@@ -174,8 +175,8 @@ export default function NotFoundPage() {
               variants={itemVariants}
               animate={glowAnimation}
               className={`text-8xl md:text-9xl font-black mb-4 relative ${
-                darkMode 
-                  ? 'bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400' 
+                isDark
+                  ? 'bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400'
                   : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600'
               } bg-clip-text text-transparent`}
             >
@@ -194,7 +195,7 @@ export default function NotFoundPage() {
                 animate={sparkleAnimation}
               >
                 <Sparkles className={`w-6 h-6 ${
-                  darkMode ? 'text-yellow-400' : 'text-yellow-500'
+                  isDark ? 'text-yellow-400' : 'text-yellow-500'
                 }`} />
               </motion.div>
             ))}
@@ -203,14 +204,14 @@ export default function NotFoundPage() {
           {/* Error Message */}
           <motion.div variants={itemVariants} className="mb-8">
             <h1 className={`text-4xl md:text-5xl font-bold mb-4 ${
-              darkMode ? 'text-white' : 'text-gray-900'
+              isDark ? 'text-white' : 'text-gray-900'
             }`}>
               Oops! Page Not Found
             </h1>
             
             <motion.p 
               className={`text-lg md:text-xl mb-6 max-w-2xl mx-auto leading-relaxed ${
-                darkMode ? 'text-gray-300' : 'text-gray-600'
+                isDark ? 'text-gray-300' : 'text-gray-600'
               }`}
               animate={floatingAnimation}
             >
@@ -227,7 +228,7 @@ export default function NotFoundPage() {
             <motion.button
               onClick={() => navigate(-1)}
               className={`group relative overflow-hidden px-8 py-4 rounded-xl transition-all duration-300 ${
-                darkMode 
+                isDark
                   ? 'bg-gray-800/50 text-gray-200 hover:bg-gray-700/60 border border-gray-700' 
                   : 'bg-white/80 text-gray-700 hover:bg-gray-50 border border-gray-200 shadow-lg'
               }`}
@@ -249,7 +250,7 @@ export default function NotFoundPage() {
             <Link to="/">
               <motion.div
                 className={`group relative overflow-hidden px-8 py-4 rounded-xl transition-all duration-300 ${
-                  darkMode 
+                  isDark
                     ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-500 hover:to-purple-500' 
                     : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700'
                 } shadow-xl`}
@@ -273,7 +274,7 @@ export default function NotFoundPage() {
           {/* Quick Suggestions */}
           <motion.div variants={itemVariants} className="mb-8">
             <h3 className={`text-xl font-semibold mb-6 ${
-              darkMode ? 'text-white' : 'text-gray-800'
+              isDark ? 'text-white' : 'text-gray-800'
             }`}>
               Or explore these popular sections:
             </h3>
@@ -283,7 +284,7 @@ export default function NotFoundPage() {
                 <Link key={index} to={item.path}>
                   <motion.div
                     className={`group p-4 rounded-xl transition-all duration-300 ${
-                      darkMode 
+                      isDark
                         ? 'bg-gray-800/30 hover:bg-gray-700/50 border border-gray-700/50' 
                         : 'bg-white/60 hover:bg-white/80 border border-gray-200/50 shadow-md'
                     }`}
@@ -294,12 +295,12 @@ export default function NotFoundPage() {
                     transition={{ delay: index * 0.1 }}
                   >
                     <item.icon className={`w-8 h-8 mx-auto mb-2 transition-all duration-300 ${
-                      darkMode 
+                      isDark
                         ? 'text-blue-400 group-hover:text-blue-300' 
                         : 'text-blue-600 group-hover:text-blue-700'
                     } group-hover:scale-110`} />
                     <p className={`text-sm font-medium ${
-                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                      isDark ? 'text-gray-300' : 'text-gray-700'
                     }`}>
                       {item.text}
                     </p>
@@ -312,7 +313,7 @@ export default function NotFoundPage() {
           {/* Fun Stats */}
           <motion.div 
             variants={itemVariants}
-            className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'} flex items-center justify-center gap-6 flex-wrap`}
+            className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'} flex items-center justify-center gap-6 flex-wrap`}
           >
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4" />

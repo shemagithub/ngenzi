@@ -1,25 +1,34 @@
-import mongoose from 'mongoose';
+import { DataTypes } from 'sequelize';
+import { sequelize } from '../config/mysql.js';
 
-const formSchema = new mongoose.Schema({
+const Form = sequelize.define('Form', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
   name: {
-    type: String,
-    required: true,
+    type: DataTypes.STRING,
+    allowNull: false
   },
   email: {
-    type: String,
-    required: true,
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      isEmail: true
+    }
   },
   phone: {
-    type: String,
+    type: DataTypes.STRING,
+    allowNull: true
   },
   message: {
-    type: String,
-    required: true,
-  },
+    type: DataTypes.TEXT,
+    allowNull: false
+  }
 }, {
-  timestamps: true,
+  tableName: 'forms',
+  timestamps: true
 });
-
-const Form = mongoose.model('Form', formSchema);
 
 export default Form;

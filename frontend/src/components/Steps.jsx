@@ -150,8 +150,8 @@ function Step({ icon: Icon, title, description, stepNumber }) {
       {/* Content with enhanced typography */}
       <div className="text-center space-y-3 max-w-sm">
         <motion.h3 
-          className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 
-            bg-clip-text text-transparent group-hover:from-blue-600 group-hover:to-indigo-600 
+          className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300
+            bg-clip-text text-transparent group-hover:from-blue-600 group-hover:to-indigo-600 dark:group-hover:from-blue-400 dark:group-hover:to-indigo-400
             transition-all duration-300"
           animate={isHovered ? { scale: 1.05 } : { scale: 1 }}
         >
@@ -159,7 +159,7 @@ function Step({ icon: Icon, title, description, stepNumber }) {
         </motion.h3>
         
         <motion.p 
-          className="text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-300"
+          className="text-gray-600 dark:text-gray-400 leading-relaxed group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors duration-300"
           animate={isHovered ? { y: -2 } : { y: 0 }}
         >
           {description}
@@ -200,7 +200,7 @@ export default function HowItWorks() {
   const [activeStep, setActiveStep] = useState(null);
 
   return (
-    <section className="relative py-32 bg-gradient-to-b from-white via-blue-50/30 to-indigo-50/30 overflow-hidden">
+    <section className="relative py-32 bg-gradient-to-b from-white via-blue-50/30 to-indigo-50/30 dark:from-gray-900 dark:via-gray-800/30 dark:to-gray-900 overflow-hidden transition-colors duration-200">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div 
@@ -219,7 +219,7 @@ export default function HowItWorks() {
         />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Enhanced Header */}
         <motion.div 
           variants={headerVariants}
@@ -230,9 +230,9 @@ export default function HowItWorks() {
         >
           {/* Badge */}
           <motion.span 
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-indigo-100 
-              text-blue-700 px-6 py-2 rounded-full text-sm font-semibold tracking-wide uppercase 
-              shadow-lg border border-blue-200/50 backdrop-blur-sm"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30
+              text-blue-700 dark:text-blue-300 px-6 py-2 rounded-full text-sm font-semibold tracking-wide uppercase 
+              shadow-lg border border-blue-200/50 dark:border-blue-800/50 backdrop-blur-sm"
             animate={pulseAnimation}
           >
             <Zap className="w-4 h-4" />
@@ -275,13 +275,13 @@ export default function HowItWorks() {
           
           {/* Description */}
           <motion.p 
-            className="text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
+            className="text-xl lg:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed transition-colors duration-200"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
           >
             Finding your perfect property is easy with our{" "}
-            <span className="font-semibold text-blue-600">AI-powered</span> three-step process
+            <span className="font-semibold text-blue-600 dark:text-blue-400">AI-powered</span> three-step process
           </motion.p>
           
           {/* Stats */}
@@ -298,13 +298,13 @@ export default function HowItWorks() {
             ].map((stat, index) => (
               <motion.div 
                 key={index}
-                className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 
-                  rounded-full shadow-lg border border-gray-100"
+                className="flex items-center gap-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm px-4 py-2 
+                  rounded-full shadow-lg border border-gray-100 dark:border-gray-700"
                 whileHover={{ scale: 1.05 }}
               >
-                <stat.icon className="w-4 h-4 text-blue-600" />
-                <span className="font-bold text-gray-900">{stat.value}</span>
-                <span className="text-gray-600 text-sm">{stat.label}</span>
+                <stat.icon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <span className="font-bold text-gray-900 dark:text-gray-100">{stat.value}</span>
+                <span className="text-gray-600 dark:text-gray-400 text-sm">{stat.label}</span>
               </motion.div>
             ))}
           </motion.div>
@@ -319,7 +319,7 @@ export default function HowItWorks() {
           className="grid grid-cols-1 lg:grid-cols-3 gap-20 lg:gap-12 relative"
         >
           {/* Animated connection line - desktop */}
-          <div className="hidden lg:block absolute top-12 left-[16%] right-[16%] h-1 bg-gray-100 rounded-full">
+          <div className="hidden lg:block absolute top-12 left-[16%] right-[16%] h-1 bg-gray-100 dark:bg-gray-700 rounded-full">
             <motion.div 
               className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full"
               initial={{ width: "0%" }}
@@ -404,7 +404,7 @@ export default function HowItWorks() {
           
           {/* Additional info */}
           <motion.p 
-            className="text-gray-500 text-sm mt-4 flex items-center gap-2"
+            className="text-gray-500 dark:text-gray-400 text-sm mt-4 flex items-center gap-2 transition-colors duration-200"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
@@ -414,61 +414,7 @@ export default function HowItWorks() {
           </motion.p>
         </motion.div>
         
-        {/* Enhanced Testimonial with modern design */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.8, duration: 0.6 }}
-          className="mt-24 max-w-4xl mx-auto"
-        >
-          <div className="relative bg-gradient-to-br from-white/80 to-blue-50/80 backdrop-blur-sm 
-            p-10 rounded-3xl shadow-2xl border border-white/20 text-center overflow-hidden">
-            {/* Background decorative elements */}
-            <div className="absolute top-0 left-0 w-full h-full">
-              <div className="absolute top-4 left-4 w-8 h-8 bg-blue-200/30 rounded-full"></div>
-              <div className="absolute bottom-4 right-4 w-12 h-12 bg-indigo-200/30 rounded-full"></div>
-              <div className="absolute top-1/2 right-8 w-6 h-6 bg-purple-200/30 rounded-full"></div>
-            </div>
-            
-            {/* Quote */}
-            <motion.div
-              className="relative z-10"
-              animate={floatingAnimation}
-            >
-              <div className="text-6xl text-blue-600/20 font-serif leading-none">&ldquo;</div>
-              <p className="text-gray-700 italic text-xl lg:text-2xl mb-6 leading-relaxed -mt-4">
-                The 3-step process was incredibly smooth. Within a week, I found and secured my dream apartment!
-              </p>
-              
-              {/* Author info */}
-              <div className="flex items-center justify-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 
-                  rounded-full flex items-center justify-center text-white font-bold text-lg">
-                  S
-                </div>
-                <div className="text-left">
-                  <p className="font-bold text-gray-900">Sarah Johnson</p>
-                  <p className="text-gray-600 text-sm">New York</p>
-                </div>
-              </div>
-              
-              {/* Stars */}
-              <div className="flex justify-center mt-4 gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, scale: 0 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 1 + i * 0.1 }}
-                  >
-                    <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </motion.div>
+    
       </div>
     </section>
   );

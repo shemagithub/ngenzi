@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Menu,
@@ -18,9 +18,18 @@ import {
   Heart,
   Zap,
   Crown,
+  Map,
+  Car,
+  Briefcase,
+  DollarSign,
+  Sun,
+  Moon,
 } from "lucide-react";
-import logo from "../assets/home-regular-24.png";
+import logo from "../assets/images/logo.JPEG";
 import { useAuth } from "../context/AuthContext";
+import { useCurrency } from "../context/CurrencyContext";
+import { useSettings } from "../context/SettingsContext";
+import { useTheme } from "../context/ThemeContext";
 import PropTypes from "prop-types";
 
 // Enhanced Animation Variants
@@ -89,10 +98,21 @@ const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [notifications] = useState(3); // Example notification count
+  const [notificationCount, setNotificationCount] = useState(0);
+  const [imageError, setImageError] = useState(false);
   const dropdownRef = useRef(null);
+  const currencyDropdownRef = useRef(null);
+  const [isCurrencyDropdownOpen, setIsCurrencyDropdownOpen] = useState(false);
   const { isLoggedIn, user, logout } = useAuth();
+  const { currency, setCurrency, formatPrice, getCurrencySymbol, currencies, currencySymbols } = useCurrency();
+  const { settings } = useSettings();
+  const { theme, toggleTheme, isDark } = useTheme();
   const location = useLocation();
+  const navigate = useNavigate();
+  
+  // Get logo from settings or use default
+  const companyLogo = settings?.companyLogo || logo;
+  const companyName = settings?.companyName || 'NGENZI REALESTATE';
 
   // Handle click outside of dropdown
   useEffect(() => {
@@ -100,16 +120,19 @@ const Navbar = () => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
       }
+      if (currencyDropdownRef.current && !currencyDropdownRef.current.contains(event.target)) {
+        setIsCurrencyDropdownOpen(false);
+      }
     };
 
-    if (isDropdownOpen) {
+    if (isDropdownOpen || isCurrencyDropdownOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isDropdownOpen]);
+  }, [isDropdownOpen, isCurrencyDropdownOpen]);
 
   // Handle scroll effect for navbar
   useEffect(() => {
@@ -125,6 +148,11 @@ const Navbar = () => {
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
+
+  // Reset image error when user changes
+  useEffect(() => {
+    setImageError(false);
+  }, [user?.image, user?.profileImage]);
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -150,101 +178,172 @@ const Navbar = () => {
       animate="visible"
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-white/95 shadow-xl backdrop-blur-xl border-b border-gray-200/50"
-          : "bg-white/90 backdrop-blur-lg border-b border-gray-100/80"
+          ? "bg-white/95 dark:bg-gray-900/95 shadow-xl backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50"
+          : "bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg border-b border-gray-100/80 dark:border-gray-800/80"
       }`}
     >
       {/* Premium gradient border */}
       <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Enhanced Logo */}
           <Link to="/" className="flex items-center space-x-3 group">
             <motion.div
               variants={logoVariants}
               whileHover={{ 
-                rotate: [0, -10, 10, -10, 0],
-                scale: 1.1,
-                ...glowAnimation
+                scale: 1.05,
+                transition: { duration: 0.2 }
               }}
-              transition={{ duration: 0.5 }}
-              className="relative p-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg group-hover:shadow-blue-500/30"
+              className="relative"
             >
-              <img src={logo} alt="BuildEstate logo" className="w-6 h-6 brightness-0 invert" />
-              {/* Floating sparkles */}
-              <motion.div
-                animate={floatingAnimation}
-                className="absolute -top-1 -right-1"
-              >
-                <Sparkles className="w-3 h-3 text-yellow-300" />
-              </motion.div>
+              <img 
+                src={companyLogo} 
+                alt={companyName} 
+                className="h-12 w-auto object-contain"
+                onError={(e) => {
+                  e.target.src = logo; // Fallback to default logo if settings logo fails
+                }}
+              />
             </motion.div>
-            <div className="flex flex-col">
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent group-hover:from-indigo-600 group-hover:via-blue-600 group-hover:to-purple-600 transition-all duration-500">
-                BuildEstate
-              </span>
-              <span className="text-xs text-gray-500 font-medium -mt-1">
-                Premium Properties
-              </span>
-            </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-4 lg:space-x-8">
             <NavLinks currentPath={location.pathname} />
 
             {/* Enhanced Auth Section */}
             <div className="flex items-center space-x-4">
+              {/* Currency Selector */}
+              <div className="relative" ref={currencyDropdownRef}>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsCurrencyDropdownOpen(!isCurrencyDropdownOpen)}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200"
+                  title="Change Currency"
+                >
+                  <DollarSign className="w-4 h-4 text-gray-600" />
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{currency}</span>
+                  <ChevronDown className={`w-3 h-3 text-gray-400 transition-transform ${isCurrencyDropdownOpen ? 'rotate-180' : ''}`} />
+                </motion.button>
+
+                {/* Currency Dropdown */}
+                <AnimatePresence>
+                  {isCurrencyDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
+                    >
+                      <div className="py-2">
+                        {currencies.map((curr) => (
+                          <motion.button
+                            key={curr}
+                            whileHover={{ backgroundColor: "rgb(243 244 246)" }}
+                            onClick={() => {
+                              setCurrency(curr);
+                              setIsCurrencyDropdownOpen(false);
+                            }}
+                            className={`w-full px-4 py-2 text-left text-sm flex items-center justify-between transition-colors ${
+                              currency === curr ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700 hover:bg-gray-50'
+                            }`}
+                          >
+                            <div className="flex items-center space-x-2">
+                              <span className="text-base">{currencySymbols[curr]}</span>
+                              <span>{curr}</span>
+                            </div>
+                            {currency === curr && (
+                              <div className="w-2 h-2 bg-blue-600 rounded-full" />
+                            )}
+                          </motion.button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Theme Toggle Button */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={toggleTheme}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors border border-gray-200 dark:border-gray-700"
+                title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                aria-label="Toggle theme"
+              >
+                {isDark ? (
+                  <Sun className="w-5 h-5 text-yellow-500" />
+                ) : (
+                  <Moon className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                )}
+              </motion.button>
+
               {isLoggedIn ? (
                 <div className="flex items-center space-x-3">
                   {/* Notification Bell */}
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    onClick={() => navigate('/notifications')}
                     className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                    title="Notifications"
                   >
                     <Bell className="w-5 h-5 text-gray-600" />
-                    {notifications > 0 && (
+                    {notificationCount > 0 && (
                       <motion.span
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium"
+                        className="absolute -top-1 -right-1 min-w-[20px] h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium px-1"
                       >
-                        {notifications}
+                        {notificationCount > 99 ? '99+' : notificationCount}
                       </motion.span>
                     )}
                   </motion.button>
 
-                  {/* User Profile Dropdown */}
+                  {/* User Profile Dropdown - Profile Image or Icon */}
                   <div className="relative" ref={dropdownRef}>
                     <motion.button
                       whileTap={{ scale: 0.97 }}
                       onClick={toggleDropdown}
-                      className="flex items-center space-x-3 p-1.5 rounded-xl hover:bg-gray-50 transition-all duration-200 focus:outline-none"
+                      className="p-1.5 rounded-xl hover:bg-gray-50 transition-all duration-200 focus:outline-none"
                       aria-label="User menu"
                       aria-expanded={isDropdownOpen}
                     >
                       <div className="relative">
-                        <motion.div
-                          whileHover={{ scale: 1.05 }}
-                          className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-blue-500/30"
-                        >
-                          {getInitials(user?.name)}
-                        </motion.div>
+                        {(user?.image || user?.profileImage) && !imageError ? (
+                          <motion.div
+                            whileHover={{ scale: 1.05 }}
+                            className="w-10 h-10 rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg"
+                          >
+                            <img
+                              src={user.image || user.profileImage}
+                              alt={user?.name || 'Profile'}
+                              className="w-full h-full object-cover"
+                              onError={() => setImageError(true)}
+                            />
+                          </motion.div>
+                        ) : (
+                          <motion.div
+                            whileHover={{ scale: 1.05 }}
+                            className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-blue-500/30"
+                          >
+                            {getInitials(user?.name)}
+                          </motion.div>
+                        )}
                         <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-400 border-2 border-white rounded-full flex items-center justify-center">
                           <div className="w-1.5 h-1.5 bg-green-600 rounded-full" />
                         </div>
                       </div>
-                      <div className="hidden lg:flex flex-col items-start">
-                        <span className="text-sm font-semibold text-gray-700">{user?.name}</span>
-                        <span className="text-xs text-gray-500">Premium Member</span>
-                      </div>
                       <motion.div
                         animate={{ rotate: isDropdownOpen ? 180 : 0 }}
                         transition={{ duration: 0.3 }}
+                        className="absolute -bottom-1 left-1/2 transform -translate-x-1/2"
                       >
-                        <ChevronDown className="w-4 h-4 text-gray-400" />
+                        <ChevronDown className="w-3 h-3 text-gray-400" />
                       </motion.div>
                     </motion.button>
 
@@ -261,43 +360,59 @@ const Navbar = () => {
                           {/* Header */}
                           <div className="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
                             <div className="flex items-center space-x-3">
-                              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold shadow-lg">
-                                {getInitials(user?.name)}
-                              </div>
+                              {(user?.image || user?.profileImage) && !imageError ? (
+                                <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg">
+                                  <img
+                                    src={user.image || user.profileImage}
+                                    alt={user?.name || 'Profile'}
+                                    className="w-full h-full object-cover"
+                                    onError={() => setImageError(true)}
+                                  />
+                                </div>
+                              ) : (
+                                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold shadow-lg">
+                                  {getInitials(user?.name)}
+                                </div>
+                              )}
                               <div className="flex-1">
                                 <p className="text-sm font-bold text-gray-900">{user?.name}</p>
                                 <p className="text-xs text-gray-600 truncate">{user?.email}</p>
-                                <div className="flex items-center gap-1 mt-1">
-                                  <Crown className="w-3 h-3 text-yellow-500" />
-                                  <span className="text-xs text-yellow-600 font-medium">Premium</span>
-                                </div>
                               </div>
                             </div>
                           </div>
 
                           {/* Menu Items */}
                           <div className="py-2">
-                            <motion.button
-                              whileHover={{ x: 4, backgroundColor: "rgb(243 244 246)" }}
-                              className="w-full px-6 py-3 text-left text-sm text-gray-700 hover:text-blue-600 flex items-center space-x-3 transition-colors"
-                            >
-                              <UserCircle className="w-4 h-4" />
-                              <span>My Profile</span>
-                            </motion.button>
-                            <motion.button
-                              whileHover={{ x: 4, backgroundColor: "rgb(243 244 246)" }}
-                              className="w-full px-6 py-3 text-left text-sm text-gray-700 hover:text-blue-600 flex items-center space-x-3 transition-colors"
-                            >
-                              <Heart className="w-4 h-4" />
-                              <span>Saved Properties</span>
-                            </motion.button>
-                            <motion.button
-                              whileHover={{ x: 4, backgroundColor: "rgb(243 244 246)" }}
-                              className="w-full px-6 py-3 text-left text-sm text-gray-700 hover:text-blue-600 flex items-center space-x-3 transition-colors"
-                            >
-                              <Settings className="w-4 h-4" />
-                              <span>Settings</span>
-                            </motion.button>
+                            <Link to="/profile">
+                              <motion.button
+                                whileHover={{ x: 4, backgroundColor: "rgb(243 244 246)" }}
+                                onClick={() => setIsDropdownOpen(false)}
+                                className="w-full px-6 py-3 text-left text-sm text-gray-700 hover:text-blue-600 flex items-center space-x-3 transition-colors"
+                              >
+                                <UserCircle className="w-4 h-4" />
+                                <span>My Profile</span>
+                              </motion.button>
+                            </Link>
+                            <Link to="/saved-properties">
+                              <motion.button
+                                whileHover={{ x: 4, backgroundColor: "rgb(243 244 246)" }}
+                                onClick={() => setIsDropdownOpen(false)}
+                                className="w-full px-6 py-3 text-left text-sm text-gray-700 hover:text-blue-600 flex items-center space-x-3 transition-colors"
+                              >
+                                <Heart className="w-4 h-4" />
+                                <span>Saved Properties</span>
+                              </motion.button>
+                            </Link>
+                            <Link to="/settings">
+                              <motion.button
+                                whileHover={{ x: 4, backgroundColor: "rgb(243 244 246)" }}
+                                onClick={() => setIsDropdownOpen(false)}
+                                className="w-full px-6 py-3 text-left text-sm text-gray-700 hover:text-blue-600 flex items-center space-x-3 transition-colors"
+                              >
+                                <Settings className="w-4 h-4" />
+                                <span>Settings</span>
+                              </motion.button>
+                            </Link>
                             <div className="border-t border-gray-100 my-2" />
                             <motion.button
                               whileHover={{ x: 4, backgroundColor: "rgb(254 242 242)" }}
@@ -314,36 +429,16 @@ const Navbar = () => {
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center space-x-4">
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Link
-                      to="/login"
-                      className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-4 py-2 rounded-lg hover:bg-blue-50"
-                    >
-                      Sign in
-                    </Link>
-                  </motion.div>
-                  <motion.div
-                    whileHover={{ scale: 1.05, ...glowAnimation }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Link
-                      to="/signup"
-                      className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white px-6 py-2.5 rounded-xl hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl shadow-blue-500/30 font-semibold overflow-hidden"
-                    >
-                      <span className="relative z-10">Get Started</span>
-                      <motion.div
-                        animate={sparkleVariants.animate}
-                        className="absolute top-1 right-1"
-                      >
-                        <Sparkles className="w-3 h-3 text-yellow-300" />
-                      </motion.div>
-                    </Link>
-                  </motion.div>
-                </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate('/login')}
+                  className="p-2 rounded-xl hover:bg-gray-100 transition-all duration-200 focus:outline-none"
+                  aria-label="Login"
+                  title="Sign in"
+                >
+                  <UserCircle className="w-8 h-8 text-gray-600 hover:text-blue-600 transition-colors" />
+                </motion.button>
               )}
             </div>
           </div>
@@ -366,13 +461,13 @@ const Navbar = () => {
                 <Menu className="w-6 h-6 text-gray-700" />
               )}
             </motion.div>
-            {isLoggedIn && notifications > 0 && (
+            {isLoggedIn && notificationCount > 0 && (
               <motion.span
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium"
               >
-                {notifications}
+                {notificationCount > 99 ? '99+' : notificationCount}
               </motion.span>
             )}
           </motion.button>
@@ -387,16 +482,16 @@ const Navbar = () => {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden bg-white/95 backdrop-blur-xl border-t border-gray-100 overflow-hidden shadow-xl"
+            className="md:hidden bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-t border-gray-100 dark:border-gray-800 shadow-xl max-h-[calc(100vh-4rem)] overflow-y-auto overscroll-contain"
           >
-            <div className="px-4 pt-4 pb-6">
+            <div className="px-3 sm:px-4 pt-3 sm:pt-4 pb-4 sm:pb-6">
               <MobileNavLinks
                 setMobileMenuOpen={setIsMobileMenuOpen}
                 isLoggedIn={isLoggedIn}
                 user={user}
                 handleLogout={handleLogout}
                 currentPath={location.pathname}
-                notifications={notifications}
+                notifications={notificationCount}
               />
             </div>
           </motion.div>
@@ -422,6 +517,27 @@ const NavLinks = ({ currentPath }) => {
       icon: Search, 
       color: "from-green-500 to-emerald-500",
       description: "Find your dream"
+    },
+    { 
+      name: "Plots", 
+      path: "/plots", 
+      icon: Map, 
+      color: "from-amber-500 to-orange-500",
+      description: "Explore plots"
+    },
+    { 
+      name: "Cars", 
+      path: "/cars", 
+      icon: Car, 
+      color: "from-sky-500 to-blue-600",
+      description: "Browse cars"
+    },
+    { 
+      name: "Services", 
+      path: "/services", 
+      icon: Briefcase, 
+      color: "from-teal-500 to-cyan-500",
+      description: "Our services"
     },
     { 
       name: "About Us", 
@@ -453,7 +569,7 @@ const NavLinks = ({ currentPath }) => {
   const isAIHubActive = currentPath.startsWith("/ai-property-hub");
 
   return (
-    <div className="flex space-x-2 items-center">
+    <div className="flex space-x-1 lg:space-x-2 items-center flex-wrap">
       {navLinks.map(({ name, path, icon: Icon, color, description }) => {
         const isActive = path === "/" ? currentPath === path : currentPath.startsWith(path);
 
@@ -465,15 +581,15 @@ const NavLinks = ({ currentPath }) => {
           >
             <Link
               to={path}
-              className={`relative group font-medium transition-all duration-300 flex items-center gap-2 px-4 py-2.5 rounded-xl
+              className={`relative group font-medium transition-all duration-300 flex items-center gap-1.5 lg:gap-2 px-2.5 lg:px-4 py-2 lg:py-2.5 rounded-lg lg:rounded-xl
                 ${isActive
                   ? `text-white bg-gradient-to-r ${color} shadow-lg shadow-blue-500/30`
-                  : "text-gray-700 hover:text-blue-600 hover:bg-blue-50/80"
+                  : "text-gray-700 hover:text-blue-600 hover:bg-blue-50/80 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-800"
                 }
               `}
             >
-              <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-gray-600 group-hover:text-blue-600'}`} />
-              <span className="font-semibold">{name}</span>
+              <Icon className={`w-3.5 h-3.5 lg:w-4 lg:h-4 flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-600 group-hover:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400'}`} />
+              <span className="font-semibold text-sm lg:text-base whitespace-nowrap">{name}</span>
               
               {/* Tooltip */}
               <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
@@ -526,7 +642,7 @@ const NavLinks = ({ currentPath }) => {
               <Sparkles className="w-3 h-3 text-yellow-400" />
             </motion.div>
           </div>
-          <span>AI Property Hub</span>
+          <span>AI</span>
           
           {/* Premium badge */}
           {!isAIHubActive && (
@@ -580,6 +696,24 @@ const MobileNavLinks = ({
   currentPath,
   notifications,
 }) => {
+  // Access currency context
+  const { currency, setCurrency, formatPrice, getCurrencySymbol, currencies, currencySymbols } = useCurrency();
+  const { theme, toggleTheme, isDark } = useTheme();
+  const [isCurrencyDropdownOpen, setIsCurrencyDropdownOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const navigate = useNavigate();
+  
+  const getInitials = (name) => {
+    if (!name) return "U";
+    return name
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase();
+  };
+  
+  const notificationCount = notifications || 0;
+
   // Enhanced navigation links with colors and descriptions
   const navLinks = [
     { 
@@ -595,6 +729,27 @@ const MobileNavLinks = ({
       icon: Search, 
       color: "from-green-500 to-emerald-500",
       description: "Find your dream"
+    },
+    { 
+      name: "Plots", 
+      path: "/plots", 
+      icon: Map, 
+      color: "from-amber-500 to-orange-500",
+      description: "Explore plots"
+    },
+    { 
+      name: "Cars", 
+      path: "/cars", 
+      icon: Car, 
+      color: "from-sky-500 to-blue-600",
+      description: "Browse cars"
+    },
+    { 
+      name: "Services", 
+      path: "/services", 
+      icon: Briefcase, 
+      color: "from-teal-500 to-cyan-500",
+      description: "Our services"
     },
     { 
       name: "About Us", 
@@ -618,30 +773,30 @@ const MobileNavLinks = ({
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex flex-col space-y-3"
+      className="flex flex-col space-y-2 sm:space-y-3"
     >
       {/* Enhanced AI Property Hub for Mobile */}
       <motion.div 
         initial={{ x: -20, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="px-2"
+        className="px-1 sm:px-2"
       >
         <Link
           to="/ai-property-hub"
           onClick={() => setMobileMenuOpen(false)}
-          className={`relative flex items-center gap-4 px-5 py-4 rounded-2xl shadow-lg transition-all duration-300 overflow-hidden ${
+          className={`relative flex items-center gap-3 sm:gap-4 px-3 sm:px-5 py-3 sm:py-4 rounded-xl sm:rounded-2xl shadow-lg transition-all duration-300 overflow-hidden ${
             isAIHubActive
               ? "bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white shadow-purple-500/30"
-              : "bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 text-indigo-700 border-2 border-indigo-100"
+              : "bg-gradient-to-r from-indigo-50 dark:from-indigo-900/30 via-purple-50 dark:via-purple-900/30 to-pink-50 dark:to-pink-900/30 text-indigo-700 dark:text-indigo-300 border-2 border-indigo-100 dark:border-indigo-800"
           }`}
         >
-          <div className="relative">
+          <div className="relative flex-shrink-0">
             <motion.div
               animate={floatingAnimation}
-              className={`p-2.5 rounded-xl ${isAIHubActive ? 'bg-white/20' : 'bg-indigo-100'}`}
+              className={`p-2 sm:p-2.5 rounded-lg sm:rounded-xl ${isAIHubActive ? 'bg-white/20' : 'bg-indigo-100 dark:bg-indigo-800/50'}`}
             >
-              <BotMessageSquare className={`w-6 h-6 ${isAIHubActive ? 'text-white' : 'text-indigo-600'}`} />
+              <BotMessageSquare className={`w-5 h-5 sm:w-6 sm:h-6 ${isAIHubActive ? 'text-white' : 'text-indigo-600'}`} />
             </motion.div>
             <motion.div
               animate={{ 
@@ -655,12 +810,12 @@ const MobileNavLinks = ({
               }}
               className="absolute -top-1 -right-1"
             >
-              <Sparkles className="w-4 h-4 text-yellow-400" />
+              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400" />
             </motion.div>
           </div>
-          <div className="flex-1">
-            <div className="font-bold text-lg">AI Property Hub</div>
-            <div className={`text-sm ${isAIHubActive ? "text-indigo-100" : "text-indigo-500"}`}>
+          <div className="flex-1 min-w-0">
+            <div className="font-bold text-base sm:text-lg dark:text-gray-100 truncate">AI Property Hub</div>
+            <div className={`text-xs sm:text-sm ${isAIHubActive ? "text-indigo-100" : "text-indigo-500 dark:text-indigo-400"} truncate`}>
               Smart property recommendations
             </div>
           </div>
@@ -668,10 +823,10 @@ const MobileNavLinks = ({
             <motion.span 
               animate={{ scale: [0.9, 1.1, 0.9] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 rounded-full text-xs font-bold shadow-lg flex items-center gap-1"
+              className="px-2 sm:px-3 py-0.5 sm:py-1 bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 rounded-full text-[10px] sm:text-xs font-bold shadow-lg flex items-center gap-1 flex-shrink-0"
             >
-              <Zap className="w-3 h-3" />
-              NEW
+              <Zap className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+              <span className="hidden sm:inline">NEW</span>
             </motion.span>
           )}
           
@@ -686,9 +841,9 @@ const MobileNavLinks = ({
 
       {/* Elegant separator */}
       <div className="flex items-center gap-4 px-2">
-        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-        <span className="text-xs text-gray-400 font-medium">Navigation</span>
-        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent"></div>
+        <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">Navigation</span>
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent"></div>
       </div>
 
       {/* Enhanced Navigation Links */}
@@ -704,21 +859,21 @@ const MobileNavLinks = ({
           >
             <Link
               to={path}
-              className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-300 group ${
+              className={`flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-2.5 sm:py-3.5 rounded-lg sm:rounded-xl transition-all duration-300 group ${
                 isActive
                   ? `bg-gradient-to-r ${color} text-white shadow-lg`
-                  : "text-gray-700 hover:bg-gray-50 active:scale-95"
+                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-95"
               }`}
               onClick={() => setMobileMenuOpen(false)}
             >
-              <div className={`p-2 rounded-lg ${isActive ? 'bg-white/20' : 'bg-gray-100 group-hover:bg-blue-100'}`}>
-                <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-600 group-hover:text-blue-600'}`} />
+              <div className={`p-1.5 sm:p-2 rounded-lg flex-shrink-0 ${isActive ? 'bg-white/20' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30'}`}>
+                <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${isActive ? 'text-white' : 'text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400'}`} />
               </div>
-              <div className="flex-1">
-                <div className={`font-semibold ${isActive ? 'text-white' : 'text-gray-900'}`}>
+              <div className="flex-1 min-w-0">
+                <div className={`font-semibold text-sm sm:text-base ${isActive ? 'text-white' : 'text-gray-900 dark:text-gray-100'} truncate`}>
                   {name}
                 </div>
-                <div className={`text-sm ${isActive ? 'text-white/80' : 'text-gray-500'}`}>
+                <div className={`text-xs sm:text-sm ${isActive ? 'text-white/80' : 'text-gray-500 dark:text-gray-400'} truncate`}>
                   {description}
                 </div>
               </div>
@@ -726,7 +881,7 @@ const MobileNavLinks = ({
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="w-2 h-2 bg-white rounded-full"
+                  className="w-2 h-2 bg-white rounded-full flex-shrink-0"
                 />
               )}
             </Link>
@@ -734,12 +889,93 @@ const MobileNavLinks = ({
         );
       })}
 
+      {/* Currency Selector - Mobile */}
+      <div className="pt-3 sm:pt-4 px-1 sm:px-2">
+        <div className="flex items-center gap-2 sm:gap-4 mb-3 sm:mb-4">
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent"></div>
+          <span className="text-[10px] sm:text-xs text-gray-400 dark:text-gray-500 font-medium">Currency</span>
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent"></div>
+        </div>
+        <div className="relative mb-3 sm:mb-4">
+          <motion.button
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setIsCurrencyDropdownOpen(!isCurrencyDropdownOpen)}
+            className="w-full flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg sm:rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            <div className="flex items-center space-x-2">
+              <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
+              <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 truncate">{currency} {getCurrencySymbol()}</span>
+            </div>
+            <ChevronDown className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 dark:text-gray-500 transition-transform flex-shrink-0 ${isCurrencyDropdownOpen ? 'rotate-180' : ''}`} />
+          </motion.button>
+
+          {/* Currency Dropdown - Mobile */}
+          <AnimatePresence>
+            {isCurrencyDropdownOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
+              >
+                <div className="py-2">
+                  {currencies.map((curr) => (
+                    <motion.button
+                      key={curr}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => {
+                        setCurrency(curr);
+                        setIsCurrencyDropdownOpen(false);
+                      }}
+                      className={`w-full px-4 py-3 text-left text-sm flex items-center justify-between ${
+                        currency === curr 
+                          ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium' 
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <span className="text-base">{currencySymbols[curr]}</span>
+                        <span>{curr}</span>
+                      </div>
+                      {currency === curr && (
+                        <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full" />
+                      )}
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Theme Toggle - Mobile */}
+      <div className="pt-2 px-1 sm:px-2 mb-3 sm:mb-4">
+        <motion.button
+          whileTap={{ scale: 0.98 }}
+          onClick={toggleTheme}
+          className="w-full flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg sm:rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          aria-label={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+        >
+          <div className="flex items-center space-x-2">
+            {isDark ? (
+              <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500 flex-shrink-0" />
+            ) : (
+              <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-300 flex-shrink-0" />
+            )}
+            <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+              {isDark ? "Light Mode" : "Dark Mode"}
+            </span>
+          </div>
+        </motion.button>
+      </div>
+
       {/* Enhanced Auth Section for Mobile */}
-      <div className="pt-4 mt-2">
-        <div className="flex items-center gap-4 px-2 mb-4">
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-          <span className="text-xs text-gray-400 font-medium">Account</span>
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+      <div className="pt-3 sm:pt-4 mt-2">
+        <div className="flex items-center gap-2 sm:gap-4 px-1 sm:px-2 mb-3 sm:mb-4">
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent"></div>
+          <span className="text-[10px] sm:text-xs text-gray-400 dark:text-gray-500 font-medium">Account</span>
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent"></div>
         </div>
 
         {isLoggedIn ? (
@@ -748,58 +984,70 @@ const MobileNavLinks = ({
             animate={{ y: 0, opacity: 1 }}
             className="space-y-4 px-2"
           >
-            {/* Enhanced User Profile Card */}
-            <div className="relative p-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl border border-indigo-100 overflow-hidden">
-              <div className="flex items-center space-x-4 relative z-10">
-                <div className="relative">
+            {/* Enhanced User Profile Card - Profile Image or Icon */}
+            <div className="relative flex justify-center">
+              <div className="relative">
+                {(user?.image || user?.profileImage) && !imageError ? (
                   <motion.div
                     whileHover={{ scale: 1.05 }}
-                    className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg shadow-lg"
+                    className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-gray-200 dark:border-gray-700 shadow-lg"
                   >
-                    {user?.name ? user.name[0].toUpperCase() : "U"}
+                    <img
+                      src={user.image || user.profileImage}
+                      alt={user?.name || 'Profile'}
+                      className="w-full h-full object-cover"
+                      onError={() => setImageError(true)}
+                    />
                   </motion.div>
-                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-400 border-2 border-white rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-green-600 rounded-full" />
-                  </div>
-                  {notifications > 0 && (
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold"
-                    >
-                      {notifications}
-                    </motion.div>
-                  )}
+                ) : (
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg shadow-lg"
+                  >
+                    {user?.name ? getInitials(user.name) : "U"}
+                  </motion.div>
+                )}
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-400 border-2 border-white rounded-full flex items-center justify-center">
+                  <div className="w-2 h-2 bg-green-600 rounded-full" />
                 </div>
-                <div className="flex-1">
-                  <p className="text-lg font-bold text-gray-900">{user?.name}</p>
-                  <p className="text-sm text-gray-600 truncate">{user?.email}</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Crown className="w-4 h-4 text-yellow-500" />
-                    <span className="text-xs text-yellow-600 font-semibold">Premium Member</span>
-                  </div>
-                </div>
+                {notificationCount > 0 && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold"
+                  >
+                    {notificationCount > 99 ? '99+' : notificationCount}
+                  </motion.div>
+                )}
               </div>
-              {/* Background decoration */}
-              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full transform translate-x-6 -translate-y-6" />
             </div>
 
             {/* Quick Actions */}
-            <div className="grid grid-cols-2 gap-3">
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-3 px-4 py-3 bg-white border border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition-all"
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+              <Link
+                to="/saved-properties"
+                onClick={() => setMobileMenuOpen(false)}
               >
-                <Heart className="w-5 h-5 text-gray-600" />
-                <span className="text-sm font-medium text-gray-700">Saved</span>
-              </motion.button>
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-3 px-4 py-3 bg-white border border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition-all"
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg sm:rounded-xl hover:border-blue-300 dark:hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all"
+                >
+                  <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 truncate">Saved</span>
+                </motion.button>
+              </Link>
+              <Link
+                to="/settings"
+                onClick={() => setMobileMenuOpen(false)}
               >
-                <Settings className="w-5 h-5 text-gray-600" />
-                <span className="text-sm font-medium text-gray-700">Settings</span>
-              </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg sm:rounded-xl hover:border-blue-300 dark:hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all"
+                >
+                  <Settings className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 truncate">Settings</span>
+                </motion.button>
+              </Link>
             </div>
 
             {/* Logout Button */}
@@ -809,9 +1057,9 @@ const MobileNavLinks = ({
                 handleLogout();
                 setMobileMenuOpen(false);
               }}
-              className="w-full flex items-center justify-center gap-3 px-4 py-4 text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-xl transition-all font-semibold"
+              className="w-full flex items-center justify-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-4 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg sm:rounded-xl transition-all font-semibold text-sm sm:text-base"
             >
-              <LogOut className="w-5 h-5" />
+              <LogOut className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
               <span>Sign out</span>
             </motion.button>
           </motion.div>
@@ -819,32 +1067,19 @@ const MobileNavLinks = ({
           <motion.div 
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="flex flex-col space-y-3 px-2"
+            className="flex justify-center px-2"
           >
-            <motion.div whileTap={{ scale: 0.97 }}>
-              <Link
-                to="/login"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center px-6 py-4 border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all font-semibold"
-              >
-                Sign in
-              </Link>
-            </motion.div>
-            <motion.div whileTap={{ scale: 0.97 }}>
-              <Link
-                to="/signup"
-                onClick={() => setMobileMenuOpen(false)}
-                className="relative w-full flex items-center justify-center px-6 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 transition-all font-semibold shadow-lg shadow-blue-500/30 overflow-hidden"
-              >
-                <span className="relative z-10">Create account</span>
-                <motion.div
-                  animate={sparkleVariants.animate}
-                  className="absolute top-2 right-2"
-                >
-                  <Sparkles className="w-4 h-4 text-yellow-300" />
-                </motion.div>
-              </Link>
-            </motion.div>
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                navigate('/login');
+                setMobileMenuOpen(false);
+              }}
+              className="p-3 sm:p-4 rounded-lg sm:rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 focus:outline-none"
+              aria-label="Login"
+            >
+              <UserCircle className="w-10 h-10 sm:w-12 sm:h-12 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" />
+            </motion.button>
           </motion.div>
         )}
       </div>

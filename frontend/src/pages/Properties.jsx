@@ -3,7 +3,7 @@ import PropertiesPage from '../components/properties/Propertiespage'
 
 const Properties = () => {
   return (
-    <div>
+    <div className="bg-white dark:bg-gray-900 transition-colors duration-200">
       <PropertiesPage />
     </div>
   )

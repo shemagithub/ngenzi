@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import PropTypes from "prop-types";
 import { 
   MapPin, 
   IndianRupee, 
@@ -14,8 +15,8 @@ import {
   Search
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Backendurl } from '../App';
-import PropTypes from "prop-types";
+import { Backendurl } from '../utils/backendUrl';
+import { useCurrency } from '../context/CurrencyContext';
 
 // Sample featured properties for fallback
 const sampleProperties = [
@@ -59,11 +60,12 @@ const sampleProperties = [
 
 const PropertyCard = ({ property }) => {
   const navigate = useNavigate();
+  const { formatPrice } = useCurrency();
   const [isHovered, setIsHovered] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
   const handleNavigate = () => {
-    navigate(`/properties/single/${property._id}`);
+    navigate(`/properties/single/${property.id || property._id}`);
   };
 
   const toggleFavorite = (e) => {
@@ -78,7 +80,7 @@ const PropertyCard = ({ property }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer"
+      className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-200 dark:border-gray-700"
       onClick={handleNavigate}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -86,9 +88,31 @@ const PropertyCard = ({ property }) => {
       {/* Property Image */}
       <div className="relative h-64">
         <img
-          src={property.image[0]}
+          src={(() => {
+            // Normalize image field
+            let images = [];
+            if (property.image) {
+              if (Array.isArray(property.image)) {
+                images = property.image;
+              } else if (typeof property.image === 'string') {
+                try {
+                  const parsed = JSON.parse(property.image);
+                  images = Array.isArray(parsed) ? parsed : [property.image];
+                } catch {
+                  images = [property.image];
+                }
+              }
+            }
+            // Base64 encoded placeholder image (gray 400x300)
+            const defaultImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2U1ZTdlYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
+            return images.length > 0 ? images[0] : defaultImage;
+          })()}
           alt={property.title}
           className="w-full h-full object-cover"
+          onError={(e) => {
+            // Base64 encoded placeholder image (gray 400x300)
+            e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2U1ZTdlYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
+          }}
         />
         
         {/* Property badges */}
@@ -110,7 +134,7 @@ const PropertyCard = ({ property }) => {
           className={`absolute top-4 right-4 p-2 rounded-full transition-all duration-300 
             ${isFavorite 
               ? 'bg-red-500 text-white' 
-              : 'bg-white/80 backdrop-blur-sm text-gray-700 hover:text-red-500'}`}
+              : 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-700 dark:text-gray-300 hover:text-red-500'}`}
         >
           <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
         </button>
@@ -129,7 +153,7 @@ const PropertyCard = ({ property }) => {
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
-                className="px-5 py-3 bg-white text-blue-600 rounded-lg font-medium flex items-center gap-2 shadow-lg"
+                className="px-5 py-3 bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 rounded-lg font-medium flex items-center gap-2 shadow-lg border border-gray-200 dark:border-gray-700"
               >
                 <Eye className="w-5 h-5" />
                 View Details
@@ -141,38 +165,37 @@ const PropertyCard = ({ property }) => {
       
       {/* Property Content */}
       <div className="p-6">
-        <h3 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-1 group-hover:text-blue-600 transition-colors">
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
           {property.title}
         </h3>
         
-        <div className="flex items-center text-gray-600 mb-4">
-          <MapPin className="h-4 w-4 mr-2 flex-shrink-0 text-blue-500" />
+        <div className="flex items-center text-gray-600 dark:text-gray-400 mb-4">
+          <MapPin className="h-4 w-4 mr-2 flex-shrink-0 text-blue-500 dark:text-blue-400" />
           <span className="line-clamp-1">{property.location}</span>
         </div>
         
         {/* Property Features */}
-        <div className="flex justify-between items-center py-3 border-y border-gray-100 mb-4">
+        <div className="flex justify-between items-center py-3 border-y border-gray-100 dark:border-gray-700 mb-4">
           <div className="flex items-center gap-1">
-            <BedDouble className="w-4 h-4 text-blue-500" />
-            <span className="text-sm text-gray-600">{property.beds} {property.beds > 1 ? 'Beds' : 'Bed'}</span>
+            <BedDouble className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+            <span className="text-sm text-gray-600 dark:text-gray-400">{property.beds} {property.beds > 1 ? 'Beds' : 'Bed'}</span>
           </div>
           <div className="flex items-center gap-1">
-            <Bath className="w-4 h-4 text-blue-500" />
-            <span className="text-sm text-gray-600">{property.baths} {property.baths > 1 ? 'Baths' : 'Bath'}</span>
+            <Bath className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+            <span className="text-sm text-gray-600 dark:text-gray-400">{property.baths} {property.baths > 1 ? 'Baths' : 'Bath'}</span>
           </div>
           <div className="flex items-center gap-1">
-            <Maximize className="w-4 h-4 text-blue-500" />
-            <span className="text-sm text-gray-600">{property.sqft} sqft</span>
+            <Maximize className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+            <span className="text-sm text-gray-600 dark:text-gray-400">{property.sqft} sqft</span>
           </div>
         </div>
         
         <div className="flex items-center justify-between">
-          <div className="flex items-center text-blue-600 font-bold">
-            <IndianRupee className="h-5 w-5 mr-1" />
-            <span className="text-xl">{Number(property.price).toLocaleString('en-IN')}</span>
+          <div className="flex items-center text-blue-600 dark:text-blue-400 font-bold">
+            <span className="text-xl">{formatPrice(property.price)}</span>
           </div>
           
-          <div className="text-sm bg-blue-50 text-blue-700 px-2 py-1 rounded-md flex items-center">
+          <div className="text-sm bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-1 rounded-md flex items-center">
             <Building className="w-3.5 h-3.5 mr-1" />
             {property.availability === 'Rent' ? 'Rental' : 'Purchase'}
           </div>
@@ -257,28 +280,28 @@ const PropertiesShow = () => {
 
   if (loading) {
     return (
-      <div className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 text-center">
+      <div className="py-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+        <div className="max-w-[1600px] mx-auto px-4 text-center">
           <div className="animate-pulse">
-            <div className="h-10 bg-gray-200 rounded w-1/3 mx-auto mb-4"></div>
-            <div className="h-5 bg-gray-200 rounded w-1/4 mx-auto mb-16"></div>
+            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mx-auto mb-4"></div>
+            <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mx-auto mb-16"></div>
             
-            <div className="h-10 bg-gray-100 rounded-lg w-full max-w-md mx-auto mb-8 flex justify-center gap-4">
+            <div className="h-10 bg-gray-100 dark:bg-gray-800 rounded-lg w-full max-w-md mx-auto mb-8 flex justify-center gap-4">
               {[1, 2, 3, 4].map(n => (
-                <div key={n} className="h-8 bg-gray-200 rounded-full w-24"></div>
+                <div key={n} className="h-8 bg-gray-200 dark:bg-gray-700 rounded-full w-24"></div>
               ))}
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[1, 2, 3].map((n) => (
-                <div key={n} className="bg-white rounded-xl shadow h-96">
-                  <div className="h-64 bg-gray-200 rounded-t-xl"></div>
+                <div key={n} className="bg-white dark:bg-gray-800 rounded-xl shadow h-96">
+                  <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-t-xl"></div>
                   <div className="p-6">
-                    <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
-                    <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
                     <div className="flex justify-between">
-                      <div className="h-6 bg-gray-200 rounded w-1/3"></div>
-                      <div className="h-6 bg-gray-200 rounded w-1/4"></div>
+                      <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+                      <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
                     </div>
                   </div>
                 </div>
@@ -291,20 +314,20 @@ const PropertiesShow = () => {
   }
 
   return (
-    <section className="py-24 bg-gradient-to-b from-white to-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-200">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="text-blue-600 font-semibold tracking-wide uppercase text-sm">Explore Properties</span>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mt-2 mb-4">
+          <span className="text-blue-600 dark:text-blue-400 font-semibold tracking-wide uppercase text-sm">Explore Properties</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 mt-2 mb-4">
             Featured Properties
           </h2>
-          <div className="w-24 h-1 bg-blue-600 mx-auto mb-6"></div>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <div className="w-24 h-1 bg-blue-600 dark:bg-blue-500 mx-auto mb-6"></div>
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             Discover our handpicked selection of premium properties designed to match your lifestyle needs
           </p>
         </motion.div>
@@ -322,8 +345,8 @@ const PropertiesShow = () => {
               onClick={() => setActiveCategory(category.id)}
               className={`px-6 py-2.5 rounded-full font-medium text-sm transition-all duration-200
                 ${activeCategory === category.id 
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
-                  : 'bg-white text-gray-700 hover:bg-gray-100 shadow-sm'}`}
+                  ? 'bg-blue-600 dark:bg-blue-500 text-white shadow-lg shadow-blue-600/20' 
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm border border-gray-200 dark:border-gray-700'}`}
             >
               {category.label}
             </button>
@@ -334,7 +357,7 @@ const PropertiesShow = () => {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-amber-700 bg-amber-50 p-4 rounded-lg border border-amber-200 mb-8 max-w-md mx-auto text-center"
+            className="text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800 mb-8 max-w-md mx-auto text-center"
           >
             <p className="font-medium mb-1">Note: {error}</p>
             <p className="text-sm">Showing sample properties for demonstration.</p>
@@ -349,19 +372,19 @@ const PropertiesShow = () => {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             {filteredProperties.map((property) => (
-              <motion.div key={property._id} variants={itemVariants}>
+              <motion.div key={property.id || property._id} variants={itemVariants}>
                 <PropertyCard property={property} />
               </motion.div>
             ))}
           </motion.div>
         ) : (
-          <div className="text-center py-10 bg-white rounded-xl shadow-sm">
-            <Search className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-gray-800 mb-2">No properties available</h3>
-            <p className="text-gray-600 mb-6">No properties found in this category.</p>
+          <div className="text-center py-10 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <Search className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+            <h3 className="text-xl font-medium text-gray-800 dark:text-gray-200 mb-2">No properties available</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">No properties found in this category.</p>
             <button 
               onClick={() => setActiveCategory('all')} 
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-6 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
             >
               View All Properties
             </button>
@@ -376,12 +399,12 @@ const PropertiesShow = () => {
         >
           <button
             onClick={viewAllProperties}
-            className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20 font-medium"
+            className="inline-flex items-center px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors shadow-lg shadow-blue-600/20 dark:shadow-blue-500/30 font-medium"
           >
             Browse All Properties
             <ArrowRight className="ml-2 w-4 h-4" />
           </button>
-          <p className="text-gray-600 mt-4 text-sm">
+          <p className="text-gray-600 dark:text-gray-400 mt-4 text-sm">
             Discover our complete collection of premium properties
           </p>
         </motion.div>

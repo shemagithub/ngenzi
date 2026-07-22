@@ -76,7 +76,7 @@ const Companies = () => {
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-[1600px] px-6 lg:px-8">
         {/* Header Section */}
         <motion.div
           variants={containerVariants}

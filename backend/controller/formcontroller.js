@@ -4,19 +4,23 @@ export const submitForm = async (req, res) => {
   try {
     const { name, email, phone, message } = req.body; // Debugging log
 
-    const newForm = new Form({
+    const savedForm = await Form.create({
       name,
       email,
       phone,
       message,
     });
-
-    const savedForm = await newForm.save();
     
 
-    res.json({ message: 'Form submitted successfully' });
+    res.json({ 
+      message: 'Form submitted successfully',
+      success: true 
+    });
   } catch (error) {
     console.error('Error saving form data:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ 
+      message: 'Server error',
+      success: false 
+    });
   }
 };

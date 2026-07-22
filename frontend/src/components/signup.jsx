@@ -17,8 +17,9 @@ import {
   Key,
   Home
 } from 'lucide-react';
-import { Backendurl } from '../App';
+import { Backendurl } from '../utils/backendUrl';
 import { toast } from 'react-toastify';
+import logo from "../assets/images/logo.JPEG";
 
 // Enhanced Animation Variants
 const containerVariants = {
@@ -197,7 +198,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden transition-colors duration-200">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -253,7 +254,7 @@ const Signup = () => {
         >
           <motion.div
             variants={cardVariants}
-            className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-blue-500/10 p-8 border border-white/20"
+            className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-blue-500/10 dark:shadow-blue-900/20 p-8 border border-white/20 dark:border-gray-700/50"
           >
             {/* Logo & Title */}
             <motion.div
@@ -266,24 +267,20 @@ const Signup = () => {
                   whileTap={{ scale: 0.95 }}
                   className="flex items-center justify-center space-x-2"
                 >
-                  <motion.div
-                    animate={pulseAnimation}
-                    className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center"
-                  >
-                    <Home className="w-6 h-6 text-white" />
-                  </motion.div>
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                    BuildEstate
-                  </h1>
+                  <img 
+                    src={logo} 
+                    alt="NGENZI REAL ESTATE" 
+                    className="h-16 w-auto object-contain"
+                  />
                 </motion.div>
               </Link>
               
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold text-gray-800">Create Your Account</h2>
-                <p className="text-gray-600">Join thousands of property enthusiasts</p>
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Create Your Account</h2>
+                <p className="text-gray-600 dark:text-gray-400">Join thousands of property enthusiasts</p>
                 
                 {/* Stats */}
-                <div className="flex items-center justify-center space-x-6 mt-4 text-sm text-gray-500">
+                <div className="flex items-center justify-center space-x-6 mt-4 text-sm text-gray-500 dark:text-gray-400">
                   <div className="flex items-center space-x-1">
                     <Star className="w-4 h-4 text-yellow-500 fill-current" />
                     <span>4.9 Rating</span>
@@ -303,12 +300,12 @@ const Signup = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Name Field */}
               <motion.div variants={inputVariants}>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Full Name
                 </label>
                 <div className="relative group">
                   <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 ${
-                    fieldFocus.name ? 'text-blue-500' : 'text-gray-400'
+                    fieldFocus.name ? 'text-blue-500 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'
                   }`}>
                     <User className="h-5 w-5" />
                   </div>
@@ -321,12 +318,12 @@ const Signup = () => {
                     onChange={handleChange}
                     onFocus={() => handleFocus('name')}
                     onBlur={() => handleBlur('name')}
-                    className={`w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50/50 border-2 transition-all duration-200 placeholder-gray-400 ${
+                    className={`w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50/50 dark:bg-gray-700/50 border-2 transition-all duration-200 placeholder-gray-400 dark:placeholder-gray-500 text-gray-800 dark:text-gray-100 ${
                       validationErrors.name
-                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20'
+                        ? 'border-red-300 dark:border-red-700 focus:border-red-500 dark:focus:border-red-400 focus:ring-red-500/20 dark:focus:ring-red-400/20'
                         : fieldFocus.name
-                        ? 'border-blue-500 focus:border-blue-500 focus:ring-blue-500/20'
-                        : 'border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-500/20'
+                        ? 'border-blue-500 dark:border-blue-400 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 dark:focus:ring-blue-400/20'
+                        : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 dark:focus:ring-blue-400/20'
                     } focus:ring-4 focus:outline-none`}
                     placeholder="Enter your full name"
                   />
@@ -355,7 +352,7 @@ const Signup = () => {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="mt-1 text-sm text-red-600"
+                      className="mt-1 text-sm text-red-600 dark:text-red-400"
                     >
                       {validationErrors.name}
                     </motion.p>
@@ -365,12 +362,12 @@ const Signup = () => {
 
               {/* Email Field */}
               <motion.div variants={inputVariants}>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Email Address
                 </label>
                 <div className="relative group">
                   <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 ${
-                    fieldFocus.email ? 'text-blue-500' : 'text-gray-400'
+                    fieldFocus.email ? 'text-blue-500 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'
                   }`}>
                     <Mail className="h-5 w-5" />
                   </div>
@@ -383,12 +380,12 @@ const Signup = () => {
                     onChange={handleChange}
                     onFocus={() => handleFocus('email')}
                     onBlur={() => handleBlur('email')}
-                    className={`w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50/50 border-2 transition-all duration-200 placeholder-gray-400 ${
+                    className={`w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50/50 dark:bg-gray-700/50 border-2 transition-all duration-200 placeholder-gray-400 dark:placeholder-gray-500 text-gray-800 dark:text-gray-100 ${
                       validationErrors.email
-                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20'
+                        ? 'border-red-300 dark:border-red-700 focus:border-red-500 dark:focus:border-red-400 focus:ring-red-500/20 dark:focus:ring-red-400/20'
                         : fieldFocus.email
-                        ? 'border-blue-500 focus:border-blue-500 focus:ring-blue-500/20'
-                        : 'border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-500/20'
+                        ? 'border-blue-500 dark:border-blue-400 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 dark:focus:ring-blue-400/20'
+                        : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 dark:focus:ring-blue-400/20'
                     } focus:ring-4 focus:outline-none`}
                     placeholder="name@company.com"
                   />
@@ -417,7 +414,7 @@ const Signup = () => {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="mt-1 text-sm text-red-600"
+                      className="mt-1 text-sm text-red-600 dark:text-red-400"
                     >
                       {validationErrors.email}
                     </motion.p>
@@ -427,12 +424,12 @@ const Signup = () => {
 
               {/* Password Field */}
               <motion.div variants={inputVariants}>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Password
                 </label>
                 <div className="relative group">
                   <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 ${
-                    fieldFocus.password ? 'text-blue-500' : 'text-gray-400'
+                    fieldFocus.password ? 'text-blue-500 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'
                   }`}>
                     <Key className="h-5 w-5" />
                   </div>
@@ -445,12 +442,12 @@ const Signup = () => {
                     onChange={handleChange}
                     onFocus={() => handleFocus('password')}
                     onBlur={() => handleBlur('password')}
-                    className={`w-full pl-10 pr-12 py-3 rounded-xl bg-gray-50/50 border-2 transition-all duration-200 placeholder-gray-400 ${
+                    className={`w-full pl-10 pr-12 py-3 rounded-xl bg-gray-50/50 dark:bg-gray-700/50 border-2 transition-all duration-200 placeholder-gray-400 dark:placeholder-gray-500 text-gray-800 dark:text-gray-100 ${
                       validationErrors.password
-                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20'
+                        ? 'border-red-300 dark:border-red-700 focus:border-red-500 dark:focus:border-red-400 focus:ring-red-500/20 dark:focus:ring-red-400/20'
                         : fieldFocus.password
-                        ? 'border-blue-500 focus:border-blue-500 focus:ring-blue-500/20'
-                        : 'border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-500/20'
+                        ? 'border-blue-500 dark:border-blue-400 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 dark:focus:ring-blue-400/20'
+                        : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 dark:focus:ring-blue-400/20'
                     } focus:ring-4 focus:outline-none`}
                     placeholder="Create a strong password"
                   />
@@ -459,7 +456,7 @@ const Signup = () => {
                     whileTap={{ scale: 0.9 }}
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-100"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
                   </motion.button>
@@ -475,7 +472,7 @@ const Signup = () => {
                       className="mt-2"
                     >
                       <div className="flex items-center space-x-2 mb-1">
-                        <span className="text-sm text-gray-600">Password strength:</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Password strength:</span>
                         <span className={`text-sm font-medium ${
                           passwordStrength < 50 ? 'text-red-500' : 
                           passwordStrength < 75 ? 'text-yellow-500' : 'text-green-500'
@@ -484,7 +481,7 @@ const Signup = () => {
                            passwordStrength < 75 ? 'Medium' : 'Strong'}
                         </span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${passwordStrength}%` }}
@@ -505,7 +502,7 @@ const Signup = () => {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="mt-1 text-sm text-red-600"
+                      className="mt-1 text-sm text-red-600 dark:text-red-400"
                     >
                       {validationErrors.password}
                     </motion.p>
@@ -522,8 +519,8 @@ const Signup = () => {
                   disabled={loading || Object.keys(validationErrors).some(key => validationErrors[key])}
                   className={`w-full py-4 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg ${
                     loading || Object.keys(validationErrors).some(key => validationErrors[key])
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-blue-500/25 hover:shadow-blue-500/40'
+                      ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-blue-700 dark:to-indigo-700 dark:hover:from-blue-600 dark:hover:to-indigo-600 text-white shadow-blue-500/25 dark:shadow-blue-900/40 hover:shadow-blue-500/40 dark:hover:shadow-blue-900/60'
                   }`}
                 >
                   {loading ? (
@@ -544,32 +541,32 @@ const Signup = () => {
               {/* Features */}
               <motion.div variants={inputVariants} className="grid grid-cols-3 gap-4 py-4">
                 <div className="text-center">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Shield className="w-4 h-4 text-blue-600" />
+                  <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <Shield className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <p className="text-xs text-gray-600">Secure</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Secure</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
+                  <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
                   </div>
-                  <p className="text-xs text-gray-600">Verified</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Verified</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Sparkles className="w-4 h-4 text-purple-600" />
+                  <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                   </div>
-                  <p className="text-xs text-gray-600">Premium</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Premium</p>
                 </div>
               </motion.div>
 
               {/* Divider */}
               <motion.div variants={inputVariants} className="relative my-6">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200"></div>
+                  <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white text-gray-500">Already have an account?</span>
+                  <span className="px-4 bg-white/80 dark:bg-gray-800/80 text-gray-500 dark:text-gray-400">Already have an account?</span>
                 </div>
               </motion.div>
 
@@ -577,7 +574,7 @@ const Signup = () => {
               <motion.div variants={inputVariants}>
                 <Link
                   to="/login"
-                  className="group w-full flex items-center justify-center px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-medium"
+                  className="group w-full flex items-center justify-center px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 font-medium"
                 >
                   <span className="group-hover:mr-2 transition-all duration-200">Sign in to your account</span>
                   <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-all duration-200 ml-1" />

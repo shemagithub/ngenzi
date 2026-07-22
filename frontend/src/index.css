@@ -3,13 +3,34 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Add to your global CSS or relevant component */
+/* Dark mode base styles */
+@layer base {
+  :root {
+    @apply bg-white text-gray-900;
+  }
+  
+  .dark {
+    @apply bg-gray-900 text-gray-100;
+  }
+}
 
+/* Add to your global CSS or relevant component */
 
 .filter-group {
   @apply space-y-3;
 }
 
 .filter-label {
-  @apply flex items-center text-gray-700 font-medium text-sm;
+  @apply flex items-center text-gray-700 dark:text-gray-300 font-medium text-sm;
+}
+
+/* Smooth transitions for theme changes */
+* {
+  @apply transition-colors duration-200;
+}
+
+/* Override for specific elements that shouldn't transition */
+.no-transition,
+.no-transition * {
+  @apply transition-none;
 }

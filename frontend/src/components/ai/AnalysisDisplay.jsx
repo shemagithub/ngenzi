@@ -18,7 +18,7 @@ const AnalysisDisplay = ({ analysis }) => {
       <motion.h1 
         initial={{ opacity: 0, y: 5 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-2xl font-bold text-gray-800 mt-5 mb-3 pb-2 border-b border-gray-100 break-words"
+        className="text-2xl font-bold text-gray-800 dark:text-gray-200 mt-5 mb-3 pb-2 border-b border-gray-100 dark:border-gray-700 break-words"
         {...props}
       />
     ),
@@ -26,7 +26,7 @@ const AnalysisDisplay = ({ analysis }) => {
       <motion.h2 
         initial={{ opacity: 0, y: 5 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-xl font-bold text-gray-800 mt-5 mb-3 pb-1 break-words"
+        className="text-xl font-bold text-gray-800 dark:text-gray-200 mt-5 mb-3 pb-1 break-words"
         {...props}
       />
     ),
@@ -34,7 +34,7 @@ const AnalysisDisplay = ({ analysis }) => {
       <motion.h3 
         initial={{ opacity: 0, y: 5 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-lg font-semibold text-gray-800 mt-4 mb-2 flex flex-wrap items-center"
+        className="text-lg font-semibold text-gray-800 dark:text-gray-200 mt-4 mb-2 flex flex-wrap items-center"
         {...props}
       />
     ),
@@ -42,7 +42,7 @@ const AnalysisDisplay = ({ analysis }) => {
       <motion.p 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="my-2.5 text-gray-700 leading-relaxed break-words"
+        className="my-2.5 text-gray-700 dark:text-gray-300 leading-relaxed break-words"
         {...props}
       />
     ),
@@ -66,7 +66,7 @@ const AnalysisDisplay = ({ analysis }) => {
       <motion.li 
         initial={{ opacity: 0, x: -5 }}
         animate={{ opacity: 1, x: 0 }}
-        className="ml-3 mt-1 text-gray-700 flex items-start"
+        className="ml-3 mt-1 text-gray-700 dark:text-gray-300 flex items-start"
       >
         {!ordered && (
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-500 mt-3 mr-2 flex-shrink-0"></span>
@@ -78,14 +78,14 @@ const AnalysisDisplay = ({ analysis }) => {
       <motion.hr
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="my-4 border-t border-gray-200"
+        className="my-4 border-t border-gray-200 dark:border-gray-700"
       />
     ),
     strong: ({node, ...props}) => (
-      <strong className="text-gray-900 font-semibold" {...props} />
+      <strong className="text-gray-900 dark:text-gray-100 font-semibold" {...props} />
     ),
     em: ({node, ...props}) => (
-      <em className="text-gray-800 italic" {...props} />
+      <em className="text-gray-800 dark:text-gray-200 italic" {...props} />
     ),
     a: ({node, ...props}) => (
       <a className="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener noreferrer" {...props} />
@@ -94,27 +94,27 @@ const AnalysisDisplay = ({ analysis }) => {
       <motion.blockquote
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="border-l-4 border-blue-200 pl-4 my-4 text-gray-600 italic"
+        className="border-l-4 border-blue-200 dark:border-blue-800 pl-4 my-4 text-gray-600 dark:text-gray-400 italic"
         {...props}
       />
     ),
     code: ({node, inline, ...props}) => (
       inline ? 
-        <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono text-gray-800" {...props} /> :
-        <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto text-sm my-4">
-          <code className="font-mono text-gray-800" {...props} />
+        <code className="bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm font-mono text-gray-800 dark:text-gray-200" {...props} /> :
+        <pre className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg overflow-x-auto text-sm my-4 border border-gray-200 dark:border-gray-600">
+          <code className="font-mono text-gray-800 dark:text-gray-200" {...props} />
         </pre>
     ),
     table: ({node, ...props}) => (
       <div className="overflow-x-auto my-4">
-        <table className="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-md" {...props} />
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200 dark:border-gray-700 rounded-md" {...props} />
       </div>
     ),
-    thead: ({node, ...props}) => <thead className="bg-gray-50" {...props} />,
-    tbody: ({node, ...props}) => <tbody className="divide-y divide-gray-200" {...props} />,
-    tr: ({node, ...props}) => <tr className="hover:bg-gray-50" {...props} />,
-    th: ({node, ...props}) => <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase" {...props} />,
-    td: ({node, ...props}) => <td className="px-3 py-2 text-sm text-gray-500" {...props} />
+    thead: ({node, ...props}) => <thead className="bg-gray-50 dark:bg-gray-700" {...props} />,
+    tbody: ({node, ...props}) => <tbody className="divide-y divide-gray-200 dark:divide-gray-700" {...props} />,
+    tr: ({node, ...props}) => <tr className="hover:bg-gray-50 dark:hover:bg-gray-700/50" {...props} />,
+    th: ({node, ...props}) => <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase" {...props} />,
+    td: ({node, ...props}) => <td className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400" {...props} />
   };
 
   return (
@@ -122,16 +122,16 @@ const AnalysisDisplay = ({ analysis }) => {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-gray-100 w-full overflow-hidden"
+      className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md border border-gray-100 dark:border-gray-700 w-full overflow-hidden"
     >
-      <div className="flex justify-between items-center mb-3 sm:mb-4 pb-2 border-b border-gray-200">
-        <h2 className="text-lg sm:text-xl font-semibold text-gray-800 flex items-center">
-          <Info className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 flex-shrink-0 text-blue-600" />
+      <div className="flex justify-between items-center mb-3 sm:mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center">
+          <Info className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 flex-shrink-0 text-blue-600 dark:text-blue-400" />
           <span className="truncate">Expert Analysis</span>
         </h2>
         <button 
           onClick={() => setExpanded(!expanded)} 
-          className="text-gray-500 hover:text-blue-600 transition-colors p-1 rounded-full hover:bg-gray-100 flex-shrink-0"
+          className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 flex-shrink-0"
           aria-label={expanded ? "Collapse analysis" : "Expand analysis"}
         >
           {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
@@ -144,7 +144,7 @@ const AnalysisDisplay = ({ analysis }) => {
             initial={{ opacity: 0, height: 0 }} 
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="prose prose-sm max-w-none text-gray-700 overflow-hidden text-sm sm:text-base"
+            className="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 overflow-hidden text-sm sm:text-base"
           >
             <div className="overflow-x-auto">
               <ReactMarkdown
@@ -155,7 +155,7 @@ const AnalysisDisplay = ({ analysis }) => {
               </ReactMarkdown>
             </div>
             
-            <div className="mt-5 sm:mt-6 pt-3 sm:pt-4 border-t border-gray-100 flex items-center text-xs text-gray-500 italic">
+            <div className="mt-5 sm:mt-6 pt-3 sm:pt-4 border-t border-gray-100 dark:border-gray-700 flex items-center text-xs text-gray-500 dark:text-gray-400 italic">
               <Info className="w-3 h-3 mr-1.5 flex-shrink-0" />
               <span>Analysis generated by AI based on available data. For informational purposes only.</span>
             </div>

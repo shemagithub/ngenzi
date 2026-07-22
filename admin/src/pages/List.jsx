@@ -18,15 +18,18 @@ import {
   TrendingUp,
   Star,
   ChevronDown,
-  RefreshCw
+  RefreshCw,
+  Youtube
 } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { backendurl } from "../config/constants";
+import { useCurrency } from "../contexts/CurrencyContext";
 
 const PropertyListings = () => {
+  const { formatPrice, getCurrencySymbol } = useCurrency();
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -64,16 +67,42 @@ const PropertyListings = () => {
     toast.success("Properties refreshed!");
   };
 
-  const parseAmenities = (amenities) => {
-    if (!amenities || !Array.isArray(amenities)) return [];
-    try {
-      return typeof amenities[0] === "string" 
-        ? JSON.parse(amenities[0].replace(/'/g, '"'))
-        : amenities;
-    } catch (error) {
-      console.error("Error parsing amenities:", error);
-      return [];
+  const getListingImage = (property) => {
+    const img = property.image;
+    if (Array.isArray(img) && img.length) return img[0];
+    if (typeof img === 'string') {
+      try {
+        const parsed = JSON.parse(img);
+        if (Array.isArray(parsed) && parsed.length) return parsed[0];
+      } catch {
+        return img;
+      }
     }
+    return property.frontImage || '/placeholder.jpg';
+  };
+
+  const parseAmenities = (amenities) => {
+    // Backend already normalizes amenities to be an array, but handle edge cases
+    if (!amenities) return [];
+    
+    // If it's already an array, return it (backend should have normalized it)
+    if (Array.isArray(amenities)) {
+      return amenities;
+    }
+    
+    // If it's a string, try to parse it as JSON
+    if (typeof amenities === "string") {
+      try {
+        const parsed = JSON.parse(amenities);
+        return Array.isArray(parsed) ? parsed : [amenities];
+      } catch {
+        // If parsing fails, treat as single amenity string
+        return [amenities];
+      }
+    }
+    
+    // Default: return empty array
+    return [];
   };
 
   useEffect(() => {
@@ -83,19 +112,43 @@ const PropertyListings = () => {
   const handleRemoveProperty = async (propertyId, propertyTitle) => {
     if (window.confirm(`Are you sure you want to remove "${propertyTitle}"?`)) {
       try {
+        // Validate property ID
+        if (!propertyId || propertyId === null || propertyId === undefined) {
+          toast.error("Invalid property ID");
+          return;
+        }
+
         const response = await axios.post(`${backendurl}/api/products/remove`, {
           id: propertyId
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
         });
 
         if (response.data.success) {
           toast.success("Property removed successfully");
           await fetchProperties();
         } else {
-          toast.error(response.data.message);
+          toast.error(response.data.message || "Failed to remove property");
         }
       } catch (error) {
         console.error("Error removing property:", error);
-        toast.error("Failed to remove property");
+        
+        // Show more specific error messages
+        if (error.response) {
+          // Server responded with error status
+          const errorMessage = error.response.data?.message || 
+                              error.response.data?.error || 
+                              `Server error: ${error.response.status}`;
+          toast.error(errorMessage);
+        } else if (error.request) {
+          // Request was made but no response received
+          toast.error("Network error: Unable to connect to server");
+        } else {
+          // Something else happened
+          toast.error(error.message || "Failed to remove property");
+        }
       }
     }
   };
@@ -297,7 +350,7 @@ const PropertyListings = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600">Avg. Price</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  ₹{properties.length > 0 ? Math.round(properties.reduce((sum, p) => sum + p.price, 0) / properties.length / 100000) : 0}L
+                  {properties.length > 0 ? formatPrice(Math.round(properties.reduce((sum, p) => sum + p.price, 0) / properties.length)) : formatPrice(0)}
                 </p>
               </div>
               <div className="p-3 bg-orange-50 rounded-xl">
@@ -438,7 +491,7 @@ const PropertyListings = () => {
               <AnimatePresence>
                 {filteredProperties.map((property, index) => (
                   <motion.div
-                    key={property._id}
+                    key={property.id || property._id}
                     variants={cardVariants}
                     initial="hidden"
                     animate="visible"
@@ -456,7 +509,7 @@ const PropertyListings = () => {
                         : 'h-56'
                     }`}>
                       <img
-                        src={property.image[0] || "/placeholder.jpg"}
+                        src={getListingImage(property)}
                         alt={property.title}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                         loading="lazy"
@@ -481,10 +534,24 @@ const PropertyListings = () => {
                         </span>
                       </div>
 
+                      {property.youtubeUrl && (
+                        <div className="absolute bottom-4 left-4 z-10 flex items-center gap-1 px-2 py-1 rounded-full bg-black/65 text-white text-xs font-medium backdrop-blur-sm">
+                          <Youtube className="w-3.5 h-3.5 shrink-0" aria-hidden />
+                          Video
+                        </div>
+                      )}
+
                       {/* Action Buttons */}
                       <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
                         <Link 
-                          to={`/update/${property._id}`}
+                          to={`/view-property/${property.id || property._id}`}
+                          className="p-2 bg-white/90 backdrop-blur-sm text-gray-700 rounded-full hover:bg-gray-800 hover:text-white transition-all duration-200 shadow-lg"
+                          title="View details"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Link>
+                        <Link 
+                          to={`/update/${property.id || property._id}`}
                           className="p-2 bg-white/90 backdrop-blur-sm text-blue-600 rounded-full hover:bg-blue-600 hover:text-white transition-all duration-200 shadow-lg"
                         >
                           <Edit3 className="w-4 h-4" />
@@ -492,7 +559,7 @@ const PropertyListings = () => {
                         <motion.button
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
-                          onClick={() => handleRemoveProperty(property._id, property.title)}
+                          onClick={() => handleRemoveProperty(property.id || property._id, property.title)}
                           className="p-2 bg-white/90 backdrop-blur-sm text-red-600 rounded-full hover:bg-red-600 hover:text-white transition-all duration-200 shadow-lg"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -504,16 +571,21 @@ const PropertyListings = () => {
                     <div className={`p-6 flex-1 ${viewMode === 'list' ? 'flex flex-col justify-between' : ''}`}>
                       <div>
                         <div className="mb-4">
-                          <h3 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-2">
-                            {property.title}
-                          </h3>
+                          <Link
+                            to={`/view-property/${property.id || property._id}`}
+                            className="group/title block"
+                          >
+                            <h3 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-2 group-hover/title:text-blue-600 transition-colors">
+                              {property.title}
+                            </h3>
+                          </Link>
                           <div className="flex items-center text-gray-600 mb-3">
                             <MapPin className="w-4 h-4 mr-2 text-gray-400" />
                             <span className="text-sm">{property.location}</span>
                           </div>
                           <div className="flex items-center justify-between">
                             <p className="text-3xl font-bold text-gray-900">
-                              ₹{property.price.toLocaleString()}
+                              {formatPrice(property.price)}
                             </p>
                             <div className="flex items-center gap-1">
                               <Eye className="w-4 h-4 text-gray-400" />
@@ -572,13 +644,20 @@ const PropertyListings = () => {
                           </div>
                           <div className="flex items-center gap-2">
                             <Link 
-                              to={`/update/${property._id}`}
+                              to={`/view-property/${property.id || property._id}`}
+                              className="p-2 text-gray-400 hover:text-gray-800 transition-colors"
+                              title="View details"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Link>
+                            <Link 
+                              to={`/update/${property.id || property._id}`}
                               className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
                             >
                               <Edit3 className="w-4 h-4" />
                             </Link>
                             <button
-                              onClick={() => handleRemoveProperty(property._id, property.title)}
+                              onClick={() => handleRemoveProperty(property.id || property._id, property.title)}
                               className="p-2 text-gray-400 hover:text-red-600 transition-colors"
                             >
                               <Trash2 className="w-4 h-4" />

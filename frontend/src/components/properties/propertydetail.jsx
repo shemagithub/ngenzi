@@ -2,6 +2,9 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-toastify";
+import { useAuth } from "../../context/AuthContext";
+import { useCurrency } from "../../context/CurrencyContext";
 import { 
   BedDouble, 
   Bath, 
@@ -16,31 +19,65 @@ import {
   ChevronLeft,
   ChevronRight,
   Copy,
-  Compass
+  Compass,
+  Heart
 } from "lucide-react";
-import { Backendurl } from "../../App.jsx";
+import { Backendurl } from "../../utils/backendUrl";
+import { getYoutubeEmbedSrc } from "../../utils/youtubeEmbed";
 import ScheduleViewing from "./ScheduleViewing";
 
 const PropertyDetails = () => {
   const { id } = useParams();
+  const { isLoggedIn } = useAuth();
+  const { formatPrice } = useCurrency();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showSchedule, setShowSchedule] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProperty = async () => {
+      // Validate ID
+      if (!id || id === 'undefined' || id === 'null') {
+        setError("Invalid property ID");
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
+        setError(null);
+        console.log(`🔍 Fetching property with ID: ${id} from ${Backendurl}/api/products/single/${id}`);
+        
         const response = await axios.get(`${Backendurl}/api/products/single/${id}`);
 
         if (response.data.success) {
           const propertyData = response.data.property;
+          console.log('✅ Property data received:', propertyData);
+          
+          // Normalize image field
+          let normalizedImages = [];
+          if (propertyData.image) {
+            if (Array.isArray(propertyData.image)) {
+              normalizedImages = propertyData.image;
+            } else if (typeof propertyData.image === 'string') {
+              try {
+                const parsed = JSON.parse(propertyData.image);
+                normalizedImages = Array.isArray(parsed) ? parsed : [propertyData.image];
+              } catch {
+                normalizedImages = [propertyData.image];
+              }
+            }
+          }
+          
           setProperty({
             ...propertyData,
+            image: normalizedImages,
             amenities: parseAmenities(propertyData.amenities)
           });
           setError(null);
@@ -48,15 +85,113 @@ const PropertyDetails = () => {
           setError(response.data.message || "Failed to load property details.");
         }
       } catch (err) {
-        console.error("Error fetching property details:", err);
-        setError("Failed to load property details. Please try again.");
+        console.error("❌ Error fetching property details:", err);
+        if (err.response?.status === 404) {
+          const errorMessage = `Property with ID ${id} not found. It may have been deleted or doesn't exist.`;
+          setError(errorMessage);
+          // Redirect to properties list after 3 seconds
+          setTimeout(() => {
+            navigate('/properties');
+          }, 3000);
+        } else if (err.response?.data?.message) {
+          setError(err.response.data.message);
+        } else if (err.message) {
+          setError(`Failed to load property: ${err.message}`);
+        } else {
+          setError("Failed to load property details. Please try again.");
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProperty();
-  }, [id]);
+    if (id) {
+      fetchProperty();
+    }
+  }, [id, navigate, isLoggedIn]);
+  
+  // Check saved status when property or login status changes
+  useEffect(() => {
+    if (property && property.id && isLoggedIn) {
+      checkSavedStatus(property.id);
+    } else if (!isLoggedIn) {
+      setIsSaved(false);
+    }
+  }, [property?.id, isLoggedIn]);
+
+  // Check if property is saved
+  const checkSavedStatus = async (propertyId) => {
+    if (!isLoggedIn || !propertyId) return;
+    
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(
+        `${Backendurl}/api/users/saved-properties/check/${propertyId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setIsSaved(response.data.isSaved || false);
+    } catch (error) {
+      setIsSaved(false);
+    }
+  };
+
+  const handleFavoriteToggle = async () => {
+    if (!isLoggedIn) {
+      toast.error('Please login to save properties');
+      navigate('/login');
+      return;
+    }
+
+    if (!property || !property.id) return;
+
+    try {
+      setSaving(true);
+      const token = localStorage.getItem('token');
+      const propertyId = property.id || property._id;
+
+      if (isSaved) {
+        await axios.delete(
+          `${Backendurl}/api/users/saved-properties/${propertyId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        ).catch(() => {
+          setIsSaved(false);
+          toast.success('Removed from saved properties');
+          return;
+        });
+        setIsSaved(false);
+        toast.success('Removed from saved properties');
+      } else {
+        await axios.post(
+          `${Backendurl}/api/users/saved-properties`,
+          { propertyId },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        ).catch(() => {
+          setIsSaved(true);
+          toast.success('Property saved to favorites');
+          return;
+        });
+        setIsSaved(true);
+        toast.success('Property saved to favorites');
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      toast.error(error.response?.data?.message || 'Failed to update favorite status');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   useEffect(() => {
     // Reset scroll position and active image when component mounts
@@ -65,28 +200,67 @@ const PropertyDetails = () => {
   }, [id]);
 
   const parseAmenities = (amenities) => {
-    if (!amenities || !Array.isArray(amenities)) return [];
+    // Backend already normalizes amenities to be an array, but handle edge cases
+    if (!amenities) return [];
     
-    try {
-      if (typeof amenities[0] === "string") {
-        return JSON.parse(amenities[0].replace(/'/g, '"'));
-      }
+    // If it's already an array, return it (backend should have normalized it)
+    if (Array.isArray(amenities)) {
       return amenities;
-    } catch (error) {
-      console.error("Error parsing amenities:", error);
-      return [];
     }
+    
+    // If it's a string, try to parse it as JSON
+    if (typeof amenities === "string") {
+      try {
+        const parsed = JSON.parse(amenities);
+        return Array.isArray(parsed) ? parsed : [amenities];
+      } catch {
+        // If parsing fails, treat as single amenity string
+        return [amenities];
+      }
+    }
+    
+    // Default: return empty array
+    return [];
   };
 
+  // Normalize image field to always be an array and filter out invalid URLs
+  const getImages = (imageData) => {
+    if (!imageData) return [];
+    let imageArray = [];
+    
+    if (Array.isArray(imageData)) {
+      imageArray = imageData;
+    } else if (typeof imageData === 'string') {
+      try {
+        const parsed = JSON.parse(imageData);
+        imageArray = Array.isArray(parsed) ? parsed : [imageData];
+      } catch {
+        imageArray = [imageData];
+      }
+    }
+    
+    // Filter out empty strings, null, undefined, and invalid URLs
+    return imageArray.filter(img => {
+      if (!img || typeof img !== 'string') return false;
+      const trimmed = img.trim();
+      return trimmed.length > 0 && (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('data:'));
+    });
+  };
+
+  const images = property ? getImages(property.image) : [];
+  // Base64 encoded placeholder image (gray 400x300 SVG)
+  const defaultImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2U1ZTdlYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
+
   const handleKeyNavigation = useCallback((e) => {
+    if (images.length === 0) return;
     if (e.key === 'ArrowLeft') {
-      setActiveImage(prev => (prev === 0 ? property.image.length - 1 : prev - 1));
+      setActiveImage(prev => (prev === 0 ? images.length - 1 : prev - 1));
     } else if (e.key === 'ArrowRight') {
-      setActiveImage(prev => (prev === property.image.length - 1 ? 0 : prev + 1));
+      setActiveImage(prev => (prev === images.length - 1 ? 0 : prev + 1));
     } else if (e.key === 'Escape' && showSchedule) {
       setShowSchedule(false);
     }
-  }, [property?.image?.length, showSchedule]);
+  }, [images.length, showSchedule]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyNavigation);
@@ -114,7 +288,7 @@ const PropertyDetails = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 pt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Navigation Skeleton */}
           <div className="flex items-center justify-between mb-8">
             <div className="w-32 h-8 bg-gray-200 rounded-lg animate-pulse"></div>
@@ -207,18 +381,40 @@ const PropertyDetails = () => {
     );
   }
 
+  // Show error state with helpful message
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <p className="text-red-500 mb-4">{error}</p>
-          <Link
-            to="/properties"
-            className="text-blue-600 hover:underline flex items-center justify-center"
-          >
-            <ArrowLeft className="w-4 h-4 mr-1" /> Back to Properties
-          </Link>
-        </div>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center max-w-md mx-auto p-8 bg-white rounded-lg shadow-lg"
+        >
+          <div className="mb-6">
+            <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+              <Loader className="w-8 h-8 text-red-500 animate-spin" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Property Not Found</h2>
+            <p className="text-red-500 mb-2">{error}</p>
+            <p className="text-gray-600 text-sm">
+              The property you're looking for doesn't exist or may have been removed.
+            </p>
+          </div>
+          <div className="flex gap-4 justify-center">
+            <Link
+              to="/properties"
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" /> Back to Properties
+            </Link>
+            <Link
+              to="/"
+              className="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+            >
+              Go Home
+            </Link>
+          </div>
+        </motion.div>
       </div>
     );
   }
@@ -238,23 +434,38 @@ const PropertyDetails = () => {
           >
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Properties
           </Link>
-          <button
-            onClick={handleShare}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg
-              hover:bg-gray-100 transition-colors relative"
-          >
-            {copySuccess ? (
-              <span className="text-green-600">
-                <Copy className="w-5 h-5" />
-                Copied!
-              </span>
-            ) : (
-              <>
-                <Share2 className="w-5 h-5" />
-                Share
-              </>
-            )}
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleFavoriteToggle}
+              disabled={saving}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors relative ${
+                isSaved 
+                  ? 'bg-red-50 text-red-600 hover:bg-red-100' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
+              title={isSaved ? 'Remove from favorites' : 'Add to favorites'}
+            >
+              <Heart className={`w-5 h-5 ${isSaved ? 'fill-red-600' : ''}`} />
+              {isSaved ? 'Saved' : 'Save'}
+            </button>
+            <button
+              onClick={handleShare}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg
+                hover:bg-gray-100 transition-colors relative"
+            >
+              {copySuccess ? (
+                <span className="text-green-600">
+                  <Copy className="w-5 h-5" />
+                  Copied!
+                </span>
+              ) : (
+                <>
+                  <Share2 className="w-5 h-5" />
+                  Share
+                </>
+              )}
+            </button>
+          </div>
         </nav>
 
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
@@ -263,22 +474,25 @@ const PropertyDetails = () => {
             <AnimatePresence mode="wait">
               <motion.img
                 key={activeImage}
-                src={property.image[activeImage]}
+                src={images.length > 0 ? images[activeImage] : defaultImage}
                 alt={`${property.title} - View ${activeImage + 1}`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="w-full h-full"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.src = defaultImage;
+                }}
               />
             </AnimatePresence>
 
             {/* Image Navigation */}
-            {property.image.length > 1 && (
+            {images.length > 1 && (
               <>
                 <button
                   onClick={() => setActiveImage(prev => 
-                    prev === 0 ? property.image.length - 1 : prev - 1
+                    prev === 0 ? images.length - 1 : prev - 1
                   )}
                   className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full
                     bg-white/80 backdrop-blur-sm hover:bg-white transition-colors"
@@ -287,7 +501,7 @@ const PropertyDetails = () => {
                 </button>
                 <button
                   onClick={() => setActiveImage(prev => 
-                    prev === property.image.length - 1 ? 0 : prev + 1
+                    prev === images.length - 1 ? 0 : prev + 1
                   )}
                   className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full
                     bg-white/80 backdrop-blur-sm hover:bg-white transition-colors"
@@ -298,10 +512,12 @@ const PropertyDetails = () => {
             )}
 
             {/* Image Counter */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 
-              bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm">
-              {activeImage + 1} / {property.image.length}
-            </div>
+            {images.length > 0 && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 
+                bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm">
+                {activeImage + 1} / {images.length}
+              </div>
+            )}
           </div>
 
           <div className="p-8">
@@ -315,24 +531,56 @@ const PropertyDetails = () => {
                   {property.location}
                 </div>
               </div>
-              <button
-                onClick={handleShare}
-                className="p-2 rounded-full hover:bg-gray-100"
-              >
-                <Share2 className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleFavoriteToggle}
+                  disabled={saving}
+                  className={`p-2 rounded-full transition-colors ${
+                    isSaved 
+                      ? 'bg-red-50 text-red-600 hover:bg-red-100' 
+                      : 'hover:bg-gray-100'
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  title={isSaved ? 'Remove from favorites' : 'Add to favorites'}
+                >
+                  <Heart className={`w-5 h-5 ${isSaved ? 'fill-red-600' : ''}`} />
+                </button>
+                <button
+                  onClick={handleShare}
+                  className="p-2 rounded-full hover:bg-gray-100"
+                  title="Share property"
+                >
+                  <Share2 className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
                 <div className="bg-blue-50 rounded-lg p-6 mb-6">
                   <p className="text-3xl font-bold text-blue-600 mb-2">
-                    ₹{Number(property.price).toLocaleString('en-IN')}
+                    {formatPrice(property.price)}
                   </p>
                   <p className="text-gray-600">
                     Available for {property.availability}
                   </p>
                 </div>
+
+                {property.youtubeUrl && getYoutubeEmbedSrc(property.youtubeUrl) && (
+                  <div id="video-tour" className="mb-6 rounded-xl overflow-hidden border border-gray-100 shadow-sm bg-white">
+                    <h2 className="text-lg font-semibold text-gray-900 px-4 pt-4 pb-2">Video tour</h2>
+                    <div className="aspect-video w-full bg-black">
+                      <iframe
+                        title={`${property.title} — YouTube`}
+                        src={getYoutubeEmbedSrc(property.youtubeUrl)}
+                        className="w-full h-full border-0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                        loading="lazy"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-3 gap-4 mb-6">
                   <div className="bg-gray-50 p-4 rounded-lg text-center">
@@ -423,7 +671,7 @@ const PropertyDetails = () => {
         <AnimatePresence>
           {showSchedule && (
             <ScheduleViewing
-              propertyId={property._id}
+              propertyId={property.id || property._id}
               onClose={() => setShowSchedule(false)}
             />
           )}

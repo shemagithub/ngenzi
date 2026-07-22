@@ -1,56 +1,76 @@
-import mongoose from "mongoose";
+import { DataTypes } from 'sequelize';
+import { sequelize } from '../config/mysql.js';
 
-const propertySchema = new mongoose.Schema({
+const Property = sequelize.define('Property', {
+  id: {
+    type: DataTypes.INTEGER.UNSIGNED, // Use UNSIGNED to ensure positive integers only
+    primaryKey: true,
+    autoIncrement: true,
+    allowNull: false
+  },
   title: {
-    type: String,
-    required: true,
+    type: DataTypes.STRING,
+    allowNull: false
   },
   location: {
-    type: String,
-    required: true,
+    type: DataTypes.STRING,
+    allowNull: false
   },
   price: {
-    type: Number,
-    required: true,
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: false
   },
-  image: { 
-    type: [String],
-    required: true
- },
+  frontImage: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: null
+  },
+  image: {
+    type: DataTypes.JSON,
+    allowNull: false,
+    defaultValue: []
+  },
   beds: {
-    type: Number,
-    required: true,
+    type: DataTypes.INTEGER,
+    allowNull: false
   },
   baths: {
-    type: Number,
-    required: true,
+    type: DataTypes.INTEGER,
+    allowNull: false
   },
   sqft: {
-    type: Number,
-    required: true,
+    type: DataTypes.INTEGER,
+    allowNull: false
   },
   type: {
-    type: String,
-    required: true,
+    type: DataTypes.STRING,
+    allowNull: false
   },
   availability: {
-    type: String,
-    required: true,
+    type: DataTypes.STRING,
+    allowNull: false
   },
   description: {
-    type: String,
-    required: true,
+    type: DataTypes.TEXT,
+    allowNull: false
   },
   amenities: {
-    type: Array,
-    required: true,
+    type: DataTypes.JSON,
+    allowNull: false,
+    defaultValue: []
   },
   phone: {
-    type: String,
-    required: true,
+    type: DataTypes.STRING,
+    allowNull: false
   },
+  youtubeUrl: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+    defaultValue: null
+  }
+}, {
+  tableName: 'properties',
+  timestamps: true
 });
-
-const Property = mongoose.model("Property", propertySchema);
 
 export default Property;

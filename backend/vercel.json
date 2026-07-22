@@ -22,7 +22,7 @@
       "headers": [
         { "key": "Access-Control-Allow-Origin", "value": "*" },
         { "key": "Access-Control-Allow-Methods", "value": "GET,POST,PUT,DELETE,OPTIONS,HEAD" },
-        { "key": "Access-Control-Allow-Headers", "value": "X-Requested-With, Content-Type, Authorization" },
+        { "key": "Access-Control-Allow-Headers", "value": "X-Requested-With, Content-Type, Authorization, Accept, Origin, X-Plot-Youtube-Url, X-Property-Youtube-Url, X-Car-Youtube-Url, X-Youtube-Url" },
         { "key": "Access-Control-Allow-Credentials", "value": "true" }
       ]
     }

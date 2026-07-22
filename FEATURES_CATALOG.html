@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NgenziRealEstate- Complete Features Catalog</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: #1f2937;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            font-size: 11pt;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: white;
+            border: none;
+            margin: 0 0 10px 0;
+            font-size: 2em;
+        }
+        
+        .header p {
+            margin: 5px 0;
+            opacity: 0.95;
+        }
+        
+        h1 {
+            color: #2563eb;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 10px;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            page-break-after: avoid;
+            font-size: 1.8em;
+        }
+        
+        h2 {
+            color: #1e40af;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            page-break-after: avoid;
+            font-size: 1.5em;
+        }
+        
+        h3 {
+            color: #1e3a8a;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            page-break-after: avoid;
+            font-size: 1.3em;
+        }
+        
+        h4 {
+            color: #1e40af;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        h5 {
+            color: #3b82f6;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+        
+        p {
+            margin: 12px 0;
+            text-align: justify;
+            line-height: 1.7;
+        }
+        
+        ul {
+            margin: 15px 0;
+            padding-left: 35px;
+        }
+        
+        li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        
+        li strong {
+            color: #1e40af;
+        }
+        
+        code {
+            background-color: #f3f4f6;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.9em;
+            color: #dc2626;
+        }
+        
+        pre {
+            background-color: #1f2937;
+            color: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            border-left: 4px solid #2563eb;
+            page-break-inside: avoid;
+            margin: 20px 0;
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+            font-size: 0.85em;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            page-break-inside: avoid;
+        }
+        
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #2563eb;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        
+        .checkmark {
+            color: #10b981;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        hr {
+            border: none;
+            border-top: 2px solid #e5e7eb;
+            margin: 30px 0;
+        }
+        
+        a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        .section {
+            margin: 30px 0;
+            page-break-inside: avoid;
+        }
+        
+        .feature-list {
+            background: #f8fafc;
+            padding: 15px;
+            border-left: 4px solid #2563eb;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        footer {
+            margin-top: 60px;
+            padding-top: 25px;
+            border-top: 3px solid #e5e7eb;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.95em;
+        }
+        
+        footer p {
+            margin: 8px 0;
+            text-align: center;
+        }
+        
+        @media print {
+            body {
+                padding: 0;
+                font-size: 10pt;
+            }
+            
+            .header {
+                page-break-after: avoid;
+            }
+            
+            h1, h2, h3 {
+                page-break-after: avoid;
+            }
+            
+            h1, h2, h3, h4 {
+                page-break-inside: avoid;
+            }
+            
+            ul, ol {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>NgenziRealEstate- Complete Features Catalog</h1>
+        <p><strong>Real Estate Platform Documentation</strong></p>
+        <p>Platform: NgenziRealEstate Real Estate Website</p>
+        <p>Backend API: https://myambi.wildjourneysrwanda.com</p>
+        <p>Version: 2.0 | Date: January 2026</p>
+    </div>
+    
+    <h1>NgenziRealEstate - Complete Features Catalog</h1>
+<h2>Real Estate Platform Documentation</h2>
+
+<p><strong>Platform:</strong> NgenziRealEstate Real Estate Website</p>
+<p><strong>Backend API:</strong> https://myambi.wildjourneysrwanda.com</p>
+<p><strong>Version:</strong> 2.0</p>
+<p><strong>Date:</strong> January 2026</p>
+
+<hr>
+
+<h2>Table of Contents</h2>
+
+<p>1. <a href="#admin-panel-features">Admin Panel Features</a></p>
+<p>2. <a href="#frontend-features">Frontend Features</a></p>
+<p>3. <a href="#technical-architecture">Technical Architecture</a></p>
+<p>4. <a href="#api-integration">API Integration</a></p>
+
+<hr>
+
+<h2>1. Admin Panel Features</h2>
+
+<h3>1.1 Authentication & Security</h3>
+<ul>
+<li><strong>Admin Login System</strong></li>
+<li>Secure JWT-based authentication</li>
+<li>Admin credentials verification</li>
+<li>Session management with token storage</li>
+<li>Auto-redirect to dashboard after login</li>
+<li>Secure logout functionality</li>
+<li>Token-based authorization for all API calls</li>
+</ul>
+
+<h3>1.2 Dashboard</h3>
+<ul>
+<li><strong>Real-time Statistics</strong></li>
+<li>Total properties count</li>
+<li>Total plots count</li>
+<li>Active appointments</li>
+<li>Total users</li>
+<li>Pending appointments</li>
+<li>Completed appointments</li>
+<li>Revenue analytics</li>
+<li>User growth metrics</li>
+</ul>
+
+<ul>
+<li><strong>Data Visualization</strong></li>
+<li>Line charts for property trends over time</li>
+<li>Bar charts for appointment statistics</li>
+<li>Doughnut charts for status distribution</li>
+<li>Interactive charts with Chart.js</li>
+<li>Real-time data refresh</li>
+</ul>
+
+<ul>
+<li><strong>Quick Actions</strong></li>
+<li>Add new property</li>
+<li>View appointments</li>
+<li>Manage users</li>
+<li>System settings access</li>
+</ul>
+
+<h3>1.3 Property Management</h3>
+<ul>
+<li><strong>Property Listings</strong> (<code>/admin/properties</code>)</li>
+<li>View all properties in grid or list view</li>
+<li>Search and filter properties</li>
+<li>Sort by various criteria (price, date, status)</li>
+<li>Property details preview</li>
+<li>Edit existing properties</li>
+<li>Delete properties</li>
+<li>Bulk actions support</li>
+</ul>
+
+<ul>
+<li><strong>Add New Property</strong> (<code>/admin/add-property</code>)</li>
+<li>Complete property information form</li>
+<li>Multiple image uploads</li>
+<li>Property type selection (House, Apartment, Villa, etc.)</li>
+<li>Location details (address, city, state, country)</li>
+<li>Property specifications:</li>
+<li>Bedrooms, Bathrooms, Square footage</li>
+<li>Price and currency selection</li>
+<li>Property status (Available, Sold, Rented)</li>
+<li>Amenities selection (checkbox list)</li>
+<li>Rich text description editor</li>
+<li>Property features and highlights</li>
+<li>SEO metadata (title, description, keywords)</li>
+<li>Preview before submission</li>
+</ul>
+
+<ul>
+<li><strong>Edit Property</strong> (<code>/admin/update-property/:id</code>)</li>
+<li>Load existing property data</li>
+<li>Update all property fields</li>
+<li>Replace or add new images</li>
+<li>Modify property status</li>
+<li>Update pricing information</li>
+<li>Edit amenities and features</li>
+</ul>
+
+<h3>1.4 Plot Management</h3>
+<ul>
+<li><strong>Plot Listings</strong> (<code>/admin/plots</code>)</li>
+<li>View all land plots</li>
+<li>Grid view with plot images</li>
+<li>Search and filter functionality</li>
+<li>Plot specifications display</li>
+<li>Edit and delete plots</li>
+</ul>
+
+<ul>
+<li><strong>Add New Plot</strong> (<code>/admin/add-plot</code>)</li>
+<li>Plot information form</li>
+<li>Image upload</li>
+<li>Location details</li>
+<li>Plot size and dimensions</li>
+<li>Price and currency</li>
+<li>Plot type (Residential, Commercial, Agricultural)</li>
+<li>Legal status information</li>
+<li>Plot features and amenities</li>
+</ul>
+
+<h3>1.5 Appointment Management</h3>
+<ul>
+<li><strong>Appointments Dashboard</strong> (<code>/admin/appointments</code>)</li>
+<li>View all property viewing appointments</li>
+<li>Filter by status:</li>
+<li>Pending</li>
+<li>Confirmed</li>
+<li>Completed</li>
+<li>Cancelled</li>
+<li>Search appointments</li>
+<li>Appointment details:</li>
+<li>User information</li>
+<li>Property details</li>
+<li>Date and time</li>
+<li>Contact information</li>
+<li>Status and notes</li>
+<li>Update appointment status</li>
+<li>Add/Edit meeting links (Zoom, Google Meet, etc.)</li>
+<li>Send appointment confirmations</li>
+<li>Manage appointment schedules</li>
+</ul>
+
+<h3>1.6 User Management</h3>
+<ul>
+<li><strong>Users Dashboard</strong> (<code>/admin/users</code>)</li>
+<li>View all registered users</li>
+<li>User details:</li>
+<li>Name, Email, Phone</li>
+<li>Registration date</li>
+<li>Account status (Active/Inactive)</li>
+<li>User role</li>
+<li>Search and filter users</li>
+<li>Edit user information</li>
+<li>Activate/Deactivate user accounts</li>
+<li>Reset user passwords</li>
+<li>View user activity</li>
+<li>Delete user accounts</li>
+</ul>
+
+<h3>1.7 Blog Management</h3>
+<ul>
+<li><strong>Blog Posts</strong> (<code>/admin/blogs</code>)</li>
+<li>Create, Edit, Delete blog posts</li>
+<li>Rich text editor (Quill Editor)</li>
+<li>Featured image upload</li>
+<li>Blog categories and tags</li>
+<li>SEO optimization:</li>
+<li>Meta title</li>
+<li>Meta description</li>
+<li>Meta keywords</li>
+<li>Slug generation</li>
+<li>Publish/Unpublish status</li>
+<li>Publication date scheduling</li>
+<li>Search and filter blogs</li>
+<li>Blog analytics (views, engagement)</li>
+</ul>
+
+<h3>1.8 Services Management</h3>
+<ul>
+<li><strong>Services</strong> (<code>/admin/services</code>)</li>
+<li>Add real estate services</li>
+<li>Service descriptions</li>
+<li>Service icons and images</li>
+<li>Service categories</li>
+<li>Pricing information</li>
+<li>Display order management</li>
+<li>Active/Inactive status</li>
+</ul>
+
+<h3>1.9 Team Management</h3>
+<ul>
+<li><strong>Team Members</strong> (<code>/admin/team</code>)</li>
+<li>Add team members</li>
+<li>Upload team member photos</li>
+<li>Team member information:</li>
+<li>Name, Position, Bio</li>
+<li>Contact information (Email, Phone)</li>
+<li>Social media links (LinkedIn, Twitter, Facebook, Instagram)</li>
+<li>Display order management</li>
+<li>Active/Inactive status</li>
+<li>Edit and delete team members</li>
+</ul>
+
+<h3>1.10 Testimonials Management</h3>
+<ul>
+<li><strong>Testimonials</strong> (<code>/admin/testimonials</code>)</li>
+<li>Add customer testimonials</li>
+<li>Client information:</li>
+<li>Name, Position, Company</li>
+<li>Testimonial content</li>
+<li>Rating system (1-5 stars)</li>
+<li>Client photo upload</li>
+<li>Featured testimonial flag</li>
+<li>Display order</li>
+<li>Active/Inactive status</li>
+</ul>
+
+<h3>1.11 System Settings</h3>
+<ul>
+<li><strong>General Settings</strong> (<code>/admin/settings</code>)</li>
+<li>Company Information:</li>
+<li>Company Name</li>
+<li>Company Email</li>
+<li>Company Phone</li>
+<li>Company Address</li>
+<li>Website URL</li>
+<li>Company Logo Upload</li>
+<li>Social Media Links:</li>
+<li>Facebook, Twitter, Instagram</li>
+<li>LinkedIn, YouTube, WhatsApp</li>
+<li>Currency Settings</li>
+<li>Timezone Configuration</li>
+<li>SEO Settings:</li>
+<li>Meta Title</li>
+<li>Meta Description</li>
+<li>Meta Keywords</li>
+<li>Content Pages:</li>
+<li>About Us (Rich text editor)</li>
+<li>Terms & Conditions</li>
+<li>Privacy Policy</li>
+<li>Save and apply settings</li>
+</ul>
+
+<h3>1.12 Additional Features</h3>
+<ul>
+<li><strong>Responsive Design</strong></li>
+<li>Mobile-friendly interface</li>
+<li>Tablet optimization</li>
+<li>Desktop experience</li>
+<li><strong>Real-time Updates</strong></li>
+<li>Live data synchronization</li>
+<li>Auto-refresh functionality</li>
+<li><strong>Search & Filter</strong></li>
+<li>Advanced search capabilities</li>
+<li>Multi-criteria filtering</li>
+<li><strong>Image Management</strong></li>
+<li>Multiple image uploads</li>
+<li>Image preview</li>
+<li>Image optimization</li>
+</ul>
+
+<hr>
+
+<h2>2. Frontend Features</h2>
+
+<h3>2.1 Authentication System</h3>
+<ul>
+<li><strong>User Registration</strong> (<code>/signup</code>)</li>
+<li>Email and password registration</li>
+<li>User profile creation</li>
+<li>Email validation</li>
+<li>Password strength requirements</li>
+<li>Terms and conditions acceptance</li>
+</ul>
+
+<ul>
+<li><strong>User Login</strong> (<code>/login</code>)</li>
+<li>Secure authentication</li>
+<li>Remember me functionality</li>
+<li>JWT token management</li>
+<li>Auto-redirect after login</li>
+</ul>
+
+<ul>
+<li><strong>Password Management</strong></li>
+<li>Forgot Password (<code>/forgot-password</code>)</li>
+<li>Email-based password reset</li>
+<li>Reset token generation</li>
+<li>Reset Password (<code>/reset/:token</code>)</li>
+<li>Secure token validation</li>
+<li>New password setting</li>
+</ul>
+
+<h3>2.2 Home Page (`/`)</h3>
+<ul>
+<li><strong>Hero Section</strong></li>
+<li>Eye-catching banner</li>
+<li>Call-to-action buttons</li>
+<li>Property search bar</li>
+<li>Featured properties display</li>
+</ul>
+
+<ul>
+<li><strong>Features Section</strong></li>
+<li>Platform highlights</li>
+<li>Key benefits showcase</li>
+<li>Service offerings</li>
+</ul>
+
+<ul>
+<li><strong>Featured Properties</strong></li>
+<li>Latest property listings</li>
+<li>Property cards with images</li>
+<li>Quick view functionality</li>
+<li>Direct property links</li>
+</ul>
+
+<ul>
+<li><strong>How It Works</strong></li>
+<li>Step-by-step process guide</li>
+<li>User journey explanation</li>
+<li>Visual workflow</li>
+</ul>
+
+<ul>
+<li><strong>Testimonials Section</strong></li>
+<li>Customer reviews display</li>
+<li>Star ratings</li>
+<li>Client photos and names</li>
+<li>Smooth scrolling carousel</li>
+</ul>
+
+<ul>
+<li><strong>Blog Preview</strong></li>
+<li>Latest blog posts</li>
+<li>Blog cards with excerpts</li>
+<li>Read more links</li>
+</ul>
+
+<h3>2.3 Properties Page (`/properties`)</h3>
+<ul>
+<li><strong>Property Listings</strong></li>
+<li>Grid and list view options</li>
+<li>Property cards with:</li>
+<li>High-quality images</li>
+<li>Property title and location</li>
+<li>Price display</li>
+<li>Bedrooms, bathrooms, area</li>
+<li>Property type</li>
+<li>Key features</li>
+<li>Pagination support</li>
+<li>Infinite scroll option</li>
+</ul>
+
+<ul>
+<li><strong>Advanced Search & Filters</strong></li>
+<li>Search by keyword</li>
+<li>Filter by:</li>
+<li>Property type (House, Apartment, Villa, etc.)</li>
+<li>Price range</li>
+<li>Bedrooms count</li>
+<li>Bathrooms count</li>
+<li>Location (City, Area)</li>
+<li>Property status</li>
+<li>Sort options:</li>
+<li>Price: Low to High / High to Low</li>
+<li>Date: Newest / Oldest</li>
+<li>Most Popular</li>
+</ul>
+
+<ul>
+<li><strong>Property Details</strong> (<code>/properties/single/:id</code>)</li>
+<li>Full property information</li>
+<li>Image gallery with lightbox</li>
+<li>Property specifications:</li>
+<li>Detailed description</li>
+<li>All amenities listed</li>
+<li>Location map</li>
+<li>Nearby facilities</li>
+<li>Price and contact information</li>
+<li>Schedule viewing button</li>
+<li>Save property functionality</li>
+<li>Share property options</li>
+<li>Related properties section</li>
+</ul>
+
+<h3>2.4 Plots Page (`/plots`)</h3>
+<ul>
+<li><strong>Land Plot Listings</strong></li>
+<li>All available plots display</li>
+<li>Plot cards with images</li>
+<li>Plot specifications:</li>
+<li>Size and dimensions</li>
+<li>Location details</li>
+<li>Price information</li>
+<li>Plot type</li>
+<li>Search and filter functionality</li>
+</ul>
+
+<ul>
+<li><strong>Plot Details</strong> (<code>/plots/:id</code>)</li>
+<li>Comprehensive plot information</li>
+<li>Image gallery</li>
+<li>Location map</li>
+<li>Legal status</li>
+<li>Nearby amenities</li>
+<li>Contact for inquiry</li>
+<li>Save plot option</li>
+</ul>
+
+<h3>2.5 Services Page (`/services`)</h3>
+<ul>
+<li><strong>Real Estate Services</strong></li>
+<li>Service listings</li>
+<li>Service descriptions</li>
+<li>Service icons and images</li>
+<li>Service categories</li>
+<li>Contact for services</li>
+</ul>
+
+<h3>2.6 About Us Page (`/about`)</h3>
+<ul>
+<li><strong>Company Information</strong></li>
+<li>Company mission and vision</li>
+<li>Company values</li>
+<li>Company milestones/history</li>
+<li>Team members showcase:</li>
+<li>Team photos</li>
+<li>Team member bios</li>
+<li>Positions and roles</li>
+<li>Social media links</li>
+<li>Why choose us section</li>
+<li>Company benefits</li>
+</ul>
+
+<h3>2.7 Contact Page (`/contact`)</h3>
+<ul>
+<li><strong>Contact Form</strong></li>
+<li>Name, Email, Phone fields</li>
+<li>Subject selection</li>
+<li>Message textarea</li>
+<li>Form validation</li>
+<li>Submit functionality</li>
+<li>Success/Error notifications</li>
+</ul>
+
+<ul>
+<li><strong>Contact Information</strong></li>
+<li>Company address</li>
+<li>Phone number</li>
+<li>Email address</li>
+<li>Social media links</li>
+<li>Office hours</li>
+<li>Map location</li>
+</ul>
+
+<h3>2.8 Blog Section (`/blogs/:slug`)</h3>
+<ul>
+<li><strong>Blog Listing</strong></li>
+<li>All blog posts display</li>
+<li>Blog cards with featured images</li>
+<li>Post excerpts</li>
+<li>Publication dates</li>
+<li>Author information</li>
+<li>Category tags</li>
+</ul>
+
+<ul>
+<li><strong>Blog Detail Page</strong></li>
+<li>Full blog content</li>
+<li>Featured image</li>
+<li>Rich text formatting</li>
+<li>Author information</li>
+<li>Publication date</li>
+<li>Share buttons</li>
+<li>Related posts</li>
+<li>Comments section (if enabled)</li>
+</ul>
+
+<h3>2.9 AI Property Hub (`/ai-property-hub`)</h3>
+<ul>
+<li><strong>AI-Powered Property Search</strong></li>
+<li>Intelligent property recommendations</li>
+<li>Natural language search queries</li>
+<li>AI analysis of properties</li>
+<li>Personalized suggestions</li>
+</ul>
+
+<ul>
+<li><strong>Location Trends</strong></li>
+<li>Location-based analytics</li>
+<li>Market trends display</li>
+<li>Price trends</li>
+<li>Popular areas</li>
+</ul>
+
+<ul>
+<li><strong>Property Analysis</strong></li>
+<li>AI-generated insights</li>
+<li>Investment recommendations</li>
+<li>Market predictions</li>
+</ul>
+
+<h3>2.10 Map Search (`/map`)</h3>
+<ul>
+<li><strong>Interactive Map</strong></li>
+<li>Google Maps integration</li>
+<li>Property markers on map</li>
+<li>Plot locations</li>
+<li>Interactive markers</li>
+<li>Click to view details</li>
+<li>Map filters</li>
+<li>Radius search</li>
+</ul>
+
+<h3>2.11 User Dashboard</h3>
+<ul>
+<li><strong>My Profile</strong> (<code>/profile</code>)</li>
+<li>Personal information display</li>
+<li>Edit profile functionality</li>
+<li>Profile picture upload</li>
+<li>Account settings</li>
+</ul>
+
+<ul>
+<li><strong>Saved Properties</strong> (<code>/saved-properties</code>)</li>
+<li>List of saved/favorited properties</li>
+<li>Remove from saved list</li>
+<li>Quick view saved properties</li>
+<li>Direct links to property details</li>
+</ul>
+
+<ul>
+<li><strong>Notifications</strong> (<code>/notifications</code>)</li>
+<li>Notification center</li>
+<li>Unread notifications count</li>
+<li>Mark as read functionality</li>
+<li>Mark all as read</li>
+<li>Delete notifications</li>
+<li>Notification types:</li>
+<li>New properties</li>
+<li>Price updates</li>
+<li>Appointment reminders</li>
+<li>System notifications</li>
+</ul>
+
+<ul>
+<li><strong>Settings</strong> (<code>/settings</code>)</li>
+<li>Change password</li>
+<li>Notification preferences</li>
+<li>Email preferences</li>
+<li>Account preferences</li>
+</ul>
+
+<h3>2.12 Schedule Viewing</h3>
+<ul>
+<li><strong>Property Viewing Booking</strong></li>
+<li>Select date and time</li>
+<li>Property selection</li>
+<li>Contact information</li>
+<li>Special requests/notes</li>
+<li>Confirmation process</li>
+<li>Email notifications</li>
+</ul>
+
+<h3>2.13 Additional Frontend Features</h3>
+<ul>
+<li><strong>Responsive Design</strong></li>
+<li>Mobile-first approach</li>
+<li>Tablet optimization</li>
+<li>Desktop experience</li>
+<li>Cross-browser compatibility</li>
+</ul>
+
+<ul>
+<li><strong>SEO Optimization</strong></li>
+<li>Meta tags management</li>
+<li>Structured data (JSON-LD)</li>
+<li>Dynamic page titles</li>
+<li>Open Graph tags</li>
+<li>Sitemap support</li>
+</ul>
+
+<ul>
+<li><strong>Performance Features</strong></li>
+<li>Image lazy loading</li>
+<li>Code splitting</li>
+<li>Optimized assets</li>
+<li>Fast page loads</li>
+</ul>
+
+<ul>
+<li><strong>User Experience</strong></li>
+<li>Smooth animations (Framer Motion)</li>
+<li>Loading states</li>
+<li>Error handling</li>
+<li>Toast notifications</li>
+<li>Scroll to top button</li>
+<li>Smooth scrolling</li>
+</ul>
+
+<ul>
+<li><strong>Currency Support</strong></li>
+<li>Multiple currency display</li>
+<li>Currency conversion</li>
+<li>Currency switcher</li>
+</ul>
+
+<ul>
+<li><strong>Newsletter Subscription</strong></li>
+<li>Email subscription form in footer</li>
+<li>Newsletter signup</li>
+<li>Subscription confirmation</li>
+</ul>
+
+<hr>
+
+<h2>3. Technical Architecture</h2>
+
+<h3>3.1 Frontend Technology Stack</h3>
+<ul>
+<li><strong>Framework:</strong> React 18</li>
+<li><strong>Routing:</strong> React Router v6</li>
+<li><strong>State Management:</strong> React Context API</li>
+<li><strong>Styling:</strong> Tailwind CSS</li>
+<li><strong>Animations:</strong> Framer Motion</li>
+<li><strong>HTTP Client:</strong> Axios</li>
+<li><strong>Build Tool:</strong> Vite</li>
+<li><strong>Form Handling:</strong> React Hook Form</li>
+<li><strong>Notifications:</strong> React Toastify, React Hot Toast</li>
+</ul>
+
+<h3>3.2 Admin Panel Technology Stack</h3>
+<ul>
+<li><strong>Framework:</strong> React 18</li>
+<li><strong>Routing:</strong> React Router v6</li>
+<li><strong>State Management:</strong> React Context API</li>
+<li><strong>Styling:</strong> Tailwind CSS</li>
+<li><strong>Charts:</strong> Chart.js, React-Chartjs-2</li>
+<li><strong>Rich Text Editor:</strong> Quill Editor</li>
+<li><strong>HTTP Client:</strong> Axios</li>
+<li><strong>Build Tool:</strong> Vite</li>
+<li><strong>Notifications:</strong> React Hot Toast</li>
+</ul>
+
+<h3>3.3 Backend API</h3>
+<ul>
+<li><strong>Runtime:</strong> Node.js (v22.18.0)</li>
+<li><strong>Framework:</strong> Express.js</li>
+<li><strong>Database:</strong> MongoDB</li>
+<li><strong>Authentication:</strong> JWT (JSON Web Tokens)</li>
+<li><strong>API Version:</strong> v2.0</li>
+<li><strong>Base URL:</strong> https://myambi.wildjourneysrwanda.com</li>
+</ul>
+
+<hr>
+
+<h2>4. API Integration</h2>
+
+<h3>4.1 Authentication Endpoints</h3>
+<ul>
+<li><code>POST /api/users/register</code> - User registration</li>
+<li><code>POST /api/users/login</code> - User login</li>
+<li><code>POST /api/users/admin</code> - Admin login</li>
+<li><code>POST /api/users/forgot</code> - Password reset request</li>
+<li><code>POST /api/users/reset/:token</code> - Password reset</li>
+</ul>
+
+<h3>4.2 Property Endpoints</h3>
+<ul>
+<li><code>GET /api/products/list</code> - Get all properties</li>
+<li><code>GET /api/products/single/:id</code> - Get single property</li>
+<li><code>POST /api/products/add</code> - Add new property (Admin)</li>
+<li><code>POST /api/products/update</code> - Update property (Admin)</li>
+<li><code>POST /api/products/remove</code> - Delete property (Admin)</li>
+<li><code>POST /api/properties/search</code> - Search properties</li>
+</ul>
+
+<h3>4.3 Plot Endpoints</h3>
+<ul>
+<li><code>GET /api/plots/list</code> - Get all plots</li>
+<li><code>GET /api/plots/single/:id</code> - Get single plot</li>
+<li><code>POST /api/plots/add</code> - Add new plot (Admin)</li>
+<li><code>POST /api/plots/remove</code> - Delete plot (Admin)</li>
+</ul>
+
+<h3>4.4 Appointment Endpoints</h3>
+<ul>
+<li><code>GET /api/appointments</code> - Get user appointments</li>
+<li><code>GET /api/appointments/all</code> - Get all appointments (Admin)</li>
+<li><code>POST /api/appointments/schedule</code> - Schedule viewing</li>
+<li><code>PUT /api/appointments/status</code> - Update appointment status</li>
+<li><code>PUT /api/appointments/update-meeting</code> - Update meeting link</li>
+</ul>
+
+<h3>4.5 User Endpoints</h3>
+<ul>
+<li><code>GET /api/users/me</code> - Get current user</li>
+<li><code>GET /api/users/profile</code> - Get user profile</li>
+<li><code>PUT /api/users/profile</code> - Update profile</li>
+<li><code>POST /api/users/change-password</code> - Change password</li>
+<li><code>GET /api/users/admin/all</code> - Get all users (Admin)</li>
+<li><code>PUT /api/users/admin/:id</code> - Update user (Admin)</li>
+<li><code>DELETE /api/users/admin/:id</code> - Delete user (Admin)</li>
+</ul>
+
+<h3>4.6 Blog Endpoints</h3>
+<ul>
+<li><code>GET /api/blogs/list</code> - Get all blogs</li>
+<li><code>GET /api/blogs/single/:slug</code> - Get single blog</li>
+<li><code>GET /api/blogs/admin/list</code> - Get all blogs (Admin)</li>
+<li><code>POST /api/blogs/add</code> - Add blog (Admin)</li>
+<li><code>PUT /api/blogs/update/:id</code> - Update blog (Admin)</li>
+<li><code>DELETE /api/blogs/delete/:id</code> - Delete blog (Admin)</li>
+</ul>
+
+<h3>4.7 Settings Endpoints</h3>
+<ul>
+<li><code>GET /api/settings</code> - Get settings</li>
+<li><code>PUT /api/settings</code> - Update settings (Admin)</li>
+</ul>
+
+<h3>4.8 Additional Endpoints</h3>
+<ul>
+<li><code>GET /api/locations/:city/trends</code> - Location trends</li>
+<li><code>GET /api/admin/stats</code> - Dashboard statistics</li>
+<li><code>GET /api/testimonials/list</code> - Get testimonials</li>
+<li><code>GET /api/teams/list</code> - Get team members</li>
+<li><code>GET /api/services/list</code> - Get services</li>
+<li><code>GET /api/notifications</code> - Get notifications</li>
+<li><code>GET /health</code> - Health check</li>
+<li><code>GET /status</code> - System status</li>
+</ul>
+
+<hr>
+
+<h2>5. Key Features Summary</h2>
+
+<h3>Admin Panel Highlights</h3>
+<p><span class="checkmark">✓</span> Complete property management system</p>
+<p><span class="checkmark">✓</span> Advanced dashboard with analytics</p>
+<p><span class="checkmark">✓</span> User management and control</p>
+<p><span class="checkmark">✓</span> Appointment scheduling system</p>
+<p><span class="checkmark">✓</span> Content management (Blogs, Services, Team, Testimonials)</p>
+<p><span class="checkmark">✓</span> System settings and configuration</p>
+<p><span class="checkmark">✓</span> Image upload and management</p>
+<p><span class="checkmark">✓</span> SEO optimization tools</p>
+
+<h3>Frontend Highlights</h3>
+<p><span class="checkmark">✓</span> Modern, responsive design</p>
+<p><span class="checkmark">✓</span> Advanced property search and filters</p>
+<p><span class="checkmark">✓</span> User authentication and profiles</p>
+<p><span class="checkmark">✓</span> AI-powered property recommendations</p>
+<p><span class="checkmark">✓</span> Interactive map integration</p>
+<p><span class="checkmark">✓</span> Blog and content sections</p>
+<p><span class="checkmark">✓</span> Appointment booking system</p>
+<p><span class="checkmark">✓</span> Saved properties feature</p>
+<p><span class="checkmark">✓</span> Notification system</p>
+<p><span class="checkmark">✓</span> SEO optimized pages</p>
+
+<hr>
+
+<p><strong>Document Generated:</strong> January 2026</p>
+<p><strong>Platform:</strong> NgenziRealEstate Real Estate Platform</p>
+<p><strong>For:</strong> System Documentation and Feature Catalog</p>
+
+
+    
+      <footer>
+          <p><strong>Document Generated:</strong> January 2026</p>
+          <p><strong>Platform:</strong> NgenziRealEstate Real Estate Platform</p>
+          <p><strong>Purpose:</strong> System Documentation and Feature Catalog</p>
+          <p><strong>Backend API:</strong> https://myambi.wildjourneysrwanda.com</p>
+      </footer>
+</body>
+</html>

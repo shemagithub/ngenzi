@@ -5,7 +5,47 @@ import { Eye, EyeOff, Mail, Lock, Shield, Building, ArrowRight, Loader2 } from "
 import { toast } from "react-hot-toast";
 import axios from "axios";
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+// Auto-detect protocol based on current page protocol
+const getBackendUrl = () => {
+  let url = '';
+  
+  if (import.meta.env.VITE_BACKEND_URL) {
+    url = import.meta.env.VITE_BACKEND_URL.trim();
+    // If env URL is HTTP but page is HTTPS, convert to HTTPS
+    if (window.location.protocol === 'https:' && url.startsWith('http://')) {
+      url = url.replace('http://', 'https://');
+    }
+  } else if (window.location.protocol === 'https:') {
+    const hostname = window.location.hostname;
+    if (hostname.includes('ngenziadmin.guzekustomz.com')) {
+      url = 'https://ngenzi.guzekustomz.com';
+    } else {
+      // Default to production API for HTTPS
+      url = 'https://myambi.wildjourneysrwanda.com';
+    }
+  } else {
+    // Default to production API for local development
+    url = 'https://myambi.wildjourneysrwanda.com';
+  }
+  
+  // Ensure URL always has protocol
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    url = 'https://' + url;
+  }
+  
+  // Remove trailing slash if present
+  return url.replace(/\/$/, '');
+};
+
+const backendUrl = getBackendUrl();
+
+// Create axios instance with baseURL
+const api = axios.create({
+  baseURL: backendUrl,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -20,10 +60,17 @@ const Login = () => {
     setLoading(true);
     
     try {
+      // Validate inputs
+      if (!email || !password) {
+        toast.error('Please enter both email and password');
+        setLoading(false);
+        return;
+      }
+
       // Change the endpoint to /api/users/admin for admin login
-      const response = await axios.post(`${backendUrl}/api/users/admin`, {
-        email,
-        password
+      const response = await api.post('/api/users/admin', {
+        email: email.trim(),
+        password: password
       });
 
       if (response.data.success) {
@@ -124,7 +171,7 @@ const Login = () => {
               Admin Portal
             </h1>
             <p className="text-gray-600 text-sm">
-              Sign in to manage BuildEstate properties
+              Sign in to manage NGENZI REALESTATE properties
             </p>
           </motion.div>
 
@@ -151,7 +198,7 @@ const Login = () => {
                   onFocus={() => setFocusedField('email')}
                   onBlur={() => setFocusedField(null)}
                   className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
-                  placeholder="admin@buildestate.com"
+                  placeholder="admin@ngenzirealestate.com"
                 />
               </div>
             </motion.div>
@@ -218,7 +265,7 @@ const Login = () => {
           {/* Footer */}
           <motion.div variants={itemVariants} className="mt-8 text-center">
             <p className="text-xs text-gray-500">
-              Secure admin access • BuildEstate © 2025
+              Secure admin access • NGENZI REALESTATE © 2025
             </p>
           </motion.div>
         </div>

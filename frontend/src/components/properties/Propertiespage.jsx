@@ -1,13 +1,15 @@
 import { useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { Grid, List, SlidersHorizontal, MapPin, Home } from "lucide-react";
 import SearchBar from "./Searchbar.jsx";
 import FilterSection from "./Filtersection.jsx";
 import PropertyCard from "./Propertycard.jsx";
-import { Backendurl } from "../../App.jsx";
+import { Backendurl } from "../../utils/backendUrl";
 
-const PropertiesPage = () => {
+const PropertiesPage = ({ defaultFilterType = "" }) => {
+  const [searchParams] = useSearchParams();
   const [viewState, setViewState] = useState({
     isGridView: true,
     showFilters: false,
@@ -22,12 +24,12 @@ const PropertiesPage = () => {
   });
 
   const [filters, setFilters] = useState({
-    propertyType: "",
+    propertyType: defaultFilterType || searchParams.get("type") || "",
     priceRange: [0, Number.MAX_SAFE_INTEGER],
     bedrooms: "0",
     bathrooms: "0",
     availability: "",
-    searchQuery: "",
+    searchQuery: searchParams.get("location") || "",
     sortBy: "",
   });
 
@@ -43,12 +45,13 @@ const PropertiesPage = () => {
           loading: false,
         }));
       } else {
-        throw new Error(response.data.message);
+        throw new Error(response.data.message || "Failed to fetch properties");
       }
     } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message || "Failed to fetch properties. Please try again later.";
       setPropertyState((prev) => ({
         ...prev,
-        error: "Failed to fetch properties. Please try again later.",
+        error: errorMessage,
         loading: false,
       }));
       console.error("Error fetching properties:", err);
@@ -58,6 +61,20 @@ const PropertiesPage = () => {
   useEffect(() => {
     fetchProperties();
   }, []);
+
+  // Update filters when URL params change
+  useEffect(() => {
+    const location = searchParams.get("location");
+    const type = searchParams.get("type");
+    
+    if (location) {
+      setFilters(prev => ({
+        ...prev,
+        searchQuery: location,
+        propertyType: type || prev.propertyType
+      }));
+    }
+  }, [searchParams]);
 
   const filteredProperties = useMemo(() => {
     return propertyState.properties
@@ -107,7 +124,7 @@ const PropertiesPage = () => {
 
   if (propertyState.loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -150,16 +167,16 @@ const PropertiesPage = () => {
             <div className="absolute inset-0 bg-blue-500/10 rounded-full animate-ping" style={{ animationDuration: '3s' }}></div>
           </div>
           
-          <h3 className="text-2xl font-bold text-gray-800 mb-3 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-3 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
             Loading Properties
           </h3>
           
-          <p className="text-gray-600 mb-5 max-w-xs text-center">
+          <p className="text-gray-600 dark:text-gray-400 mb-5 max-w-xs text-center">
             {`We're finding the perfect homes that match your preferences...`}
           </p>
           
           {/* Progress bar with animated gradient */}
-          <div className="w-64 h-2 bg-gray-200 rounded-full overflow-hidden relative">
+          <div className="w-64 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden relative">
             <motion.div
               className="h-full bg-gradient-to-r from-blue-600 via-indigo-500 to-blue-600 bg-size-200 absolute top-0 left-0 right-0"
               animate={{ 
@@ -189,16 +206,16 @@ const PropertiesPage = () => {
 
   if (propertyState.error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center text-red-600 p-6 rounded-lg bg-red-50 max-w-md"
+          className="text-center text-red-600 dark:text-red-400 p-6 rounded-lg bg-red-50 dark:bg-red-900/20 max-w-md border border-red-200 dark:border-red-800"
         >
           <p className="font-medium mb-4">{propertyState.error}</p>
           <button
             onClick={fetchProperties}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
+            className="px-6 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors 
               transition-colors duration-200"
           >
             Try Again
@@ -212,19 +229,21 @@ const PropertiesPage = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-gray-50 pt-16"
+      className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 transition-colors duration-200"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <motion.header
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Find Your Perfect Property
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+            {defaultFilterType ? `Find Your Perfect ${defaultFilterType}` : "Find Your Perfect Property"}
           </h1>
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
-            Discover a curated collection of premium properties
+          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            {defaultFilterType 
+              ? `Discover a curated collection of premium ${defaultFilterType.toLowerCase()}s`
+              : "Discover a curated collection of premium properties"}
           </p>
         </motion.header>
 
@@ -247,11 +266,12 @@ const PropertiesPage = () => {
           </AnimatePresence>
 
           <div className={`${viewState.showFilters ? "lg:col-span-3" : "lg:col-span-4"}`}>
-            <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm mb-6 border border-gray-200 dark:border-gray-700">
               <div className="flex flex-col sm:flex-row items-center gap-4">
                 <SearchBar
                   onSearch={(query) => setFilters(prev => ({ ...prev, searchQuery: query }))}
                   className="flex-1"
+                  initialValue={filters.searchQuery}
                 />
 
                 <div className="flex items-center gap-4">
@@ -261,7 +281,7 @@ const PropertiesPage = () => {
                       ...prev,
                       sortBy: e.target.value
                     }))}
-                    className="px-3 py-2 border rounded-lg text-sm"
+                    className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   >
                     <option value="">Sort By</option>
                     <option value="price-asc">Price: Low to High</option>
@@ -275,23 +295,23 @@ const PropertiesPage = () => {
                         ...prev,
                         showFilters: !prev.showFilters
                       }))}
-                      className="p-2 rounded-lg hover:bg-gray-100"
+                      className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
                       title="Toggle Filters"
                     >
                       <SlidersHorizontal className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => setViewState(prev => ({ ...prev, isGridView: true }))}
-                      className={`p-2 rounded-lg ${
-                        viewState.isGridView ? "bg-blue-100 text-blue-600" : "hover:bg-gray-100"
+                      className={`p-2 rounded-lg transition-colors ${
+                        viewState.isGridView ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
                       }`}
                     >
                       <Grid className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => setViewState(prev => ({ ...prev, isGridView: false }))}
-                      className={`p-2 rounded-lg ${
-                        !viewState.isGridView ? "bg-blue-100 text-blue-600" : "hover:bg-gray-100"
+                      className={`p-2 rounded-lg transition-colors ${
+                        !viewState.isGridView ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
                       }`}
                     >
                       <List className="w-5 h-5" />
@@ -311,7 +331,7 @@ const PropertiesPage = () => {
                 {filteredProperties.length > 0 ? (
                   filteredProperties.map((property) => (
                     <PropertyCard
-                      key={property._id}
+                      key={property.id || property._id}
                       property={property}
                       viewType={viewState.isGridView ? "grid" : "list"}
                     />
@@ -321,13 +341,13 @@ const PropertiesPage = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="col-span-full text-center py-12 bg-white rounded-lg shadow-sm"
+                    className="col-span-full text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
                   >
-                    <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    <MapPin className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-200 mb-2">
                       No properties found
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 dark:text-gray-400">
                       Try adjusting your filters or search criteria
                     </p>
                   </motion.div>

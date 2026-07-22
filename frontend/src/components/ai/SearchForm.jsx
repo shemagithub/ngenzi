@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
-import { Search, Home, MapPin, IndianRupee, Building } from 'lucide-react';
+import { Search, Home, MapPin, DollarSign, Building } from 'lucide-react';
+import { useCurrency } from '../../context/CurrencyContext';
 
 const SearchForm = ({ onSearch, isLoading }) => {
   const [searchParams, setSearchParams] = useState({
@@ -12,6 +13,7 @@ const SearchForm = ({ onSearch, isLoading }) => {
   });
   
   const [activeField, setActiveField] = useState(null);
+  const { formatPrice, getCurrencySymbol } = useCurrency();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,7 +28,7 @@ const SearchForm = ({ onSearch, isLoading }) => {
     onSearch(searchParams);
   };
 
-  const popularCities = ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Pune', 'Chennai'];
+  const popularCities = ['Kigali', 'Butare', 'Gitarama', 'Ruhengeri', 'Gisenyi', 'Cyangugu'];
 
   const handleCitySelect = (city) => {
     setSearchParams(prev => ({
@@ -41,20 +43,20 @@ const SearchForm = ({ onSearch, isLoading }) => {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="bg-white p-4 sm:p-6 md:p-8 rounded-xl shadow-lg border border-gray-100"
+      className="bg-white dark:bg-gray-800 p-4 sm:p-6 md:p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700"
     >
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6">
-        <div className="p-2 bg-blue-100 rounded-lg mr-3 w-10 h-10 flex items-center justify-center">
-          <Search className="h-5 w-5 text-blue-600" />
+        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg mr-3 w-10 h-10 flex items-center justify-center">
+          <Search className="h-5 w-5 text-blue-600 dark:text-blue-400" />
         </div>
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Find Your Dream Property</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-200">Find Your Dream Property</h2>
       </div>
       
       <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
         {/* City Field with Suggestions */}
         <div className="relative">
-          <label htmlFor="city" className="flex items-center text-sm font-medium text-gray-700 mb-1.5">
-            <MapPin className="w-4 h-4 mr-1.5 text-blue-600" />
+          <label htmlFor="city" className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+            <MapPin className="w-4 h-4 mr-1.5 text-blue-600 dark:text-blue-400" />
             City
           </label>
           <div className="relative">
@@ -66,7 +68,7 @@ const SearchForm = ({ onSearch, isLoading }) => {
               onChange={handleChange}
               onFocus={() => setActiveField('city')}
               onBlur={() => setTimeout(() => setActiveField(null), 100)}
-              placeholder="Enter city name (e.g., Mumbai)"
+              placeholder="Enter city name (e.g., Kigali)"
               className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-shadow text-sm sm:text-base"
               required
             />
@@ -74,17 +76,17 @@ const SearchForm = ({ onSearch, isLoading }) => {
               <motion.div 
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="absolute z-10 mt-1 w-full bg-white rounded-lg shadow-lg border border-gray-200 py-2"
+                className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2"
               >
-                <p className="px-3 py-1 text-xs font-medium text-gray-500">Popular Cities</p>
+                <p className="px-3 py-1 text-xs font-medium text-gray-500 dark:text-gray-400">Popular Cities</p>
                 <div className="mt-1 max-h-48 overflow-y-auto">
                   {popularCities.map((city) => (
                     <div
                       key={city}
                       onClick={() => handleCitySelect(city)}
-                      className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-gray-700 flex items-center"
+                      className="px-3 py-2 hover:bg-blue-50 dark:hover:bg-blue-900/30 cursor-pointer text-gray-700 dark:text-gray-300 flex items-center"
                     >
-                      <MapPin className="w-4 h-4 mr-2 text-gray-400" />
+                      <MapPin className="w-4 h-4 mr-2 text-gray-400 dark:text-gray-500" />
                       {city}
                     </div>
                   ))}
@@ -97,9 +99,9 @@ const SearchForm = ({ onSearch, isLoading }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           {/* Price Field */}
           <div>
-            <label htmlFor="maxPrice" className="flex items-center text-sm font-medium text-gray-700 mb-1.5">
-              <IndianRupee className="w-4 h-4 mr-1.5 text-blue-600" />
-              Maximum Price (in Crores)
+            <label htmlFor="maxPrice" className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              <DollarSign className="w-4 h-4 mr-1.5 text-blue-600 dark:text-blue-400" />
+              Maximum Price
             </label>
             <div className="relative">
               <input
@@ -111,19 +113,19 @@ const SearchForm = ({ onSearch, isLoading }) => {
                 step="0.1"
                 value={searchParams.maxPrice}
                 onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-shadow text-sm sm:text-base"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-shadow text-sm sm:text-base bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 required
               />
-              <span className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm font-medium">
-                Cr
+              <span className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 text-sm font-medium">
+                {getCurrencySymbol()}
               </span>
             </div>
           </div>
           
           {/* Property Type Field */}
           <div>
-            <label htmlFor="propertyType" className="flex items-center text-sm font-medium text-gray-700 mb-1.5">
-              <Home className="w-4 h-4 mr-1.5 text-blue-600" />
+            <label htmlFor="propertyType" className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              <Home className="w-4 h-4 mr-1.5 text-blue-600 dark:text-blue-400" />
               Property Type
             </label>
             <select
@@ -142,8 +144,8 @@ const SearchForm = ({ onSearch, isLoading }) => {
           
           {/* Property Category Field */}
           <div>
-            <label htmlFor="propertyCategory" className="flex items-center text-sm font-medium text-gray-700 mb-1.5">
-              <Building className="w-4 h-4 mr-1.5 text-blue-600" />
+            <label htmlFor="propertyCategory" className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              <Building className="w-4 h-4 mr-1.5 text-blue-600 dark:text-blue-400" />
               Property Category
             </label>
             <select
@@ -160,9 +162,9 @@ const SearchForm = ({ onSearch, isLoading }) => {
 
           {/* Price Range Selector */}
           <div>
-            <label className="flex items-center text-sm font-medium text-gray-700 mb-2 sm:mb-4">
-              <IndianRupee className="w-4 h-4 mr-1.5 text-blue-600" />
-              Price Range: ₹{searchParams.maxPrice} Cr
+            <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 sm:mb-4">
+              <DollarSign className="w-4 h-4 mr-1.5 text-blue-600 dark:text-blue-400" />
+              Price Range: {formatPrice(searchParams.maxPrice * 10000000)}
             </label>
             <input
               type="range"
@@ -171,11 +173,11 @@ const SearchForm = ({ onSearch, isLoading }) => {
               step="0.5"
               value={searchParams.maxPrice}
               onChange={(e) => handleChange({ target: { name: 'maxPrice', value: e.target.value }})}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+              className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
             />
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
-              <span>₹50L</span>
-              <span>₹50Cr</span>
+            <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <span>{formatPrice(0.5 * 10000000)}</span>
+              <span>{formatPrice(50 * 10000000)}</span>
             </div>
           </div>
         </div>

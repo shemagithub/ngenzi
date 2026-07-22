@@ -28,4 +28,10 @@ router.get("/stats", getAppointmentStats);
 router.put("/status", updateAppointmentStatus);
 router.put("/update-meeting", updateAppointmentMeetingLink);
 
+// Log route registration
+console.log('✅ Appointment routes registered:');
+console.log('   PUT /api/appointments/status');
+console.log('   PUT /api/appointments/update-meeting');
+console.log('   GET /api/appointments/all');
+
 export default router;

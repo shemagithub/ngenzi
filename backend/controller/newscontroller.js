@@ -26,7 +26,7 @@ const submitNewsletter = async (req, res) => {
     }
 
     // Check if email already exists
-    const existingSubscription = await News.findOne({ email: email.toLowerCase().trim() });
+    const existingSubscription = await News.findOne({ where: { email: email.toLowerCase().trim() } });
     if (existingSubscription) {
       return res.status(400).json({ 
         message: 'Email already subscribed to newsletter',
@@ -34,11 +34,9 @@ const submitNewsletter = async (req, res) => {
       });
     }
 
-    const newNewsletter = new News({
+    const savedNewsletter = await News.create({
       email: email.toLowerCase().trim(),
     });
-
-    const savedNewsletter = await newNewsletter.save();
 
     const mailOptions = {
       from: process.env.EMAIL,

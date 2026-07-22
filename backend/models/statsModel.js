@@ -1,34 +1,40 @@
-import mongoose from 'mongoose';
+import { DataTypes } from 'sequelize';
+import { sequelize } from '../config/mysql.js';
 
-const statsSchema = new mongoose.Schema({
+const Stats = sequelize.define('Stats', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
   endpoint: {
-    type: String,
-    required: true
+    type: DataTypes.STRING,
+    allowNull: false
   },
   method: {
-    type: String,
-    required: true,
-    enum: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'] // Added HEAD
+    type: DataTypes.ENUM('GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'),
+    allowNull: false
   },
   timestamp: {
-    type: Date,
-    default: Date.now
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW
   },
   responseTime: {
-    type: Number,
-    required: true
+    type: DataTypes.INTEGER,
+    allowNull: false
   },
   statusCode: {
-    type: Number,
-    required: true
+    type: DataTypes.INTEGER,
+    allowNull: false
   }
-}, { timestamps: true });
-
-// Index for better query performance
-statsSchema.index({ endpoint: 1, timestamp: -1 });
-statsSchema.index({ method: 1 });
-statsSchema.index({ statusCode: 1 });
-
-const Stats = mongoose.model('Stats', statsSchema);
+}, {
+  tableName: 'stats',
+  timestamps: true,
+  indexes: [
+    { fields: ['endpoint', 'timestamp'] },
+    { fields: ['method'] },
+    { fields: ['statusCode'] }
+  ]
+});
 
 export default Stats;

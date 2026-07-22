@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, ArrowLeft, Loader, Shield, CheckCircle, Sparkles, Key, Lock } from "lucide-react";
 import { toast } from "react-toastify";
-import { Backendurl } from "../App";
+import { Backendurl } from "../utils/backendUrl";
+import logo from "../assets/images/logo.JPEG";
 
 // Animation variants
 const containerVariants = {
@@ -141,15 +142,11 @@ const ForgotPassword = () => {
                     whileHover={{ scale: 1.05 }}
                     transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   >
-                    <motion.div
-                      animate={floatingAnimation}
-                      className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg shadow-blue-500/25"
-                    >
-                      <Lock className="w-6 h-6 text-white" />
-                    </motion.div>
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                      BuildEstate
-                    </h1>
+                    <img 
+                      src={logo} 
+                      alt="NGENZI REAL ESTATE" 
+                      className="h-16 w-auto object-contain"
+                    />
                   </motion.div>
                 </Link>
                 

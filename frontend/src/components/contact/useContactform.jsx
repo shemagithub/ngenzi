@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Backendurl } from '../../App';
+import { Backendurl } from '../../utils/backendUrl';
 
 export default function useContactForm() {
   const [formData, setFormData] = useState({

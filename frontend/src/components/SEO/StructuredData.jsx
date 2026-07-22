@@ -1,17 +1,34 @@
 import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { useSettings } from '../../context/SettingsContext';
 
 const StructuredData = ({ type, data }) => {
   const location = useLocation();
-  const currentUrl = `https://buildestate.vercel.app${location.pathname}`;
+  const { settings } = useSettings();
+  
+  const companyName = settings?.companyName || 'NGENZI REALESTATE';
+  const websiteUrl = settings?.websiteUrl || 'https://ngenzirealestate.rw';
+  const companyLogo = settings?.companyLogo || 'https://ngenzirealestate.rw/logo.png';
+  const companyEmail = settings?.companyEmail || 'support@ngenzirealestate.com';
+  
+  // Build sameAs array from social media links
+  const sameAs = [];
+  if (settings?.facebook) sameAs.push(settings.facebook);
+  if (settings?.twitter) sameAs.push(settings.twitter);
+  if (settings?.instagram) sameAs.push(settings.instagram);
+  if (settings?.linkedin) sameAs.push(settings.linkedin);
+  if (settings?.youtube) sameAs.push(`https://youtube.com/${settings.youtube}`);
+  // No GitHub fallback - use only social media links from settings
+  
+  const currentUrl = `${websiteUrl}${location.pathname}`;
 
   // Different schema types based on page content
   const schemas = {
     website: {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
-      name: 'BuildEstate',
-      url: 'https://buildestate.vercel.app',
+      name: companyName,
+      url: websiteUrl,
       potentialAction: {
         '@type': 'SearchAction',
         target: '{search_term_string}',
@@ -21,13 +38,11 @@ const StructuredData = ({ type, data }) => {
     organization: {
       '@context': 'https://schema.org',
       '@type': 'Organization',
-      name: 'BuildEstate',
-      url: 'https://buildestate.vercel.app',
-      logo: 'https://buildestate.vercel.app/logo.png',
-      sameAs: [
-        'https://github.com/AAYUSH412/Real-Estate-Website',
-        'https://linkedin.com/in/AAYUSH412'
-      ]
+      name: companyName,
+      url: websiteUrl,
+      logo: companyLogo,
+      email: companyEmail,
+      sameAs: sameAs
     },
     property: {
       '@context': 'https://schema.org',
@@ -40,7 +55,7 @@ const StructuredData = ({ type, data }) => {
         '@type': 'PostalAddress',
         addressLocality: data?.location || 'City',
         addressRegion: data?.region || 'Region',
-        addressCountry: 'IN'
+        addressCountry: 'RW'
       },
       price: data?.price ? `₹${data.price}` : '',
       floorSize: {
@@ -57,11 +72,14 @@ const StructuredData = ({ type, data }) => {
       name: 'AI Property Hub',
       applicationCategory: 'RealEstateApplication',
       description: 'AI-powered real estate analytics and recommendations tool',
-      url: 'https://buildestate.vercel.app/ai-property-hub',
+      // Always use production domain regardless of settings or hosting
+      url: 'https://ngenzirealestate.rw/ai-property-hub',
+      applicationName: 'AI Property Hub',
+      operatingSystem: 'Web Browser',
       offers: {
         '@type': 'Offer',
         price: '0',
-        priceCurrency: 'INR',
+        priceCurrency: 'RWF',
         availability: 'https://schema.org/InStock'
       }
     }

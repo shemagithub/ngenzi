@@ -1,12 +1,23 @@
-import mongoose from "mongoose";
+import { DataTypes } from 'sequelize';
+import { sequelize } from '../config/mysql.js';
 
-const newsSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
+const News = sequelize.define('News', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
   },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+    validate: {
+      isEmail: true
+    }
+  }
+}, {
+  tableName: 'news',
+  timestamps: true
 });
-
-const News = mongoose.model('News', newsSchema);
 
 export default News;

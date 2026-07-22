@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
 import {
@@ -12,8 +13,9 @@ import {
   Tooltip,
   Legend,
   ArcElement,
+  Filler,
 } from "chart.js";
-import { Line, Doughnut } from "react-chartjs-2";
+import { Line, Doughnut, Bar } from "react-chartjs-2";
 import {
   Home,
   Activity,
@@ -29,6 +31,12 @@ import {
   RefreshCw,
   ArrowUpRight,
   ArrowDownRight,
+  MapPin,
+  MessageSquare,
+  FileText,
+  Briefcase,
+  Shield,
+  UserCheck,
 } from "lucide-react";
 import { backendurl } from "../config/constants";
 
@@ -42,15 +50,92 @@ ChartJS.register(
   ArcElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 );
+
+// Bar chart options
+const barChartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: "top",
+      labels: {
+        padding: 20,
+        usePointStyle: true,
+        font: {
+          size: 12,
+          family: "'Inter', sans-serif"
+        }
+      }
+    },
+    tooltip: {
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      titleColor: '#fff',
+      bodyColor: '#fff',
+      cornerRadius: 8,
+      padding: 12,
+    }
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
+      ticks: {
+        stepSize: 1,
+        precision: 0,
+        color: '#6B7280',
+        font: {
+          size: 11
+        }
+      },
+      grid: {
+        color: 'rgba(107, 114, 128, 0.1)',
+        drawBorder: false,
+      },
+      border: {
+        display: false
+      }
+    },
+    x: {
+      grid: {
+        display: false
+      },
+      ticks: {
+        color: '#6B7280',
+        font: {
+          size: 11
+        }
+      },
+      border: {
+        display: false
+      }
+    }
+  }
+};
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
     totalProperties: 0,
     activeListings: 0,
     totalViews: 0,
+    totalUsers: 0,
+    totalAdmins: 0,
+    regularUsers: 0,
+    totalPlots: 0,
+    activePlots: 0,
+    totalTestimonials: 0,
+    activeTestimonials: 0,
+    featuredTestimonials: 0,
+    totalBlogs: 0,
+    publishedBlogs: 0,
+    totalServices: 0,
+    activeServices: 0,
+    totalTeams: 0,
+    activeTeams: 0,
     pendingAppointments: 0,
+    confirmedAppointments: 0,
+    totalAppointments: 0,
     recentActivity: [],
     viewsData: {},
     propertyTypeData: {},
@@ -210,47 +295,83 @@ const Dashboard = () => {
   const statCards = [
     {
       title: "Total Properties",
-      value: stats.totalProperties,
+      value: stats.totalProperties || 0,
       icon: Home,
       color: "from-blue-500 to-blue-600",
       bgColor: "bg-blue-50",
       iconColor: "text-blue-600",
       description: "Total properties listed",
-      change: "+12%",
-      changeType: "positive"
+      link: "/list"
     },
     {
-      title: "Active Listings",
-      value: stats.activeListings,
-      icon: Activity,
-      color: "from-green-500 to-green-600",
-      bgColor: "bg-green-50",
-      iconColor: "text-green-600",
-      description: "Currently active listings",
-      change: "+8%",
-      changeType: "positive"
+      title: "Total Plots",
+      value: stats.totalPlots || 0,
+      icon: MapPin,
+      color: "from-amber-500 to-orange-600",
+      bgColor: "bg-amber-50",
+      iconColor: "text-amber-600",
+      description: "Total plots listed",
+      link: "/list-plots"
     },
     {
-      title: "Total Views",
-      value: stats.totalViews,
-      icon: Eye,
+      title: "Total Users",
+      value: stats.totalUsers || 0,
+      icon: Users,
       color: "from-purple-500 to-purple-600",
       bgColor: "bg-purple-50",
       iconColor: "text-purple-600",
-      description: "Property page views",
-      change: "+23%",
-      changeType: "positive"
+      description: `${stats.regularUsers || 0} regular, ${stats.totalAdmins || 0} admins`,
+      link: "/users"
     },
     {
-      title: "Pending Appointments",
-      value: stats.pendingAppointments,
+      title: "Testimonials",
+      value: stats.totalTestimonials || 0,
+      icon: MessageSquare,
+      color: "from-pink-500 to-rose-600",
+      bgColor: "bg-pink-50",
+      iconColor: "text-pink-600",
+      description: `${stats.activeTestimonials || 0} active, ${stats.featuredTestimonials || 0} featured`,
+      link: "/testimonials"
+    },
+    {
+      title: "Blogs",
+      value: stats.totalBlogs || 0,
+      icon: FileText,
+      color: "from-indigo-500 to-indigo-600",
+      bgColor: "bg-indigo-50",
+      iconColor: "text-indigo-600",
+      description: `${stats.publishedBlogs || 0} published`,
+      link: "/blogs"
+    },
+    {
+      title: "Services",
+      value: stats.totalServices || 0,
+      icon: Briefcase,
+      color: "from-teal-500 to-teal-600",
+      bgColor: "bg-teal-50",
+      iconColor: "text-teal-600",
+      description: `${stats.activeServices || 0} active`,
+      link: "/services"
+    },
+    {
+      title: "Team Members",
+      value: stats.totalTeams || 0,
+      icon: UserCheck,
+      color: "from-cyan-500 to-cyan-600",
+      bgColor: "bg-cyan-50",
+      iconColor: "text-cyan-600",
+      description: `${stats.activeTeams || 0} active`,
+      link: "/team"
+    },
+    {
+      title: "Appointments",
+      value: stats.totalAppointments || 0,
       icon: Calendar,
       color: "from-orange-500 to-orange-600",
       bgColor: "bg-orange-50",
       iconColor: "text-orange-600",
-      description: "Awaiting confirmation",
-      change: "-5%",
-      changeType: "negative"
+      description: `${stats.pendingAppointments || 0} pending, ${stats.confirmedAppointments || 0} confirmed`,
+      link: "/appointments"
     },
   ];
 
@@ -365,15 +486,18 @@ const Dashboard = () => {
         {/* Enhanced Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {statCards.map((stat, index) => (
-            <motion.div
+            <Link
               key={stat.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="group relative bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl 
-                transition-all duration-300 border border-gray-100 hover:border-gray-200
-                overflow-hidden"
+              to={stat.link}
             >
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="group relative bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl 
+                  transition-all duration-300 border border-gray-100 hover:border-gray-200
+                  overflow-hidden cursor-pointer"
+              >
               {/* Background Gradient */}
               <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 
                 group-hover:opacity-5 transition-opacity duration-300`}></div>
@@ -385,17 +509,7 @@ const Dashboard = () => {
                     <stat.icon className={`w-6 h-6 ${stat.iconColor}`} />
                   </div>
                   <div className="text-right">
-                    <div className={`flex items-center gap-1 text-sm font-medium ${
-                      stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {stat.changeType === 'positive' ? (
-                        <ArrowUpRight className="w-4 h-4" />
-                      ) : (
-                        <ArrowDownRight className="w-4 h-4" />
-                      )}
-                      {stat.change}
-                    </div>
-                    <span className="text-xs text-gray-500">vs last month</span>
+                    <ArrowUpRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
                   </div>
                 </div>
                 
@@ -408,11 +522,12 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Hover Effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent 
-                opacity-0 group-hover:opacity-10 transform -skew-x-12 -translate-x-full 
-                group-hover:translate-x-full transition-all duration-700"></div>
-            </motion.div>
+                {/* Hover Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent 
+                  opacity-0 group-hover:opacity-10 transform -skew-x-12 -translate-x-full 
+                  group-hover:translate-x-full transition-all duration-700"></div>
+              </motion.div>
+            </Link>
           ))}
         </div>
 
@@ -487,6 +602,82 @@ const Dashboard = () => {
           </motion.div>
         </div>
 
+        {/* System Overview Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45 }}
+          className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <Shield className="w-5 h-5 text-indigo-600" />
+                System Overview
+              </h2>
+              <p className="text-sm text-gray-600 mt-1">Complete system statistics</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+            <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
+              <div className="flex items-center gap-2 mb-2">
+                <Home className="w-4 h-4 text-blue-600" />
+                <span className="text-xs font-medium text-gray-600">Properties</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">{stats.totalProperties || 0}</p>
+              <p className="text-xs text-gray-500 mt-1">{stats.activeListings || 0} active</p>
+            </div>
+            <div className="p-4 bg-amber-50 rounded-xl border border-amber-100">
+              <div className="flex items-center gap-2 mb-2">
+                <MapPin className="w-4 h-4 text-amber-600" />
+                <span className="text-xs font-medium text-gray-600">Plots</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">{stats.totalPlots || 0}</p>
+              <p className="text-xs text-gray-500 mt-1">{stats.activePlots || 0} active</p>
+            </div>
+            <div className="p-4 bg-purple-50 rounded-xl border border-purple-100">
+              <div className="flex items-center gap-2 mb-2">
+                <Users className="w-4 h-4 text-purple-600" />
+                <span className="text-xs font-medium text-gray-600">Users</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">{stats.totalUsers || 0}</p>
+              <p className="text-xs text-gray-500 mt-1">{stats.totalAdmins || 0} admins</p>
+            </div>
+            <div className="p-4 bg-pink-50 rounded-xl border border-pink-100">
+              <div className="flex items-center gap-2 mb-2">
+                <MessageSquare className="w-4 h-4 text-pink-600" />
+                <span className="text-xs font-medium text-gray-600">Testimonials</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">{stats.totalTestimonials || 0}</p>
+              <p className="text-xs text-gray-500 mt-1">{stats.activeTestimonials || 0} active</p>
+            </div>
+            <div className="p-4 bg-indigo-50 rounded-xl border border-indigo-100">
+              <div className="flex items-center gap-2 mb-2">
+                <FileText className="w-4 h-4 text-indigo-600" />
+                <span className="text-xs font-medium text-gray-600">Blogs</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">{stats.totalBlogs || 0}</p>
+              <p className="text-xs text-gray-500 mt-1">{stats.publishedBlogs || 0} published</p>
+            </div>
+            <div className="p-4 bg-teal-50 rounded-xl border border-teal-100">
+              <div className="flex items-center gap-2 mb-2">
+                <Briefcase className="w-4 h-4 text-teal-600" />
+                <span className="text-xs font-medium text-gray-600">Services</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">{stats.totalServices || 0}</p>
+              <p className="text-xs text-gray-500 mt-1">{stats.activeServices || 0} active</p>
+            </div>
+            <div className="p-4 bg-cyan-50 rounded-xl border border-cyan-100">
+              <div className="flex items-center gap-2 mb-2">
+                <UserCheck className="w-4 h-4 text-cyan-600" />
+                <span className="text-xs font-medium text-gray-600">Team</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">{stats.totalTeams || 0}</p>
+              <p className="text-xs text-gray-500 mt-1">{stats.activeTeams || 0} active</p>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Bottom Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Recent Activity */}
@@ -516,9 +707,19 @@ const Dashboard = () => {
                     className="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-xl 
                       transition-colors duration-200 border border-transparent hover:border-gray-100"
                   >
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg 
-                      flex items-center justify-center flex-shrink-0">
-                      <Users className="w-5 h-5 text-white" />
+                    <div className={`w-10 h-10 bg-gradient-to-br rounded-lg 
+                      flex items-center justify-center flex-shrink-0 ${
+                        activity.type === 'property' ? 'from-blue-500 to-blue-600' :
+                        activity.type === 'plot' ? 'from-amber-500 to-orange-600' :
+                        activity.type === 'testimonial' ? 'from-pink-500 to-rose-600' :
+                        activity.type === 'user' ? 'from-purple-500 to-purple-600' :
+                        'from-green-500 to-green-600'
+                      }`}>
+                      {activity.type === 'property' ? <Home className="w-5 h-5 text-white" /> :
+                       activity.type === 'plot' ? <MapPin className="w-5 h-5 text-white" /> :
+                       activity.type === 'testimonial' ? <MessageSquare className="w-5 h-5 text-white" /> :
+                       activity.type === 'user' ? <Users className="w-5 h-5 text-white" /> :
+                       <Calendar className="w-5 h-5 text-white" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-gray-900 truncate">
@@ -556,41 +757,79 @@ const Dashboard = () => {
                 Performance Insights
               </h2>
             </div>
-            <div className="space-y-6">
-              {/* Average Views per Property */}
-              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">
-                <div>
-                  <p className="text-sm text-gray-600">Avg. Views per Property</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {stats.totalProperties > 0 ? Math.round(stats.totalViews / stats.totalProperties) : 0}
-                  </p>
-                </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Eye className="w-6 h-6 text-blue-600" />
-                </div>
-              </div>
-
-              {/* Active Listing Rate */}
-              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl">
-                <div>
-                  <p className="text-sm text-gray-600">Active Listing Rate</p>
-                  <p className="text-2xl font-bold text-gray-900">
+            <div className="space-y-4">
+              {/* System Overview */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">
+                  <p className="text-xs text-gray-600 mb-1">Active Listings</p>
+                  <p className="text-xl font-bold text-gray-900">
                     {stats.totalProperties > 0 ? Math.round((stats.activeListings / stats.totalProperties) * 100) : 0}%
                   </p>
+                  <p className="text-xs text-gray-500 mt-1">{stats.activeListings} of {stats.totalProperties}</p>
                 </div>
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <Activity className="w-6 h-6 text-green-600" />
+                <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl">
+                  <p className="text-xs text-gray-600 mb-1">Active Plots</p>
+                  <p className="text-xl font-bold text-gray-900">
+                    {stats.totalPlots > 0 ? Math.round((stats.activePlots / stats.totalPlots) * 100) : 0}%
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">{stats.activePlots} of {stats.totalPlots}</p>
                 </div>
               </div>
 
-              {/* Appointment Conversion */}
-              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl">
-                <div>
-                  <p className="text-sm text-gray-600">Pending Appointments</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.pendingAppointments}</p>
+              {/* User Stats */}
+              <div className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm text-gray-600">User Breakdown</p>
+                  <Users className="w-5 h-5 text-purple-600" />
                 </div>
-                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                  <Calendar className="w-6 h-6 text-orange-600" />
+                <div className="flex items-center gap-4">
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">{stats.regularUsers || 0}</p>
+                    <p className="text-xs text-gray-500">Regular Users</p>
+                  </div>
+                  <div className="h-8 w-px bg-gray-300"></div>
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">{stats.totalAdmins || 0}</p>
+                    <p className="text-xs text-gray-500">Admins</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Content Stats */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 bg-gradient-to-r from-pink-50 to-rose-50 rounded-xl">
+                  <p className="text-xs text-gray-600 mb-1">Testimonials</p>
+                  <p className="text-xl font-bold text-gray-900">{stats.activeTestimonials || 0}</p>
+                  <p className="text-xs text-gray-500 mt-1">{stats.featuredTestimonials || 0} featured</p>
+                </div>
+                <div className="p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl">
+                  <p className="text-xs text-gray-600 mb-1">Published Blogs</p>
+                  <p className="text-xl font-bold text-gray-900">{stats.publishedBlogs || 0}</p>
+                  <p className="text-xs text-gray-500 mt-1">of {stats.totalBlogs || 0} total</p>
+                </div>
+              </div>
+
+              {/* Appointments */}
+              <div className="p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm text-gray-600">Appointments</p>
+                  <Calendar className="w-5 h-5 text-orange-600" />
+                </div>
+                <div className="flex items-center gap-4">
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">{stats.pendingAppointments || 0}</p>
+                    <p className="text-xs text-gray-500">Pending</p>
+                  </div>
+                  <div className="h-8 w-px bg-gray-300"></div>
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">{stats.confirmedAppointments || 0}</p>
+                    <p className="text-xs text-gray-500">Confirmed</p>
+                  </div>
+                  <div className="h-8 w-px bg-gray-300"></div>
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">{stats.totalAppointments || 0}</p>
+                    <p className="text-xs text-gray-500">Total</p>
+                  </div>
                 </div>
               </div>
             </div>

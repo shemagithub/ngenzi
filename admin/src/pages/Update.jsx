@@ -3,7 +3,23 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { backendurl } from '../config/constants';
-import { X, Upload } from 'lucide-react';
+import { X, Upload, Youtube } from 'lucide-react';
+import { useCurrency } from '../contexts/CurrencyContext';
+
+/** Client-side preview only; server still normalizes on save */
+const getYoutubePreviewSrc = (raw) => {
+  if (!raw || typeof raw !== 'string') return null;
+  const s = raw.trim();
+  if (!s) return null;
+  if (/youtube\.com\/embed\/[a-zA-Z0-9_-]{11}/i.test(s)) return s.split(/[?#]/)[0];
+  let m = s.match(/[?&]v=([a-zA-Z0-9_-]{11})/i);
+  if (m) return `https://www.youtube.com/embed/${m[1]}`;
+  m = s.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/i);
+  if (m) return `https://www.youtube.com/embed/${m[1]}`;
+  m = s.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/i);
+  if (m) return `https://www.youtube.com/embed/${m[1]}`;
+  return null;
+};
 
 const PROPERTY_TYPES = ['House', 'Apartment', 'Office', 'Villa'];
 const AVAILABILITY_TYPES = ['rent', 'buy'];
@@ -12,6 +28,7 @@ const AMENITIES = ['Lake View', 'Fireplace', 'Central heating and air conditioni
 const Update = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { getCurrencySymbol } = useCurrency();
   const [formData, setFormData] = useState({
     title: '',
     type: '',
@@ -24,44 +41,110 @@ const Update = () => {
     phone: '',
     availability: '',
     amenities: [],
-    images: []
+    images: [],
+    youtubeUrl: ''
   });
   const [previewUrls, setPreviewUrls] = useState([]);
+  const [existingImages, setExistingImages] = useState([]); // Store existing image URLs
+  const [newImages, setNewImages] = useState([]); // Store new image files
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchProperty = async () => {
+      // Validate that id exists
+      if (!id || id === 'undefined') {
+        toast.error('Invalid property ID');
+        navigate('/list', { replace: true });
+        return;
+      }
+
       try {
-        const response = await axios.get(`${backendurl}/api/products/single/${id}`);
-        console.log('Response:', response); // Log the response
-        if (response.data.success) {
-          const property = response.data.property;
-          setFormData({
-            title: property.title,
-            type: property.type,
-            price: property.price,
-            location: property.location,
-            description: property.description,
-            beds: property.beds,
-            baths: property.baths,
-            sqft: property.sqft,
-            phone: property.phone,
-            availability: property.availability,
-            amenities: property.amenities,
-            images: property.image
-          });
-          setPreviewUrls(property.image);
-        } else {
-          toast.error(response.data.message);
+        // Treat 4xx as a normal response so axios does not reject (avoids noisy console errors for missing rows).
+        const response = await axios.get(
+          `${backendurl}/api/products/single/${encodeURIComponent(id)}`,
+          { validateStatus: (status) => status >= 200 && status < 500 }
+        );
+
+        if (!response.data?.success || !response.data?.property) {
+          toast.error(
+            response.data?.message ||
+              (response.status === 404
+                ? 'This property was not found. It may have been deleted.'
+                : 'Failed to load property')
+          );
+          navigate('/list', { replace: true });
+          return;
         }
+
+        const property = response.data.property;
+
+        // Normalize image field to always be an array; include front image when stored separately
+        let images = [];
+        if (property.image) {
+          if (Array.isArray(property.image)) {
+            images = [...property.image];
+          } else if (typeof property.image === 'string') {
+            try {
+              const parsed = JSON.parse(property.image);
+              images = Array.isArray(parsed) ? [...parsed] : [property.image];
+            } catch {
+              images = [property.image];
+            }
+          }
+        }
+        if (property.frontImage && !images.includes(property.frontImage)) {
+          images = [property.frontImage, ...images];
+        }
+        images = images.slice(0, 4);
+
+        // Normalize amenities field to always be an array
+        let amenities = [];
+        if (property.amenities) {
+          if (Array.isArray(property.amenities)) {
+            amenities = property.amenities;
+          } else if (typeof property.amenities === 'string') {
+            try {
+              const parsed = JSON.parse(property.amenities);
+              amenities = Array.isArray(parsed) ? parsed : [property.amenities];
+            } catch {
+              amenities = [property.amenities];
+            }
+          }
+        }
+
+        setFormData({
+          title: property.title || '',
+          type: property.type || '',
+          price: property.price || '',
+          location: property.location || '',
+          description: property.description || '',
+          beds: property.beds || '',
+          baths: property.baths || '',
+          sqft: property.sqft || '',
+          phone: property.phone || '',
+          availability: property.availability || '',
+          amenities: amenities,
+          images: [], // New images will be added via file input
+          youtubeUrl: property.youtubeUrl || ''
+        });
+        setExistingImages(images);
+        setPreviewUrls(images);
+        setNewImages([]);
       } catch (error) {
-        console.log('Error fetching property:', error); // Log the error
-        toast.error('An error occurred. Please try again.');
+        const serverMessage = error.response?.data?.message;
+        if (error.response) {
+          console.error('Error fetching property:', error.response.status, serverMessage || error.message);
+          toast.error(serverMessage || 'Failed to load property. Please try again.');
+        } else {
+          console.error('Error fetching property:', error);
+          toast.error('Could not reach the server. Check your connection and API URL.');
+        }
+        navigate('/list', { replace: true });
       }
     };
 
     fetchProperty();
-  }, [id]);
+  }, [id, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -82,18 +165,67 @@ const Update = () => {
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    setPreviewUrls(files.map((file) => URL.createObjectURL(file)));
+    if (files.length + previewUrls.length > 4) {
+      toast.error('Maximum 4 images allowed');
+      return;
+    }
+
+    // Create preview URLs for new files
+    const newPreviewUrls = files.map((file) => URL.createObjectURL(file));
+    
+    // Combine existing images with new preview URLs
+    setPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
+    
+    // Store new files separately
+    setNewImages((prev) => [...prev, ...files]);
+    
     setFormData((prev) => ({
       ...prev,
-      images: files
+      images: [...prev.images, ...files]
     }));
   };
 
   const removeImage = (index) => {
-    setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
+    // Check if it's an existing image (URL) or new image (file)
+    if (index < existingImages.length) {
+      // Remove existing image
+      setExistingImages((prev) => prev.filter((_, i) => i !== index));
+    } else {
+      // Remove new image file
+      const newIndex = index - existingImages.length;
+      setNewImages((prev) => {
+        const updated = prev.filter((_, i) => i !== newIndex);
+        // Revoke object URL to free memory
+        const removedFile = prev[newIndex];
+        if (removedFile && removedFile instanceof File) {
+          // Find and revoke the corresponding preview URL
+          const previewIndex = existingImages.length + newIndex;
+          const previewUrl = previewUrls[previewIndex];
+          if (previewUrl && previewUrl.startsWith('blob:')) {
+            URL.revokeObjectURL(previewUrl);
+          }
+        }
+        return updated;
+      });
+    }
+    
+    // Update preview URLs
+    setPreviewUrls((prev) => {
+      const updated = prev.filter((_, i) => i !== index);
+      // Revoke object URL for removed image if it's a blob URL
+      const removedUrl = prev[index];
+      if (removedUrl && removedUrl.startsWith('blob:') && index >= existingImages.length) {
+        URL.revokeObjectURL(removedUrl);
+      }
+      return updated;
+    });
+    
+    // Update form data (only affects new images)
     setFormData((prev) => ({
       ...prev,
-      images: prev.images.filter((_, i) => i !== index)
+      images: index >= existingImages.length 
+        ? prev.images.filter((_, i) => i !== (index - existingImages.length))
+        : prev.images
     }));
   };
 
@@ -115,11 +247,26 @@ const Update = () => {
       formdata.append('phone', formData.phone);
       formdata.append('availability', formData.availability);
       formdata.append('amenities', JSON.stringify(formData.amenities));
-      formData.images.forEach((image, index) => {
-        formdata.append(`image${index + 1}`, image);
+
+      const yt = (formData.youtubeUrl || '').trim();
+      formdata.append('youtubeUrl', yt);
+
+      // Only append new image files (not existing URLs) — after text fields
+      newImages.forEach((image, index) => {
+        if (image instanceof File) {
+          formdata.append(`image${index + 1}`, image);
+        }
       });
 
-      const response = await axios.post(`${backendurl}/api/products/update`, formdata);
+      const qs = yt ? `youtubeUrl=${encodeURIComponent(yt)}` : 'youtubeUrl=';
+
+      // Do not set Content-Type manually — axios must add the multipart boundary.
+      const response = await axios.post(`${backendurl}/api/products/update?${qs}`, formdata, {
+        headers: {
+          'X-Property-Youtube-Url': yt,
+          'X-Youtube-Url': yt
+        }
+      });
       if (response.data.success) {
         toast.success('Property updated successfully');
         navigate('/list');
@@ -134,14 +281,24 @@ const Update = () => {
     }
   };
 
+  const youtubePreviewSrc = getYoutubePreviewSrc(formData.youtubeUrl);
+
   return (
-    <div className="min-h-screen pt-32 px-4 bg-gray-50">
+    <div className="min-h-screen pt-32 px-4 bg-gray-50 pb-16">
       <div className="max-w-2xl mx-auto rounded-lg shadow-xl bg-white p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Update Property</h2>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="mb-6 pb-4 border-b border-gray-100">
+          <p className="text-sm font-medium text-indigo-600">Property #{id}</p>
+          <h2 className="text-2xl font-bold text-gray-900">Update property</h2>
+          <p className="text-sm text-gray-500 mt-1">
+            All fields below reflect the current listing. Change anything you need, including the YouTube embed link, then save.
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-8">
           {/* Basic Information */}
-          <div className="space-y-4">
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">Listing details</h3>
+            <div className="space-y-4 rounded-xl border border-gray-100 bg-gray-50/50 p-4">
             <div>
               <label htmlFor="title" className="block text-sm font-medium text-gray-700">
                 Property Title
@@ -219,18 +376,24 @@ const Update = () => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label htmlFor="price" className="block text-sm font-medium text-gray-700">
-                  Price
+                  Price ({getCurrencySymbol()})
                 </label>
-                <input
-                  type="number"
-                  id="price"
-                  name="price"
-                  required
-                  min="0"
-                  value={formData.price}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                />
+                <div className="mt-1 relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span className="text-gray-500 sm:text-sm">{getCurrencySymbol()}</span>
+                  </div>
+                  <input
+                    type="number"
+                    id="price"
+                    name="price"
+                    required
+                    min="0"
+                    value={formData.price}
+                    onChange={handleInputChange}
+                    className="block w-full pl-8 rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    placeholder="Enter price"
+                  />
+                </div>
               </div>
 
               <div>
@@ -313,11 +476,59 @@ const Update = () => {
                 className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
+            </div>
+          </div>
+
+          {/* YouTube — full width section */}
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3 flex items-center gap-2">
+              <Youtube className="w-4 h-4 text-red-600" aria-hidden />
+              YouTube video (embed)
+            </h3>
+            <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
+              <label htmlFor="youtubeUrl" className="block text-sm font-medium text-gray-700">
+                Link or embed URL
+              </label>
+              <input
+                type="text"
+                id="youtubeUrl"
+                name="youtubeUrl"
+                value={formData.youtubeUrl}
+                onChange={handleInputChange}
+                placeholder="e.g. https://www.youtube.com/watch?v=… or https://youtu.be/…"
+                className="block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                autoComplete="off"
+              />
+              <p className="text-xs text-gray-500">
+                Paste a watch link, short link, or embed URL. The server saves a standard embed URL. Clear the field to remove the video from the public page.
+              </p>
+              {formData.youtubeUrl?.trim() && (
+                <p className="text-xs text-gray-600 break-all">
+                  <span className="font-medium text-gray-700">Current value: </span>
+                  {formData.youtubeUrl.trim()}
+                </p>
+              )}
+              {youtubePreviewSrc && (
+                <div className="pt-2">
+                  <p className="text-xs font-medium text-gray-700 mb-2">Preview</p>
+                  <div className="aspect-video w-full max-w-lg rounded-lg overflow-hidden border border-gray-200 bg-black">
+                    <iframe
+                      title="YouTube preview"
+                      src={youtubePreviewSrc}
+                      className="w-full h-full border-0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Amenities */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">Amenities</h3>
+            <label className="block text-sm font-medium text-gray-700 mb-2 sr-only">
               Amenities
             </label>
             <div className="flex flex-wrap gap-2">
@@ -340,8 +551,9 @@ const Update = () => {
 
           {/* Image Upload */}
           <div>
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">Photos</h3>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Property Images (Max 4)
+              Property images (max 4)
             </label>
             <div className="grid grid-cols-2 gap-4 mb-4">
               {previewUrls.map((url, index) => (
@@ -350,6 +562,10 @@ const Update = () => {
                     src={url}
                     alt={`Preview ${index + 1}`}
                     className="h-40 w-full object-cover rounded-lg"
+                    onError={(e) => {
+                      // Fallback for broken images
+                      e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2U1ZTdlYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZTwvdGV4dD48L3N2Zz4=';
+                    }}
                   />
                   <button
                     type="button"
@@ -358,6 +574,11 @@ const Update = () => {
                   >
                     <X size={16} />
                   </button>
+                  {index < existingImages.length && (
+                    <span className="absolute top-2 left-2 px-2 py-1 bg-blue-500 text-white text-xs rounded">
+                      Existing
+                    </span>
+                  )}
                 </div>
               ))}
             </div>
