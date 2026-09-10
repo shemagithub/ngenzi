@@ -25,6 +25,7 @@ import blogRouter from './routes/blogRoute.js';
 import teamRouter from './routes/teamRoute.js';
 import testimonialRouter from './routes/testimonialRoute.js';
 import getStatusPage from './serverweb.js';
+import seoRouter from './routes/seoRoute.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -72,7 +73,7 @@ const limiter = rateLimit({
   // Skip rate limiting for successful requests in development
   skip: (req, res) => {
     // Skip for health checks and in development for successful requests
-    if (req.path === '/status' || req.path === '/') return true;
+    if (req.path === '/status' || req.path === '/' || req.path === '/sitemap.xml' || req.path === '/robots.txt') return true;
     return process.env.NODE_ENV === 'development' && res.statusCode < 400;
   },
   // Custom key generator to handle proxy scenarios
@@ -95,20 +96,15 @@ app.use(cors({
     'https://buildestate.vercel.app',
     'https://real-estate-website-admin.onrender.com',
     'https://real-estate-website-backend-zfu7.onrender.com',
-    // Namecheap domains
-    'http://ngenziadmin.guzekustomz.com',
-    'https://ngenziadmin.guzekustomz.com',
-    'http://ngenzi.guzekustomz.com',
-    'https://ngenzi.guzekustomz.com',
-    'http://www.ngenziadmin.guzekustomz.com',
-    'https://www.ngenziadmin.guzekustomz.com',
-    'http://www.ngenzi.guzekustomz.com',
-    'https://www.ngenzi.guzekustomz.com',
-    // Production frontend domain
-    'https://ngenzirealestate.rw',
-    'http://ngenzirealestate.rw',
-    'https://www.ngenzirealestate.rw',
-    'http://www.ngenzirealestate.rw',
+    // Production — frontend + backend
+    'https://ngenzirealestate.com',
+    'http://ngenzirealestate.com',
+    'https://www.ngenzirealestate.com',
+    'http://www.ngenzirealestate.com',
+    'https://admin.ngenzirealestate.com',
+    'http://admin.ngenzirealestate.com',
+    'https://backend.ngenzirealestate.com',
+    'http://backend.ngenzirealestate.com',
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'PATCH'],
@@ -136,7 +132,7 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
       scriptSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "https:", "http://localhost:4000", "http://localhost:5173", "http://localhost:5174", "http://ngenzi.guzekustomz.com", "https://ngenzi.guzekustomz.com", "http://ngenziadmin.guzekustomz.com", "https://ngenziadmin.guzekustomz.com", "https://ngenzirealestate.rw", "https://www.ngenzirealestate.rw", "https://myambi.wildjourneysrwanda.com"],
+      imgSrc: ["'self'", "data:", "https:", "http://localhost:4000", "http://localhost:5173", "http://localhost:5174", "https://ngenzirealestate.com", "https://www.ngenzirealestate.com", "https://admin.ngenzirealestate.com", "https://backend.ngenzirealestate.com"],
     },
   } : false,
   crossOriginEmbedderPolicy: false,
@@ -212,19 +208,14 @@ const staticCorsMiddleware = (req, res, next) => {
     'http://localhost:5173',
     'https://buildestate.vercel.app',
     'https://real-estate-website-admin.onrender.com',
-    'http://ngenziadmin.guzekustomz.com',
-    'https://ngenziadmin.guzekustomz.com',
-    'http://ngenzi.guzekustomz.com',
-    'https://ngenzi.guzekustomz.com',
-    'http://www.ngenziadmin.guzekustomz.com',
-    'https://www.ngenziadmin.guzekustomz.com',
-    'http://www.ngenzi.guzekustomz.com',
-    'https://www.ngenzi.guzekustomz.com',
-    // Production frontend domain
-    'https://ngenzirealestate.rw',
-    'http://ngenzirealestate.rw',
-    'https://www.ngenzirealestate.rw',
-    'http://www.ngenzirealestate.rw',
+    'https://ngenzirealestate.com',
+    'http://ngenzirealestate.com',
+    'https://www.ngenzirealestate.com',
+    'http://www.ngenzirealestate.com',
+    'https://admin.ngenzirealestate.com',
+    'http://admin.ngenzirealestate.com',
+    'https://backend.ngenzirealestate.com',
+    'http://backend.ngenzirealestate.com',
   ];
 
   const origin = req.headers.origin;
@@ -283,19 +274,14 @@ app.use((req, res, next) => {
     'https://buildestate.vercel.app',
     'https://real-estate-website-admin.onrender.com',
     'https://real-estate-website-backend-zfu7.onrender.com',
-    'http://ngenziadmin.guzekustomz.com',
-    'https://ngenziadmin.guzekustomz.com',
-    'http://ngenzi.guzekustomz.com',
-    'https://ngenzi.guzekustomz.com',
-    'http://www.ngenziadmin.guzekustomz.com',
-    'https://www.ngenziadmin.guzekustomz.com',
-    'http://www.ngenzi.guzekustomz.com',
-    'https://www.ngenzi.guzekustomz.com',
-    // Production frontend domain
-    'https://ngenzirealestate.rw',
-    'http://ngenzirealestate.rw',
-    'https://www.ngenzirealestate.rw',
-    'http://www.ngenzirealestate.rw',
+    'https://ngenzirealestate.com',
+    'http://ngenzirealestate.com',
+    'https://www.ngenzirealestate.com',
+    'http://www.ngenzirealestate.com',
+    'https://admin.ngenzirealestate.com',
+    'http://admin.ngenzirealestate.com',
+    'https://backend.ngenzirealestate.com',
+    'http://backend.ngenzirealestate.com',
   ];
   
   const origin = req.headers.origin;
@@ -330,6 +316,9 @@ connectdb()
     // Don't exit - allow server to start and retry DB connection
   });
 
+
+// SEO — sitemap & robots (public, before API catch-alls)
+app.use('/', seoRouter);
 
 // API Routes
 app.use('/api/products', propertyrouter);

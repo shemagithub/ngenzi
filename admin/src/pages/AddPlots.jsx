@@ -318,7 +318,7 @@ const PlotForm = () => {
   };
 
   return (
-    <div className="min-h-screen pt-32 px-4 bg-gray-50">
+    <div className="admin-page">
       <div className="max-w-2xl mx-auto rounded-lg shadow-xl bg-white p-6">
         <div className="flex items-center gap-3 mb-2">
           <div className="p-2 bg-amber-100 rounded-lg">

@@ -43,20 +43,19 @@ const SearchForm = ({ onSearch, isLoading }) => {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="bg-white dark:bg-gray-800 p-4 sm:p-6 md:p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700"
+      className="bg-cream-50 p-4 sm:p-6 md:p-8 rounded-haven shadow-haven border border-cream-400"
     >
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6">
-        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg mr-3 w-10 h-10 flex items-center justify-center">
-          <Search className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+        <div className="p-2 bg-haven-100 rounded-haven mr-3 w-10 h-10 flex items-center justify-center">
+          <Search className="h-5 w-5 text-haven-700" />
         </div>
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-200">Find Your Dream Property</h2>
+        <h2 className="font-display text-xl sm:text-2xl text-haven-900">Find Your Dream Property</h2>
       </div>
       
       <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
-        {/* City Field with Suggestions */}
         <div className="relative">
-          <label htmlFor="city" className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-            <MapPin className="w-4 h-4 mr-1.5 text-blue-600 dark:text-blue-400" />
+          <label htmlFor="city" className="flex items-center text-sm font-medium text-haven-800 mb-1.5">
+            <MapPin className="w-4 h-4 mr-1.5 text-haven-700" />
             City
           </label>
           <div className="relative">
@@ -69,24 +68,24 @@ const SearchForm = ({ onSearch, isLoading }) => {
               onFocus={() => setActiveField('city')}
               onBlur={() => setTimeout(() => setActiveField(null), 100)}
               placeholder="Enter city name (e.g., Kigali)"
-              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-shadow text-sm sm:text-base"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-cream-400 rounded-haven bg-white focus:ring-2 focus:ring-haven-500 focus:border-haven-500 focus:outline-none transition-shadow text-sm sm:text-base text-haven-900"
               required
             />
             {activeField === 'city' && (
               <motion.div 
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2"
+                className="absolute z-10 mt-1 w-full bg-cream-50 rounded-haven shadow-soft border border-cream-400 py-2"
               >
-                <p className="px-3 py-1 text-xs font-medium text-gray-500 dark:text-gray-400">Popular Cities</p>
+                <p className="px-3 py-1 text-xs font-medium text-haven-600">Popular Cities</p>
                 <div className="mt-1 max-h-48 overflow-y-auto">
                   {popularCities.map((city) => (
                     <div
                       key={city}
                       onClick={() => handleCitySelect(city)}
-                      className="px-3 py-2 hover:bg-blue-50 dark:hover:bg-blue-900/30 cursor-pointer text-gray-700 dark:text-gray-300 flex items-center"
+                      className="px-3 py-2 hover:bg-haven-50 cursor-pointer text-haven-800 flex items-center"
                     >
-                      <MapPin className="w-4 h-4 mr-2 text-gray-400 dark:text-gray-500" />
+                      <MapPin className="w-4 h-4 mr-2 text-haven-500" />
                       {city}
                     </div>
                   ))}
@@ -97,10 +96,9 @@ const SearchForm = ({ onSearch, isLoading }) => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-          {/* Price Field */}
           <div>
-            <label htmlFor="maxPrice" className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-              <DollarSign className="w-4 h-4 mr-1.5 text-blue-600 dark:text-blue-400" />
+            <label htmlFor="maxPrice" className="flex items-center text-sm font-medium text-haven-800 mb-1.5">
+              <DollarSign className="w-4 h-4 mr-1.5 text-haven-700" />
               Maximum Price
             </label>
             <div className="relative">
@@ -113,19 +111,18 @@ const SearchForm = ({ onSearch, isLoading }) => {
                 step="0.1"
                 value={searchParams.maxPrice}
                 onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-shadow text-sm sm:text-base bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-cream-400 rounded-haven bg-white focus:ring-2 focus:ring-haven-500 focus:border-haven-500 focus:outline-none transition-shadow text-sm sm:text-base text-haven-900"
                 required
               />
-              <span className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 text-sm font-medium">
+              <span className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-haven-600 text-sm font-medium">
                 {getCurrencySymbol()}
               </span>
             </div>
           </div>
           
-          {/* Property Type Field */}
           <div>
-            <label htmlFor="propertyType" className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-              <Home className="w-4 h-4 mr-1.5 text-blue-600 dark:text-blue-400" />
+            <label htmlFor="propertyType" className="flex items-center text-sm font-medium text-haven-800 mb-1.5">
+              <Home className="w-4 h-4 mr-1.5 text-haven-700" />
               Property Type
             </label>
             <select
@@ -133,7 +130,7 @@ const SearchForm = ({ onSearch, isLoading }) => {
               name="propertyType"
               value={searchParams.propertyType}
               onChange={handleChange}
-              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-shadow appearance-none text-sm sm:text-base"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-cream-400 rounded-haven bg-white focus:ring-2 focus:ring-haven-500 focus:border-haven-500 focus:outline-none transition-shadow appearance-none text-sm sm:text-base text-haven-900"
             >
               <option value="Flat">Flat</option>
               <option value="Individual House">Individual House</option>
@@ -142,10 +139,9 @@ const SearchForm = ({ onSearch, isLoading }) => {
             </select>
           </div>
           
-          {/* Property Category Field */}
           <div>
-            <label htmlFor="propertyCategory" className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-              <Building className="w-4 h-4 mr-1.5 text-blue-600 dark:text-blue-400" />
+            <label htmlFor="propertyCategory" className="flex items-center text-sm font-medium text-haven-800 mb-1.5">
+              <Building className="w-4 h-4 mr-1.5 text-haven-700" />
               Property Category
             </label>
             <select
@@ -153,17 +149,16 @@ const SearchForm = ({ onSearch, isLoading }) => {
               name="propertyCategory"
               value={searchParams.propertyCategory}
               onChange={handleChange}
-              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-shadow appearance-none text-sm sm:text-base"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-cream-400 rounded-haven bg-white focus:ring-2 focus:ring-haven-500 focus:border-haven-500 focus:outline-none transition-shadow appearance-none text-sm sm:text-base text-haven-900"
             >
               <option value="Residential">Residential</option>
               <option value="Commercial">Commercial</option>
             </select>
           </div>
 
-          {/* Price Range Selector */}
           <div>
-            <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 sm:mb-4">
-              <DollarSign className="w-4 h-4 mr-1.5 text-blue-600 dark:text-blue-400" />
+            <label className="flex items-center text-sm font-medium text-haven-800 mb-2 sm:mb-4">
+              <DollarSign className="w-4 h-4 mr-1.5 text-haven-700" />
               Price Range: {formatPrice(searchParams.maxPrice * 10000000)}
             </label>
             <input
@@ -173,9 +168,9 @@ const SearchForm = ({ onSearch, isLoading }) => {
               step="0.5"
               value={searchParams.maxPrice}
               onChange={(e) => handleChange({ target: { name: 'maxPrice', value: e.target.value }})}
-              className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
+              className="w-full h-2 bg-cream-300 rounded-lg appearance-none cursor-pointer accent-haven-700"
             />
-            <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+            <div className="flex justify-between text-xs text-haven-600 mt-1">
               <span>{formatPrice(0.5 * 10000000)}</span>
               <span>{formatPrice(50 * 10000000)}</span>
             </div>
@@ -187,7 +182,7 @@ const SearchForm = ({ onSearch, isLoading }) => {
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.99 }}
           disabled={isLoading}
-          className="w-full mt-2 sm:mt-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 font-medium shadow-lg disabled:opacity-70"
+          className="w-full mt-2 sm:mt-4 btn-haven !py-3 sm:!py-4 disabled:opacity-70"
         >
           {isLoading ? (
             <span className="flex items-center justify-center">

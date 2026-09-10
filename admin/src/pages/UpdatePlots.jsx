@@ -335,14 +335,14 @@ const UpdatePlots = () => {
 
   if (fetching) {
     return (
-      <div className="min-h-screen pt-32 flex items-center justify-center bg-gray-50">
+      <div className="admin-page flex items-center justify-center">
         <p className="text-gray-600">Loading plot...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pt-32 px-4 bg-gray-50 pb-16">
+    <div className="admin-page pb-16">
       <div className="max-w-2xl mx-auto rounded-lg shadow-xl bg-white p-6">
         <div className="flex items-start gap-3 mb-6 pb-4 border-b border-gray-100">
           <div className="p-2 bg-amber-100 rounded-lg shrink-0">

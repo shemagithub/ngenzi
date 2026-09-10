@@ -21,11 +21,16 @@ import {
   Ruler,
   Map as MapIcon,
   CheckCircle,
-  XCircle
+  XCircle,
+  Expand
 } from "lucide-react";
 import { Backendurl } from "../../utils/backendUrl";
 import { getYoutubeEmbedSrc } from "../../utils/youtubeEmbed";
 import ScheduleViewing from "../properties/ScheduleViewing";
+import ImageLightbox from "../ImageLightbox";
+import SEOHead from "../SEO/SEOHead";
+import StructuredData from "../SEO/StructuredData";
+import { clipDescription } from "../../utils/seoConfig";
 
 const PlotDetails = () => {
   const { id } = useParams();
@@ -36,6 +41,7 @@ const PlotDetails = () => {
   const [error, setError] = useState(null);
   const [showSchedule, setShowSchedule] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const navigate = useNavigate();
 
@@ -161,13 +167,13 @@ const PlotDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-16">
+      <div className="min-h-screen flex items-center justify-center bg-cream-200 pt-16">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="text-center"
         >
-          <Loader className="w-12 h-12 text-amber-600 animate-spin mx-auto mb-4" />
+          <Loader className="w-12 h-12 text-haven-700 animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading plot details...</p>
         </motion.div>
       </div>
@@ -176,7 +182,7 @@ const PlotDetails = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-16">
+      <div className="min-h-screen flex items-center justify-center bg-cream-200 pt-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -189,7 +195,7 @@ const PlotDetails = () => {
             <div className="flex gap-3 justify-center">
               <button
                 onClick={() => navigate('/plots')}
-                className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
+                className="btn-haven !py-2 !px-4"
               >
                 Back to Plots
               </button>
@@ -214,14 +220,36 @@ const PlotDetails = () => {
   const displayImage = images[activeImage] || plot.frontImage || '';
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16">
+    <div className="min-h-screen bg-cream-200 pt-16">
+      <SEOHead
+        title={`${plot.title} — Land Plot in ${plot.location || 'Rwanda'}`}
+        description={clipDescription(
+          plot.description ||
+            `${plot.title} land plot in ${plot.location || 'Rwanda'} listed with NGENZI REALESTATE.`
+        )}
+        keywords={`${plot.title}, ${plot.location}, land plot Rwanda, buy land`}
+        image={plot.frontImage || (Array.isArray(plot.image) ? plot.image[0] : null)}
+        type="article"
+        canonicalPath={`/plots/${id}`}
+      />
+      <StructuredData type="plot" data={plot} />
+      <StructuredData
+        type="breadcrumb"
+        data={{
+          breadcrumbs: [
+            { name: 'Home', path: '/' },
+            { name: 'Plots', path: '/plots' },
+            { name: plot.title, path: `/plots/${id}` },
+          ],
+        }}
+      />
       {/* Navigation Bar */}
       <div className="bg-white border-b sticky top-16 z-40">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <button
               onClick={() => navigate('/plots')}
-              className="flex items-center gap-2 text-gray-600 hover:text-amber-600 transition-colors"
+              className="flex items-center gap-2 text-haven-700 hover:text-haven-900 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
               <span>Back to Plots</span>
@@ -229,7 +257,7 @@ const PlotDetails = () => {
             <div className="flex items-center gap-3">
               <button
                 onClick={handleShare}
-                className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-amber-600 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-haven-700 hover:text-haven-900 transition-colors"
               >
                 <Share2 className="w-5 h-5" />
                 <span className="hidden sm:inline">Share</span>
@@ -256,17 +284,28 @@ const PlotDetails = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <div className="relative bg-white rounded-xl overflow-hidden shadow-lg">
+          <div className="relative bg-white rounded-xl overflow-hidden shadow-lg group">
             {displayImage ? (
               <div className="relative h-[500px] md:h-[600px]">
                 <img
                   src={displayImage}
                   alt={plot.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover cursor-zoom-in"
+                  onClick={() => setLightboxOpen(true)}
                   onError={(e) => {
                     e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2U1ZTdlYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5QbG90IEltYWdlPC90ZXh0Pjwvc3ZnPg==';
                   }}
                 />
+
+                <button
+                  type="button"
+                  onClick={() => setLightboxOpen(true)}
+                  className="absolute top-4 right-4 z-10 inline-flex items-center gap-2 px-3 py-2 bg-haven-900/90 text-cream-100 text-[10px] font-semibold uppercase tracking-[0.14em] hover:bg-accent-400 hover:text-haven-900 transition-colors"
+                  aria-label="View image full screen"
+                >
+                  <Expand className="w-4 h-4" />
+                  Full View
+                </button>
                 
                 {images.length > 1 && (
                   <>
@@ -310,8 +349,12 @@ const PlotDetails = () => {
                     <button
                       key={index}
                       onClick={() => setActiveImage(index)}
+                      onDoubleClick={() => {
+                        setActiveImage(index);
+                        setLightboxOpen(true);
+                      }}
                       className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
-                        index === activeImage ? 'border-amber-600' : 'border-transparent'
+                        index === activeImage ? 'border-haven-700' : 'border-transparent'
                       }`}
                     >
                       <img
@@ -325,6 +368,15 @@ const PlotDetails = () => {
               </div>
             )}
           </div>
+
+          <ImageLightbox
+            images={images}
+            index={activeImage}
+            isOpen={lightboxOpen}
+            onClose={() => setLightboxOpen(false)}
+            onChangeIndex={setActiveImage}
+            alt={plot.title}
+          />
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -339,14 +391,14 @@ const PlotDetails = () => {
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">{plot.title}</h1>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <MapPin className="w-5 h-5 text-amber-600" />
+                  <h1 className="font-display text-3xl text-haven-900 mb-2">{plot.title}</h1>
+                  <div className="flex items-center gap-2 text-haven-700">
+                    <MapPin className="w-5 h-5 text-haven-700" />
                     <span className="text-lg">{plot.location}</span>
                   </div>
                 </div>
                 <span className={`px-4 py-2 rounded-full text-sm font-semibold text-white ${
-                  plot.availability === 'rent' ? 'bg-green-600' : 'bg-amber-600'
+                  plot.availability === 'rent' ? 'bg-haven-600' : 'bg-accent-600'
                 }`}>
                   {plot.availability === 'rent' ? 'For Rent' : 'For Sale'}
                 </span>
@@ -358,10 +410,10 @@ const PlotDetails = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-gradient-to-r from-amber-500 to-orange-600 rounded-xl p-6 text-white shadow-lg"
+              className="bg-haven-800 rounded-haven p-6 text-cream-100 shadow-haven"
             >
-              <p className="text-sm opacity-90 mb-1">Price</p>
-              <p className="text-4xl font-bold">{formatPrice(plot.price)}</p>
+              <p className="text-sm text-cream-200/80 mb-1">Price</p>
+              <p className="font-display text-4xl">{formatPrice(plot.price)}</p>
             </motion.div>
 
             {plot.youtubeUrl && getYoutubeEmbedSrc(plot.youtubeUrl) && (
@@ -396,8 +448,8 @@ const PlotDetails = () => {
             >
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Plot Details</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                <div className="flex flex-col items-center p-4 bg-amber-50 rounded-lg">
-                  <Maximize className="w-8 h-8 text-amber-600 mb-2" />
+                <div className="flex flex-col items-center p-4 bg-haven-50 rounded-haven border border-haven-100">
+                  <Maximize className="w-8 h-8 text-haven-700 mb-2" />
                   <p className="text-sm text-gray-600 mb-1">Area</p>
                   <p className="text-lg font-semibold text-gray-900">
                     {plot.area ? `${Number(plot.area).toLocaleString()} ${plot.areaUnit || 'sqft'}` : 'N/A'}
@@ -405,8 +457,8 @@ const PlotDetails = () => {
                 </div>
                 
                 {plot.plotNumber && (
-                  <div className="flex flex-col items-center p-4 bg-blue-50 rounded-lg">
-                    <MapIcon className="w-8 h-8 text-blue-600 mb-2" />
+                  <div className="flex flex-col items-center p-4 bg-cream-100 rounded-haven border border-cream-400">
+                    <MapIcon className="w-8 h-8 text-haven-700 mb-2" />
                     <p className="text-sm text-gray-600 mb-1">Plot Number</p>
                     <p className="text-lg font-semibold text-gray-900">{plot.plotNumber}</p>
                   </div>
@@ -421,8 +473,8 @@ const PlotDetails = () => {
                 )}
                 
                 {plot.facing && (
-                  <div className="flex flex-col items-center p-4 bg-purple-50 rounded-lg">
-                    <Compass className="w-8 h-8 text-purple-600 mb-2" />
+                  <div className="flex flex-col items-center p-4 bg-accent-50 rounded-haven border border-accent-200">
+                    <Compass className="w-8 h-8 text-accent-700 mb-2" />
                     <p className="text-sm text-gray-600 mb-1">Facing</p>
                     <p className="text-lg font-semibold text-gray-900">{plot.facing}</p>
                   </div>
@@ -509,7 +561,7 @@ const PlotDetails = () => {
               {plot.phone && (
                 <a
                   href={`tel:${plot.phone}`}
-                  className="flex items-center gap-3 w-full p-4 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors mb-4"
+                  className="flex items-center gap-3 w-full p-4 btn-haven mb-4"
                 >
                   <Phone className="w-5 h-5" />
                   <span className="font-semibold">Call Now</span>
@@ -518,7 +570,7 @@ const PlotDetails = () => {
               
               <button
                 onClick={() => setShowSchedule(true)}
-                className="flex items-center gap-3 w-full p-4 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors"
+                className="flex items-center gap-3 w-full p-4 bg-cream-200 text-haven-900 rounded-haven hover:bg-cream-300 transition-colors border border-cream-400"
               >
                 <Calendar className="w-5 h-5" />
                 <span className="font-semibold">Schedule Viewing</span>

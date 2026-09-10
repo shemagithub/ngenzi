@@ -1,15 +1,12 @@
 // frontend/src/services/api.js
 import axios from 'axios';
-
-// Backend API URL - Always use the production API
-// Hardcoded to prevent environment variable caching issues
-const API_URL = 'https://myambi.wildjourneysrwanda.com';
+import { Backendurl } from '../utils/backendUrl';
 
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: Backendurl,
   headers: {
     'Content-Type': 'application/json',
-  }
+  },
 });
 
 export const searchProperties = async (searchParams) => {

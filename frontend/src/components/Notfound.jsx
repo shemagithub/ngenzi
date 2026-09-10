@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import SEOHead from './SEO/SEOHead';
 
 // Enhanced Animation Variants
 const containerVariants = {
@@ -64,9 +65,9 @@ const sparkleAnimation = {
 
 const glowAnimation = {
   boxShadow: [
-    "0 0 40px rgba(59, 130, 246, 0.3)",
-    "0 0 80px rgba(59, 130, 246, 0.5)",
-    "0 0 40px rgba(59, 130, 246, 0.3)"
+    "0 0 40px rgba(27, 58, 47, 0.2)",
+    "0 0 80px rgba(27, 58, 47, 0.35)",
+    "0 0 40px rgba(27, 58, 47, 0.2)"
   ],
   transition: {
     duration: 3,
@@ -99,16 +100,21 @@ export default function NotFoundPage() {
   return (
     <div className={`min-h-screen relative overflow-hidden transition-all duration-700 ${
       isDark
-        ? 'bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900'
-        : 'bg-gradient-to-br from-blue-50 via-white to-purple-50'
+        ? 'bg-haven-950'
+        : 'bg-cream-200'
     }`}>
+      <SEOHead
+        title="Page Not Found"
+        description="The page you requested could not be found on NGENZI REALESTATE."
+        noindex
+      />
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(50)].map((_, i) => (
           <motion.div
             key={i}
             className={`absolute w-1 h-1 rounded-full ${
-              isDark ? 'bg-blue-400/30' : 'bg-blue-500/20'
+              isDark ? 'bg-accent-400/30' : 'bg-haven-500/20'
             }`}
             style={{
               left: `${Math.random() * 100}%`,
@@ -131,7 +137,7 @@ export default function NotFoundPage() {
       <motion.div
         className="fixed pointer-events-none z-10 w-32 h-32 rounded-full opacity-20"
         style={{
-          background: `radial-gradient(circle, ${isDark ? 'rgba(59, 130, 246, 0.3)' : 'rgba(59, 130, 246, 0.2)'} 0%, transparent 70%)`,
+          background: `radial-gradient(circle, ${isDark ? 'rgba(196, 165, 116, 0.25)' : 'rgba(27, 58, 47, 0.15)'} 0%, transparent 70%)`,
           left: mousePosition.x - 64,
           top: mousePosition.y - 64,
         }}
@@ -174,11 +180,9 @@ export default function NotFoundPage() {
             <motion.div
               variants={itemVariants}
               animate={glowAnimation}
-              className={`text-8xl md:text-9xl font-black mb-4 relative ${
-                isDark
-                  ? 'bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400'
-                  : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600'
-              } bg-clip-text text-transparent`}
+              className={`font-display text-8xl md:text-9xl mb-4 relative ${
+                isDark ? 'text-cream-100' : 'text-haven-900'
+              }`}
             >
               404
             </motion.div>
@@ -203,8 +207,8 @@ export default function NotFoundPage() {
 
           {/* Error Message */}
           <motion.div variants={itemVariants} className="mb-8">
-            <h1 className={`text-4xl md:text-5xl font-bold mb-4 ${
-              isDark ? 'text-white' : 'text-gray-900'
+            <h1 className={`font-display text-4xl md:text-5xl mb-4 ${
+              isDark ? 'text-cream-100' : 'text-haven-900'
             }`}>
               Oops! Page Not Found
             </h1>
@@ -240,7 +244,7 @@ export default function NotFoundPage() {
                 Go Back
               </span>
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20"
+                className="absolute inset-0 bg-haven-900/5"
                 initial={{ x: "-100%" }}
                 whileHover={{ x: 0 }}
                 transition={{ duration: 0.3 }}
@@ -249,11 +253,7 @@ export default function NotFoundPage() {
             
             <Link to="/">
               <motion.div
-                className={`group relative overflow-hidden px-8 py-4 rounded-xl transition-all duration-300 ${
-                  isDark
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-500 hover:to-purple-500' 
-                    : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700'
-                } shadow-xl`}
+                className="btn-haven !px-8 !py-4 shadow-haven"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -296,8 +296,8 @@ export default function NotFoundPage() {
                   >
                     <item.icon className={`w-8 h-8 mx-auto mb-2 transition-all duration-300 ${
                       isDark
-                        ? 'text-blue-400 group-hover:text-blue-300' 
-                        : 'text-blue-600 group-hover:text-blue-700'
+                        ? 'text-accent-400 group-hover:text-accent-300' 
+                        : 'text-haven-700 group-hover:text-haven-900'
                     } group-hover:scale-110`} />
                     <p className={`text-sm font-medium ${
                       isDark ? 'text-gray-300' : 'text-gray-700'

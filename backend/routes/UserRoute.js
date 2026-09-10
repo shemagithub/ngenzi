@@ -1,5 +1,5 @@
 import express from 'express';
-import { login, register, forgotpassword,adminlogin,resetpassword,getname, updateProfile, changePassword, getAllUsers, getUserById, updateUserByAdmin, deleteUser, resetUserPassword } from '../controller/Usercontroller.js';
+import { login, register, forgotpassword,adminlogin,setupAdmin,resetpassword,getname, updateProfile, changePassword, getAllUsers, getUserById, updateUserByAdmin, deleteUser, resetUserPassword } from '../controller/Usercontroller.js';
 import { getSavedProperties, addSavedProperty, removeSavedProperty, checkSavedProperty } from '../controller/savedPropertyController.js';
 import { protect, isAdmin } from '../middleware/authmiddleware.js';
 
@@ -11,6 +11,7 @@ userrouter.post('/register', register);
 userrouter.post('/forgot', forgotpassword);
 userrouter.post('/reset/:token', resetpassword);
 userrouter.post('/admin', adminlogin);
+userrouter.post('/setup-admin', setupAdmin);
 userrouter.get('/me', protect, getname);
 userrouter.put('/profile', protect, updateProfile);
 userrouter.put('/change-password', protect, changePassword);

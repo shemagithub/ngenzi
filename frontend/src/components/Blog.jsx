@@ -147,7 +147,7 @@ const BlogCard = ({ post }) => {
 
   return (
     <motion.div
-      className="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-blue-200 cursor-pointer transform-gpu"
+      className="group bg-white dark:bg-haven-900 overflow-hidden shadow-soft transition-all duration-500 border border-cream-400/80 dark:border-haven-800 hover:border-accent-400 cursor-pointer"
       variants={cardVariants}
       initial="hidden"
       animate="visible"
@@ -160,7 +160,7 @@ const BlogCard = ({ post }) => {
       onHoverEnd={() => setIsHovered(false)}
       onClick={handleReadMore}
     >
-      <div className="relative overflow-hidden aspect-w-16 aspect-h-9 bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="relative overflow-hidden aspect-w-16 aspect-h-9 bg-cream-300">
         {post.image && post.image.trim() !== '' && post.image !== 'null' && post.image !== 'undefined' ? (
           <img
             src={post.image}
@@ -175,7 +175,7 @@ const BlogCard = ({ post }) => {
           />
         ) : null}
         <div 
-          className={`image-fallback w-full h-64 bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center ${post.image && post.image.trim() !== '' && post.image !== 'null' && post.image !== 'undefined' ? 'hidden' : ''}`}
+          className={`image-fallback w-full h-64 bg-haven-800 flex items-center justify-center ${post.image && post.image.trim() !== '' && post.image !== 'null' && post.image !== 'undefined' ? 'hidden' : ''}`}
         >
           <FileText className="w-16 h-16 text-white opacity-50" />
         </div>
@@ -186,7 +186,7 @@ const BlogCard = ({ post }) => {
           className="absolute top-6 left-6 z-10"
           animate={floatingAnimation}
         >
-          <span className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 backdrop-blur-md text-white text-xs font-semibold rounded-full shadow-lg border border-white/20">
+          <span className="px-3 py-1.5 bg-haven-900 text-white text-[10px] font-semibold uppercase tracking-[0.14em]">
             {category}
           </span>
         </motion.div>
@@ -211,7 +211,7 @@ const BlogCard = ({ post }) => {
                   e.stopPropagation();
                   handleReadMore();
                 }}
-                className="px-6 py-3 bg-white/95 backdrop-blur-sm text-blue-600 rounded-full flex items-center gap-2 hover:bg-blue-600 hover:text-white transition-all duration-300 font-semibold text-sm shadow-xl border border-white/50 group-hover:scale-105"
+                className="px-5 py-2.5 bg-white text-haven-900 text-[11px] font-semibold uppercase tracking-[0.14em] flex items-center gap-2 hover:bg-haven-900 hover:text-white transition-all"
               >
                 Read Full Article <ExternalLink className="w-4 h-4" />
               </button>
@@ -225,8 +225,8 @@ const BlogCard = ({ post }) => {
             onClick={handleBookmark}
             className={`p-3 backdrop-blur-md rounded-full shadow-lg border border-white/20 transition-all duration-300
               ${isBookmarked 
-                ? 'bg-blue-600 text-white shadow-blue-500/25' 
-                : 'bg-white/90 text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+                ? 'bg-haven-900 text-white' 
+                : 'bg-white/90 text-gray-700 hover:bg-cream-200 hover:text-haven-900'
               }`}
           >
             {isBookmarked ? (
@@ -239,7 +239,7 @@ const BlogCard = ({ post }) => {
           <motion.button
             whileTap={pulseAnimation}
             onClick={handleShare}
-            className="p-3 bg-white/90 backdrop-blur-md text-gray-700 rounded-full hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 shadow-lg border border-white/20"
+            className="p-3 bg-white/90 backdrop-blur-md text-gray-700 rounded-full hover:bg-cream-200 hover:text-haven-900 transition-all duration-300 shadow-lg border border-white/20"
           >
             <Share2 className="w-4 h-4" />
           </motion.button>
@@ -250,7 +250,7 @@ const BlogCard = ({ post }) => {
         <div className="flex items-center justify-between text-gray-500 text-xs mb-4">
           <div className="flex items-center gap-4">
             <div className="flex items-center">
-              <Calendar className="w-4 h-4 mr-2 text-blue-500" />
+              <Calendar className="w-4 h-4 mr-2 text-accent-500" />
               <span className="font-medium">{displayDate}</span>
             </div>
             <div className="flex items-center">
@@ -264,7 +264,7 @@ const BlogCard = ({ post }) => {
           </div>
         </div>
 
-        <h3 className="text-xl font-bold text-gray-900 mb-4 line-clamp-2 group-hover:text-blue-600 transition-colors duration-300 leading-tight">
+        <h3 className="font-display text-xl text-haven-900 dark:text-cream-100 mb-4 line-clamp-2 group-hover:text-accent-600 transition-colors duration-300 leading-tight">
           {post.title}
         </h3>
         
@@ -288,7 +288,7 @@ const BlogCard = ({ post }) => {
               e.stopPropagation();
               handleReadMore();
             }}
-            className="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold transition-all duration-300 text-sm group/btn"
+            className="inline-flex items-center text-haven-900 dark:text-accent-400 hover:text-accent-600 font-semibold transition-all duration-300 text-sm group/btn"
           >
             Continue Reading
             <ChevronRight className="w-4 h-4 ml-1 group-hover/btn:translate-x-1 transition-transform duration-300" />
@@ -391,11 +391,11 @@ const Blog = () => {
   }, [blogs, filteredPosts, loading, error, selectedCategory]);
 
   return (
-    <section className="py-32 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50 dark:from-gray-900 dark:via-gray-800/30 dark:to-gray-900 relative overflow-hidden transition-colors duration-200">
+    <section className="py-24 bg-cream-100 dark:bg-haven-950 relative overflow-hidden transition-colors duration-200">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-gradient-to-br from-blue-400/10 to-indigo-400/10 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full blur-3xl"></div>
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-gradient-to-br from-accent-400/10 to-haven-400/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-gradient-to-br from-haven-400/10 to-accent-400/10 rounded-full blur-3xl"></div>
       </div>
 
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -406,30 +406,14 @@ const Blog = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <motion.div 
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-6"
-            animate={{ scale: [1, 1.05, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            <TrendingUp className="w-4 h-4" />
-            Latest Real Estate Insights
-          </motion.div>
+          <p className="section-eyebrow mb-4">Latest Insights</p>
           
-          <h2 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-gray-100 mb-6 relative">
-            <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent">
-              Expert Insights
-            </span>
-            <br />
-            <span className="text-gray-900 dark:text-gray-100">& Market Updates</span>
-            <motion.div 
-              className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full"
-              initial={{ width: 0 }}
-              whileInView={{ width: 96 }}
-              transition={{ duration: 1, delay: 0.5 }}
-            />
+          <h2 className="section-title mt-3 mb-2">
+            Expert Insights & Market Updates
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed transition-colors duration-200">
-            Stay ahead of the market with our curated collection of expert advice, 
+          <div className="section-divider" />
+          <p className="text-haven-700/70 dark:text-cream-200/60 max-w-2xl mx-auto leading-relaxed">
+            Stay ahead of the market with our curated collection of expert advice,
             market trends, and insider tips for your real estate journey.
           </p>
         </motion.div>
@@ -453,9 +437,9 @@ const Blog = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
-                  className="w-full pl-12 pr-6 py-4 rounded-2xl border-2 border-gray-200 dark:border-gray-700 focus:ring-4 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 focus:border-blue-500 dark:focus:border-blue-400 transition-all bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                  className="w-full pl-12 pr-6 py-4 rounded-2xl border-2 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-accent-400/30 focus:border-accent-400 transition-all bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                 />
-                <Search className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 transition-colors ${isSearchFocused ? 'text-blue-500' : 'text-gray-400'}`} />
+                <Search className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 transition-colors ${isSearchFocused ? 'text-accent-500' : 'text-gray-400'}`} />
                 {searchTerm && (
                   <motion.button
                     initial={{ opacity: 0, scale: 0 }}
@@ -481,8 +465,8 @@ const Blog = () => {
                   onClick={() => setSelectedCategory(category)}
                   className={`px-6 py-3 rounded-full text-sm font-semibold transition-all duration-300 shadow-lg ${
                     selectedCategory === category
-                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-500 dark:to-indigo-500 text-white shadow-blue-500/25 dark:shadow-blue-500/30 transform scale-105'
-                      : 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 border border-gray-200 dark:border-gray-700'
+                      ? 'bg-haven-900 text-white'
+                      : 'bg-white dark:bg-haven-900 text-haven-800 dark:text-cream-200 border border-cream-400 dark:border-haven-700 hover:border-haven-900'
                   }`}
                 >
                   {category}
@@ -498,7 +482,7 @@ const Blog = () => {
             animate={{ opacity: 1 }}
             className="flex flex-col items-center justify-center py-20"
           >
-            <Loader className="w-12 h-12 text-blue-600 animate-spin mb-4" />
+            <Loader className="w-12 h-12 text-accent-500 animate-spin mb-4" />
             <p className="text-gray-600 dark:text-gray-400">Loading blog posts...</p>
           </motion.div>
         ) : error && filteredPosts.length === 0 ? (
@@ -519,7 +503,7 @@ const Blog = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={fetchBlogs}
-                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
+                className="btn-haven"
               >
                 Try Again
               </motion.button>
@@ -535,7 +519,7 @@ const Blog = () => {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center"
+                className="w-20 h-20 mx-auto mb-6 bg-haven-800 rounded-full flex items-center justify-center"
               >
                 <Search className="w-8 h-8 text-white" />
               </motion.div>
@@ -551,7 +535,7 @@ const Blog = () => {
                   setSearchTerm('');
                   setSelectedCategory('All');
                 }}
-                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
+                className="btn-haven"
               >
                 Clear Filters
               </motion.button>
@@ -595,7 +579,7 @@ const Blog = () => {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center"
+                className="w-20 h-20 mx-auto mb-6 bg-haven-800 rounded-full flex items-center justify-center"
               >
                 <Search className="w-8 h-8 text-white" />
               </motion.div>
@@ -611,7 +595,7 @@ const Blog = () => {
                   setSearchTerm('');
                   setSelectedCategory('All');
                 }}
-                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
+                className="btn-haven"
               >
                 Clear Filters
               </motion.button>
@@ -630,14 +614,14 @@ const Blog = () => {
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => navigate('/blogs')}
-            className="px-10 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white rounded-2xl 
-              shadow-2xl hover:shadow-blue-500/25 transition-all font-bold text-lg inline-flex items-center group relative overflow-hidden"
+            className="btn-haven !px-10 !py-4 
+              transition-all font-bold text-lg inline-flex items-center group relative overflow-hidden"
           >
             <span className="relative z-10 flex items-center">
               Explore All Articles
               <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform duration-300" />
             </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-haven-800 to-haven-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </motion.button>
           
           <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm transition-colors duration-200">

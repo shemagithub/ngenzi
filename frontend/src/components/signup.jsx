@@ -1,115 +1,52 @@
-import { useState } from 'react';
-import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Loader, 
-  UserPlus, 
-  Mail, 
-  CheckCircle, 
-  AlertCircle, 
-  Sparkles, 
-  Shield, 
+import { useState } from "react";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Loader,
+  UserPlus,
+  Mail,
+  CheckCircle,
+  AlertCircle,
+  Shield,
   Star,
   ArrowRight,
   User,
   Key,
-  Home
-} from 'lucide-react';
-import { Backendurl } from '../utils/backendUrl';
-import { toast } from 'react-toastify';
+} from "lucide-react";
+import { Backendurl } from "../utils/backendUrl";
+import { toast } from "react-toastify";
+import { authStyles } from "../styles/auth";
 import logo from "../assets/images/logo.JPEG";
+import SEOHead from "./SEO/SEOHead";
 
-// Enhanced Animation Variants
-const containerVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { 
-    opacity: 1, 
+const fadeIn = {
+  hidden: { opacity: 0, y: 16 },
+  visible: {
+    opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.6,
-      ease: "easeOut",
-      staggerChildren: 0.1,
-      delayChildren: 0.2
-    }
+    transition: { duration: 0.5, ease: "easeOut" },
   },
-  exit: { opacity: 0, y: -20 }
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, scale: 0.95, y: 20 },
-  visible: { 
-    opacity: 1, 
-    scale: 1,
-    y: 0,
-    transition: {
-      type: "spring",
-      stiffness: 100,
-      damping: 20,
-      duration: 0.8
-    }
-  }
-};
-
-const inputVariants = {
-  hidden: { opacity: 0, x: -20 },
-  visible: { 
-    opacity: 1, 
-    x: 0,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut"
-    }
-  }
-};
-
-const floatingAnimation = {
-  y: [-3, 3, -3],
-  transition: {
-    duration: 4,
-    repeat: Infinity,
-    ease: "easeInOut"
-  }
-};
-
-const sparkleAnimation = {
-  scale: [1, 1.2, 1],
-  rotate: [0, 180, 360],
-  transition: {
-    duration: 3,
-    repeat: Infinity,
-    ease: "easeInOut"
-  }
-};
-
-const pulseAnimation = {
-  scale: [1, 1.05, 1],
-  transition: { 
-    duration: 2,
-    repeat: Infinity,
-    ease: "easeInOut"
-  }
 };
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: ''
+    name: "",
+    email: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fieldFocus, setFieldFocus] = useState({
     name: false,
     email: false,
-    password: false
+    password: false,
   });
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [validationErrors, setValidationErrors] = useState({});
   const navigate = useNavigate();
 
-  // Password strength calculation
   const calculatePasswordStrength = (password) => {
     let strength = 0;
     if (password.length >= 8) strength += 25;
@@ -119,194 +56,197 @@ const Signup = () => {
     return strength;
   };
 
-  // Real-time validation
   const validateField = (name, value) => {
     const errors = {};
-    
+
     switch (name) {
-      case 'name':
-        if (!value.trim()) errors.name = 'Name is required';
-        else if (value.trim().length < 2) errors.name = 'Name must be at least 2 characters';
+      case "name":
+        if (!value.trim()) errors.name = "Name is required";
+        else if (value.trim().length < 2)
+          errors.name = "Name must be at least 2 characters";
         break;
-      case 'email': {
+      case "email": {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!value) errors.email = 'Email is required';
-        else if (!emailRegex.test(value)) errors.email = 'Please enter a valid email';
+        if (!value) errors.email = "Email is required";
+        else if (!emailRegex.test(value))
+          errors.email = "Please enter a valid email";
         break;
       }
-      case 'password':
-        if (!value) errors.password = 'Password is required';
-        else if (value.length < 6) errors.password = 'Password must be at least 6 characters';
+      case "password":
+        if (!value) errors.password = "Password is required";
+        else if (value.length < 6)
+          errors.password = "Password must be at least 6 characters";
         break;
     }
-    
-    setValidationErrors(prev => ({ ...prev, ...errors }));
+
+    setValidationErrors((prev) => ({ ...prev, ...errors }));
     return Object.keys(errors).length === 0;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
 
-    // Clear validation error when user starts typing
     if (validationErrors[name]) {
-      setValidationErrors(prev => ({ ...prev, [name]: '' }));
+      setValidationErrors((prev) => ({ ...prev, [name]: "" }));
     }
 
-    // Calculate password strength
-    if (name === 'password') {
+    if (name === "password") {
       setPasswordStrength(calculatePasswordStrength(value));
     }
 
-    // Real-time validation
     validateField(name, value);
   };
 
   const handleFocus = (fieldName) => {
-    setFieldFocus(prev => ({ ...prev, [fieldName]: true }));
+    setFieldFocus((prev) => ({ ...prev, [fieldName]: true }));
   };
 
   const handleBlur = (fieldName) => {
-    setFieldFocus(prev => ({ ...prev, [fieldName]: false }));
+    setFieldFocus((prev) => ({ ...prev, [fieldName]: false }));
     validateField(fieldName, formData[fieldName]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const nameOk = validateField("name", formData.name);
+    const emailOk = validateField("email", formData.email);
+    const passwordOk = validateField("password", formData.password);
+    if (!nameOk || !emailOk || !passwordOk) {
+      toast.error("Please fix the form errors before continuing");
+      return;
+    }
+
     setLoading(true);
     try {
+      const payload = {
+        name: formData.name.trim(),
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
+      };
+
       const response = await axios.post(
-        `${Backendurl}/api/users/register`, 
-        formData
+        `${Backendurl}/api/users/register`,
+        payload
       );
+
       if (response.data.success) {
-        localStorage.setItem('token', response.data.token);
-        toast.success('Account created successfully!');
-        navigate('/');
-      } else {
-        toast.error(response.data.message);
+        localStorage.setItem("token", response.data.token);
+        if (response.data.user) {
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+        }
+        toast.success("Account created successfully!");
+        navigate("/");
+        return;
       }
+
+      toast.error(response.data.message || "Could not create account");
     } catch (error) {
-      console.error('Error signing up:', error);
-      toast.error('An error occurred. Please try again.');
+      const apiMessage = error.response?.data?.message;
+      const status = error.response?.status;
+
+      if (status === 400 && apiMessage) {
+        toast.error(apiMessage);
+        // Duplicate account → send them to login
+        if (/already registered|already exists|sign in/i.test(apiMessage)) {
+          setTimeout(() => navigate("/login"), 1200);
+        }
+      } else if (error.code === "ERR_NETWORK") {
+        toast.error("Cannot reach the server. Check your connection.");
+      } else {
+        toast.error(apiMessage || "An error occurred. Please try again.");
+      }
+      console.error("Error signing up:", apiMessage || error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden transition-colors duration-200">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          animate={floatingAnimation}
-          className="absolute top-20 left-10 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{
-            y: [5, -5, 5],
-            transition: { duration: 6, repeat: Infinity, ease: "easeInOut" }
-          }}
-          className="absolute top-40 right-20 w-96 h-96 bg-indigo-400/10 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={sparkleAnimation}
-          className="absolute bottom-20 left-1/3 w-64 h-64 bg-purple-400/10 rounded-full blur-3xl"
-        />
-      </div>
+  const getInputClasses = (fieldName, hasError) => {
+    const base = `${authStyles.input} pl-10 pr-10 dark:bg-haven-800 dark:border-haven-600 dark:text-cream-100 dark:placeholder-cream-400`;
+    if (hasError) {
+      return `${base} border-red-400 focus:border-red-500 focus:ring-red-400/30`;
+    }
+    if (fieldFocus[fieldName]) {
+      return `${base} border-accent-400 ring-2 ring-accent-400/20`;
+    }
+    return base;
+  };
 
-      {/* Floating Sparkles */}
-      <div className="absolute inset-0 pointer-events-none">
-        {[...Array(6)].map((_, i) => (
-          <motion.div
-            key={i}
-            animate={{
-              y: [-20, 20, -20],
-              x: [-10, 10, -10],
-              rotate: [0, 360],
-              opacity: [0.3, 0.8, 0.3],
-            }}
-            transition={{
-              duration: 4 + i,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: i * 0.5
-            }}
-            className={`absolute w-2 h-2 bg-blue-400 rounded-full ${
-              i % 2 === 0 ? 'top-1/4' : 'top-3/4'
-            } ${
-              i % 3 === 0 ? 'left-1/4' : i % 3 === 1 ? 'left-1/2' : 'left-3/4'
-            }`}
-          />
-        ))}
-      </div>
+  const hasValidationErrors = Object.keys(validationErrors).some(
+    (key) => validationErrors[key]
+  );
+
+  return (
+    <div className="min-h-screen relative overflow-hidden bg-cream-200 dark:bg-haven-950 transition-colors duration-200">
+      <SEOHead title="Create Account" description="Create your NGENZI REALESTATE account." noindex canonicalPath="/signup" />
+      <div className="absolute inset-0 bg-gradient-to-br from-cream-200 via-cream-100 to-cream-300 dark:from-haven-950 dark:via-haven-900 dark:to-haven-950" />
+      <div className="absolute inset-0 bg-gradient-to-t from-haven-950/5 via-transparent to-transparent dark:from-haven-950/40" />
 
       <div className="relative z-10 flex items-center justify-center min-h-screen px-4 py-20">
         <motion.div
-          variants={containerVariants}
           initial="hidden"
           animate="visible"
-          exit="exit"
+          variants={fadeIn}
           className="w-full max-w-md"
         >
-          <motion.div
-            variants={cardVariants}
-            className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-blue-500/10 dark:shadow-blue-900/20 p-8 border border-white/20 dark:border-gray-700/50"
-          >
+          <div className="bg-white dark:bg-haven-900 border border-cream-400 dark:border-haven-700 rounded-haven shadow-soft p-8">
             {/* Logo & Title */}
-            <motion.div
-              variants={inputVariants}
-              className="text-center mb-8"
-            >
+            <div className="text-center mb-8">
               <Link to="/" className="inline-block mb-6">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="flex items-center justify-center space-x-2"
-                >
-                  <img 
-                    src={logo} 
-                    alt="NGENZI REAL ESTATE" 
-                    className="h-16 w-auto object-contain"
-                  />
-                </motion.div>
+                <img
+                  src={logo}
+                  alt="NGENZI REAL ESTATE"
+                  className="h-16 w-auto object-contain mx-auto"
+                />
               </Link>
-              
+
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Create Your Account</h2>
-                <p className="text-gray-600 dark:text-gray-400">Join thousands of property enthusiasts</p>
-                
-                {/* Stats */}
-                <div className="flex items-center justify-center space-x-6 mt-4 text-sm text-gray-500 dark:text-gray-400">
+                <h2 className="font-display text-2xl font-semibold text-haven-900 dark:text-cream-100">
+                  Create Your Account
+                </h2>
+                <p className="text-haven-600 dark:text-cream-300 text-sm">
+                  Join thousands of property enthusiasts
+                </p>
+
+                <div className="flex items-center justify-center space-x-6 mt-4 text-sm text-haven-500 dark:text-cream-400">
                   <div className="flex items-center space-x-1">
-                    <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                    <Star className="w-4 h-4 text-accent-400 fill-current" />
                     <span>4.9 Rating</span>
                   </div>
                   <div className="flex items-center space-x-1">
-                    <Shield className="w-4 h-4 text-green-500" />
+                    <Shield className="w-4 h-4 text-haven-600 dark:text-haven-400" />
                     <span>Secure</span>
                   </div>
                   <div className="flex items-center space-x-1">
-                    <User className="w-4 h-4 text-blue-500" />
+                    <User className="w-4 h-4 text-accent-500" />
                     <span>50K+ Users</span>
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Name Field */}
-              <motion.div variants={inputVariants}>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <div>
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-haven-800 dark:text-cream-200 mb-2"
+                >
                   Full Name
                 </label>
-                <div className="relative group">
-                  <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 ${
-                    fieldFocus.name ? 'text-blue-500 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'
-                  }`}>
+                <div className="relative">
+                  <div
+                    className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 ${
+                      fieldFocus.name
+                        ? "text-accent-500"
+                        : "text-haven-400 dark:text-haven-500"
+                    }`}
+                  >
                     <User className="h-5 w-5" />
                   </div>
                   <input
@@ -316,59 +256,52 @@ const Signup = () => {
                     required
                     value={formData.name}
                     onChange={handleChange}
-                    onFocus={() => handleFocus('name')}
-                    onBlur={() => handleBlur('name')}
-                    className={`w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50/50 dark:bg-gray-700/50 border-2 transition-all duration-200 placeholder-gray-400 dark:placeholder-gray-500 text-gray-800 dark:text-gray-100 ${
-                      validationErrors.name
-                        ? 'border-red-300 dark:border-red-700 focus:border-red-500 dark:focus:border-red-400 focus:ring-red-500/20 dark:focus:ring-red-400/20'
-                        : fieldFocus.name
-                        ? 'border-blue-500 dark:border-blue-400 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 dark:focus:ring-blue-400/20'
-                        : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 dark:focus:ring-blue-400/20'
-                    } focus:ring-4 focus:outline-none`}
+                    onFocus={() => handleFocus("name")}
+                    onBlur={() => handleBlur("name")}
+                    className={getInputClasses("name", validationErrors.name)}
                     placeholder="Enter your full name"
                   />
                   {validationErrors.name && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="absolute right-3 top-1/2 -translate-y-1/2"
-                    >
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
                       <AlertCircle className="h-5 w-5 text-red-500" />
-                    </motion.div>
+                    </div>
                   )}
                   {formData.name && !validationErrors.name && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="absolute right-3 top-1/2 -translate-y-1/2"
-                    >
-                      <CheckCircle className="h-5 w-5 text-green-500" />
-                    </motion.div>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <CheckCircle className="h-5 w-5 text-haven-600 dark:text-haven-400" />
+                    </div>
                   )}
                 </div>
                 <AnimatePresence>
                   {validationErrors.name && (
                     <motion.p
-                      initial={{ opacity: 0, y: -10 }}
+                      initial={{ opacity: 0, y: -6 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
+                      exit={{ opacity: 0, y: -6 }}
                       className="mt-1 text-sm text-red-600 dark:text-red-400"
                     >
                       {validationErrors.name}
                     </motion.p>
                   )}
                 </AnimatePresence>
-              </motion.div>
+              </div>
 
               {/* Email Field */}
-              <motion.div variants={inputVariants}>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-haven-800 dark:text-cream-200 mb-2"
+                >
                   Email Address
                 </label>
-                <div className="relative group">
-                  <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 ${
-                    fieldFocus.email ? 'text-blue-500 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'
-                  }`}>
+                <div className="relative">
+                  <div
+                    className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 ${
+                      fieldFocus.email
+                        ? "text-accent-500"
+                        : "text-haven-400 dark:text-haven-500"
+                    }`}
+                  >
                     <Mail className="h-5 w-5" />
                   </div>
                   <input
@@ -378,59 +311,52 @@ const Signup = () => {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    onFocus={() => handleFocus('email')}
-                    onBlur={() => handleBlur('email')}
-                    className={`w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50/50 dark:bg-gray-700/50 border-2 transition-all duration-200 placeholder-gray-400 dark:placeholder-gray-500 text-gray-800 dark:text-gray-100 ${
-                      validationErrors.email
-                        ? 'border-red-300 dark:border-red-700 focus:border-red-500 dark:focus:border-red-400 focus:ring-red-500/20 dark:focus:ring-red-400/20'
-                        : fieldFocus.email
-                        ? 'border-blue-500 dark:border-blue-400 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 dark:focus:ring-blue-400/20'
-                        : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 dark:focus:ring-blue-400/20'
-                    } focus:ring-4 focus:outline-none`}
+                    onFocus={() => handleFocus("email")}
+                    onBlur={() => handleBlur("email")}
+                    className={getInputClasses("email", validationErrors.email)}
                     placeholder="name@company.com"
                   />
                   {validationErrors.email && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="absolute right-3 top-1/2 -translate-y-1/2"
-                    >
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
                       <AlertCircle className="h-5 w-5 text-red-500" />
-                    </motion.div>
+                    </div>
                   )}
                   {formData.email && !validationErrors.email && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="absolute right-3 top-1/2 -translate-y-1/2"
-                    >
-                      <CheckCircle className="h-5 w-5 text-green-500" />
-                    </motion.div>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <CheckCircle className="h-5 w-5 text-haven-600 dark:text-haven-400" />
+                    </div>
                   )}
                 </div>
                 <AnimatePresence>
                   {validationErrors.email && (
                     <motion.p
-                      initial={{ opacity: 0, y: -10 }}
+                      initial={{ opacity: 0, y: -6 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
+                      exit={{ opacity: 0, y: -6 }}
                       className="mt-1 text-sm text-red-600 dark:text-red-400"
                     >
                       {validationErrors.email}
                     </motion.p>
                   )}
                 </AnimatePresence>
-              </motion.div>
+              </div>
 
               {/* Password Field */}
-              <motion.div variants={inputVariants}>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-haven-800 dark:text-cream-200 mb-2"
+                >
                   Password
                 </label>
-                <div className="relative group">
-                  <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 ${
-                    fieldFocus.password ? 'text-blue-500 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'
-                  }`}>
+                <div className="relative">
+                  <div
+                    className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 ${
+                      fieldFocus.password
+                        ? "text-accent-500"
+                        : "text-haven-400 dark:text-haven-500"
+                    }`}
+                  >
                     <Key className="h-5 w-5" />
                   </div>
                   <input
@@ -440,55 +366,63 @@ const Signup = () => {
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    onFocus={() => handleFocus('password')}
-                    onBlur={() => handleBlur('password')}
-                    className={`w-full pl-10 pr-12 py-3 rounded-xl bg-gray-50/50 dark:bg-gray-700/50 border-2 transition-all duration-200 placeholder-gray-400 dark:placeholder-gray-500 text-gray-800 dark:text-gray-100 ${
-                      validationErrors.password
-                        ? 'border-red-300 dark:border-red-700 focus:border-red-500 dark:focus:border-red-400 focus:ring-red-500/20 dark:focus:ring-red-400/20'
-                        : fieldFocus.password
-                        ? 'border-blue-500 dark:border-blue-400 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 dark:focus:ring-blue-400/20'
-                        : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 dark:focus:ring-blue-400/20'
-                    } focus:ring-4 focus:outline-none`}
+                    onFocus={() => handleFocus("password")}
+                    onBlur={() => handleBlur("password")}
+                    className={`${getInputClasses("password", validationErrors.password)} pr-12`}
                     placeholder="Create a strong password"
                   />
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
+                  <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-haven-400 dark:text-haven-500 hover:text-haven-700 dark:hover:text-cream-200 transition-colors p-1"
                   >
-                    {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
-                  </motion.button>
+                    {showPassword ? (
+                      <FaEyeSlash size={18} />
+                    ) : (
+                      <FaEye size={18} />
+                    )}
+                  </button>
                 </div>
-                
-                {/* Password Strength Indicator */}
+
                 <AnimatePresence>
                   {formData.password && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
+                      animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
                       className="mt-2"
                     >
                       <div className="flex items-center space-x-2 mb-1">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">Password strength:</span>
-                        <span className={`text-sm font-medium ${
-                          passwordStrength < 50 ? 'text-red-500' : 
-                          passwordStrength < 75 ? 'text-yellow-500' : 'text-green-500'
-                        }`}>
-                          {passwordStrength < 50 ? 'Weak' : 
-                           passwordStrength < 75 ? 'Medium' : 'Strong'}
+                        <span className="text-sm text-haven-600 dark:text-cream-400">
+                          Password strength:
+                        </span>
+                        <span
+                          className={`text-sm font-medium ${
+                            passwordStrength < 50
+                              ? "text-red-500"
+                              : passwordStrength < 75
+                              ? "text-accent-600"
+                              : "text-haven-600 dark:text-haven-400"
+                          }`}
+                        >
+                          {passwordStrength < 50
+                            ? "Weak"
+                            : passwordStrength < 75
+                            ? "Medium"
+                            : "Strong"}
                         </span>
                       </div>
-                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                      <div className="w-full bg-cream-300 dark:bg-haven-700 rounded-full h-2">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${passwordStrength}%` }}
                           transition={{ duration: 0.3 }}
                           className={`h-2 rounded-full transition-colors duration-300 ${
-                            passwordStrength < 50 ? 'bg-red-500' : 
-                            passwordStrength < 75 ? 'bg-yellow-500' : 'bg-green-500'
+                            passwordStrength < 50
+                              ? "bg-red-500"
+                              : passwordStrength < 75
+                              ? "bg-accent-400"
+                              : "bg-haven-600"
                           }`}
                         />
                       </div>
@@ -499,89 +433,89 @@ const Signup = () => {
                 <AnimatePresence>
                   {validationErrors.password && (
                     <motion.p
-                      initial={{ opacity: 0, y: -10 }}
+                      initial={{ opacity: 0, y: -6 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
+                      exit={{ opacity: 0, y: -6 }}
                       className="mt-1 text-sm text-red-600 dark:text-red-400"
                     >
                       {validationErrors.password}
                     </motion.p>
                   )}
                 </AnimatePresence>
-              </motion.div>
+              </div>
 
               {/* Submit Button */}
-              <motion.div variants={inputVariants}>
-                <motion.button
-                  whileHover={{ scale: 1.02, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  type="submit"
-                  disabled={loading || Object.keys(validationErrors).some(key => validationErrors[key])}
-                  className={`w-full py-4 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg ${
-                    loading || Object.keys(validationErrors).some(key => validationErrors[key])
-                      ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-blue-700 dark:to-indigo-700 dark:hover:from-blue-600 dark:hover:to-indigo-600 text-white shadow-blue-500/25 dark:shadow-blue-900/40 hover:shadow-blue-500/40 dark:hover:shadow-blue-900/60'
-                  }`}
-                >
-                  {loading ? (
-                    <>
-                      <Loader className="w-5 h-5 animate-spin" />
-                      <span>Creating Account...</span>
-                    </>
-                  ) : (
-                    <>
-                      <UserPlus className="w-5 h-5" />
-                      <span>Create Account</span>
-                      <ArrowRight className="w-5 h-5" />
-                    </>
-                  )}
-                </motion.button>
-              </motion.div>
+              <button
+                type="submit"
+                disabled={loading || hasValidationErrors}
+                className={`${authStyles.button} !py-4 disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                {loading ? (
+                  <>
+                    <Loader className="w-5 h-5 animate-spin" />
+                    <span>Creating Account...</span>
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="w-5 h-5" />
+                    <span>Create Account</span>
+                    <ArrowRight className="w-5 h-5" />
+                  </>
+                )}
+              </button>
 
               {/* Features */}
-              <motion.div variants={inputVariants} className="grid grid-cols-3 gap-4 py-4">
+              <div className="grid grid-cols-3 gap-4 py-4">
                 <div className="text-center">
-                  <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Shield className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <div className="w-8 h-8 bg-cream-200 dark:bg-haven-800 rounded-haven flex items-center justify-center mx-auto mb-2">
+                    <Shield className="w-4 h-4 text-haven-700 dark:text-haven-400" />
                   </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Secure</p>
+                  <p className="text-xs text-haven-600 dark:text-cream-400">
+                    Secure
+                  </p>
                 </div>
                 <div className="text-center">
-                  <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
+                  <div className="w-8 h-8 bg-cream-200 dark:bg-haven-800 rounded-haven flex items-center justify-center mx-auto mb-2">
+                    <CheckCircle className="w-4 h-4 text-haven-700 dark:text-haven-400" />
                   </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Verified</p>
+                  <p className="text-xs text-haven-600 dark:text-cream-400">
+                    Verified
+                  </p>
                 </div>
                 <div className="text-center">
-                  <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                  <div className="w-8 h-8 bg-cream-200 dark:bg-haven-800 rounded-haven flex items-center justify-center mx-auto mb-2">
+                    <Star className="w-4 h-4 text-accent-500 fill-current" />
                   </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Premium</p>
+                  <p className="text-xs text-haven-600 dark:text-cream-400">
+                    Premium
+                  </p>
                 </div>
-              </motion.div>
+              </div>
 
               {/* Divider */}
-              <motion.div variants={inputVariants} className="relative my-6">
+              <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
+                  <div className="w-full border-t border-cream-400 dark:border-haven-700" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white/80 dark:bg-gray-800/80 text-gray-500 dark:text-gray-400">Already have an account?</span>
+                  <span className="px-4 bg-white dark:bg-haven-900 text-haven-500 dark:text-cream-400">
+                    Already have an account?
+                  </span>
                 </div>
-              </motion.div>
+              </div>
 
               {/* Sign In Link */}
-              <motion.div variants={inputVariants}>
-                <Link
-                  to="/login"
-                  className="group w-full flex items-center justify-center px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 font-medium"
-                >
-                  <span className="group-hover:mr-2 transition-all duration-200">Sign in to your account</span>
-                  <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-all duration-200 ml-1" />
-                </Link>
-              </motion.div>
+              <Link
+                to="/login"
+                className={`${authStyles.socialButton} dark:border-haven-600 dark:text-cream-200 dark:hover:bg-haven-800 group`}
+              >
+                <span className="group-hover:mr-1 transition-all duration-200">
+                  Sign in to your account
+                </span>
+                <ArrowRight className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-all duration-200" />
+              </Link>
             </form>
-          </motion.div>
+          </div>
         </motion.div>
       </div>
     </div>

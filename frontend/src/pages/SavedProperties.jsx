@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Propertycard from '../components/properties/Propertycard';
+import SEOHead from '../components/SEO/SEOHead';
 
 const SavedProperties = () => {
   const { isLoggedIn } = useAuth();
@@ -95,14 +96,15 @@ const SavedProperties = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-24 pb-16 flex items-center justify-center bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
-        <Loader className="w-8 h-8 text-blue-500 animate-spin" />
+      <div className="min-h-screen pt-24 pb-16 flex items-center justify-center bg-gradient-to-br from-cream-200 to-cream-100">
+        <Loader className="w-8 h-8 text-accent-500 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-cream-200 to-cream-100">
+      <SEOHead title="Saved Properties" noindex canonicalPath="/saved-properties" />
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -136,7 +138,7 @@ const SavedProperties = () => {
                 placeholder="Search saved properties..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-accent-400 focus:border-transparent"
               />
             </div>
           </motion.div>
@@ -158,7 +160,7 @@ const SavedProperties = () => {
             </p>
             <Link
               to="/properties"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-haven-900 text-white rounded-lg hover:bg-haven-800 transition-colors"
             >
               <Home className="w-5 h-5" />
               Browse Properties

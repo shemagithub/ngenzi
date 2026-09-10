@@ -80,7 +80,7 @@ const ViewProperty = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-24 flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+      <div className="admin-page flex items-center justify-center">
         <p className="text-gray-600">Loading property…</p>
       </div>
     );
@@ -100,7 +100,7 @@ const ViewProperty = () => {
   const descIsHtml = /<[a-z][\s\S]*>/i.test(desc);
 
   return (
-    <div className="min-h-screen pt-20 pb-12 bg-gradient-to-br from-slate-50 via-white to-blue-50/40">
+    <div className="admin-page">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 8 }}

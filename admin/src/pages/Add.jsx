@@ -231,7 +231,7 @@ const PropertyForm = () => {
   };
 
   return (
-    <div className="min-h-screen pt-32 px-4 bg-gray-50">
+    <div className="admin-page">
       <div className="max-w-2xl mx-auto rounded-lg shadow-xl bg-white p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Add New Property</h2>
         

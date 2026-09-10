@@ -7,58 +7,49 @@ dotenv.config();
 
 const createAdmin = async () => {
   try {
-    // Connect to database
     await sequelize.authenticate();
     console.log('✅ Database connected');
 
-    // Sync models to ensure role column exists
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ alter: false });
     console.log('✅ Models synced');
 
-    // Admin credentials
-    const adminEmail = 'admin@buildestate.com';
-    const adminPassword = 'Admin@123';
-    const adminName = 'Admin User';
+    const adminEmail = (process.env.ADMIN_EMAIL || 'admin@buildestate.com').trim().toLowerCase();
+    const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123';
+    const adminName = process.env.ADMIN_NAME || 'Admin User';
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
-    // Check if admin already exists
-    const existingAdmin = await User.findOne({ 
-      where: { email: adminEmail } 
+    const existingAdmin = await User.findOne({
+      where: { email: adminEmail },
     });
 
     if (existingAdmin) {
-      // Update existing user to admin
       existingAdmin.role = 'admin';
       existingAdmin.password = hashedPassword;
       existingAdmin.name = adminName;
       await existingAdmin.save();
       console.log('✅ Admin user updated');
     } else {
-      // Create new admin user
-      const admin = await User.create({
+      await User.create({
         name: adminName,
         email: adminEmail,
         password: hashedPassword,
-        role: 'admin'
+        role: 'admin',
       });
       console.log('✅ Admin user created');
     }
 
-    console.log('\n📋 Admin Credentials:');
+    console.log('\n📋 Admin Credentials (from .env):');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log(`Email:    ${adminEmail}`);
     console.log(`Password: ${adminPassword}`);
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('\n⚠️  IMPORTANT: Change the password after first login!');
 
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error creating admin:', error);
+    console.error('❌ Error creating admin:', error.message || error);
     process.exit(1);
   }
 };
 
 createAdmin();
-

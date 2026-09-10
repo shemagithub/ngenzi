@@ -1,5 +1,4 @@
 import React from 'react';
-import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 
 export default function ContactInfoItem({ icon: Icon, title, content, link }) {
   const ContentWrapper = link ? 'a' : 'div';
@@ -8,14 +7,14 @@ export default function ContactInfoItem({ icon: Icon, title, content, link }) {
   return (
     <ContentWrapper
       {...props}
-      className={`flex items-start ${link ? 'hover:text-blue-600 dark:hover:text-blue-400 transition-colors' : ''}`}
+      className={`flex items-start ${link ? 'hover:text-accent-600 dark:hover:text-accent-400 transition-colors group' : ''}`}
     >
-      <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mr-4">
-        <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+      <div className="w-12 h-12 bg-cream-100 dark:bg-haven-800 border border-cream-400 dark:border-haven-600 rounded-lg flex items-center justify-center mr-4 shrink-0 group-hover:border-accent-400 transition-colors duration-300">
+        <Icon className="w-6 h-6 text-accent-500 stroke-[1.25]" strokeWidth={1.25} />
       </div>
       <div>
-        <h3 className="font-semibold mb-1 text-gray-900 dark:text-gray-200">{title}</h3>
-        <p className="text-gray-600 dark:text-gray-400">{content}</p>
+        <h3 className="font-display text-base text-haven-900 dark:text-cream-100 mb-1">{title}</h3>
+        <p className="text-haven-700/70 dark:text-cream-200/60">{content}</p>
       </div>
     </ContentWrapper>
   );

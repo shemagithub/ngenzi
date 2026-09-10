@@ -14,61 +14,50 @@ const PropertyCard = ({ property }) => {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -6 }}
       transition={{ duration: 0.3 }}
-      className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-xl border border-gray-100 dark:border-gray-700 flex flex-col h-full"
+      className="bg-cream-50 rounded-haven overflow-hidden shadow-soft hover:shadow-haven border border-cream-400 flex flex-col h-full"
     >
-      {/* Header with gradient background */}
-      <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-4 sm:p-5 relative">
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="absolute top-0 right-0 mt-3 mr-3 sm:mt-4 sm:mr-4"
-        >
-        </motion.div>
-        
+      <div className="bg-haven-800 p-4 sm:p-5 relative">
         <div className="relative z-10">
-          <h3 className="text-lg sm:text-xl font-semibold text-white mb-1 truncate" title={property.building_name}>
+          <h3 className="font-display text-lg sm:text-xl text-cream-100 mb-1 truncate" title={property.building_name}>
             {property.building_name}
           </h3>
-          <div className="flex items-center text-blue-100 flex-wrap">
+          <div className="flex items-center text-cream-200/80 flex-wrap">
             <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 flex-shrink-0" />
             <p className="text-xs sm:text-sm truncate" title={property.location_address}>
               {property.location_address}
             </p>
           </div>
         </div>
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-accent-400/60" />
       </div>
       
-      {/* Content area */}
       <div className="p-4 sm:p-5 flex-1 flex flex-col">
-        {/* Price and area information */}
         <div className="flex items-center gap-3 mb-4 sm:mb-5">
           <div className="flex-1">
-            <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-0.5 sm:mb-1">Price</p>
-            <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">
+            <p className="text-xs text-haven-600 uppercase tracking-wider mb-0.5 sm:mb-1">Price</p>
+            <p className="text-lg sm:text-xl font-bold text-haven-900">
               {property.price ? (typeof property.price === 'number' || !isNaN(property.price) ? formatPrice(Number(property.price)) : property.price) : 'N/A'}
             </p>
           </div>
           
           {property.area_sqft && (
             <div className="flex flex-col items-end">
-              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-0.5 sm:mb-1">Area</p>
+              <p className="text-xs text-haven-600 uppercase tracking-wider mb-0.5 sm:mb-1">Area</p>
               <div className="flex items-center">
-                <Maximize className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-500 dark:text-gray-400 mr-1" />
-                <p className="text-sm sm:text-base font-medium text-gray-800 dark:text-gray-200">{property.area_sqft}</p>
+                <Maximize className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-haven-600 mr-1" />
+                <p className="text-sm sm:text-base font-medium text-haven-800">{property.area_sqft}</p>
               </div>
             </div>
           )}
         </div>
         
-        {/* Property description - Collapsible on mobile */}
         <div className="mb-4 sm:mb-5 flex-1">
           <button 
             onClick={() => setIsExpanded(!isExpanded)}
             className="flex w-full items-center justify-between text-left sm:pointer-events-none"
           >
-            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-              <Building className="w-4 h-4 text-blue-500 dark:text-blue-400 mr-1.5" />
+            <h4 className="text-sm font-medium text-haven-800 flex items-center">
+              <Building className="w-4 h-4 text-haven-700 mr-1.5" />
               Overview
             </h4>
             <motion.div 
@@ -76,7 +65,7 @@ const PropertyCard = ({ property }) => {
               transition={{ duration: 0.2 }}
               className="sm:hidden"
             >
-              <ArrowRight className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+              <ArrowRight className="w-4 h-4 text-haven-500" />
             </motion.div>
           </button>
           
@@ -89,17 +78,16 @@ const PropertyCard = ({ property }) => {
             transition={{ duration: 0.3 }}
             className={`overflow-hidden ${isExpanded ? '' : 'max-h-12 sm:max-h-none'}`}
           >
-            <p className={`text-gray-600 dark:text-gray-400 text-xs sm:text-sm mt-2 ${isExpanded ? '' : 'line-clamp-3'}`}>
+            <p className={`text-haven-700/80 text-xs sm:text-sm mt-2 ${isExpanded ? '' : 'line-clamp-3'}`}>
               {property.description}
             </p>
           </motion.div>
         </div>
         
-        {/* Amenities section */}
         {property.amenities && property.amenities.length > 0 && (
           <div className="mt-auto">
-            <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center">
-              <Tag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500 dark:text-blue-400 mr-1.5" />
+            <h4 className="text-sm font-medium text-haven-800 mb-2 flex items-center">
+              <Tag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-haven-700 mr-1.5" />
               Amenities
             </h4>
             <div className="flex flex-wrap gap-1.5 sm:gap-2">
@@ -108,7 +96,7 @@ const PropertyCard = ({ property }) => {
                   key={index}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border border-blue-100 dark:border-blue-800"
+                  className="bg-haven-50 text-haven-800 text-xs px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border border-haven-200"
                 >
                   {amenity}
                 </motion.span>
@@ -118,7 +106,7 @@ const PropertyCard = ({ property }) => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setIsExpanded(true)}
-                  className="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full flex items-center border border-gray-100 dark:border-gray-600 cursor-pointer"
+                  className="bg-cream-200 text-haven-700 text-xs px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full flex items-center border border-cream-400 cursor-pointer"
                 >
                   <Plus className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />
                   {property.amenities.length - 2} more

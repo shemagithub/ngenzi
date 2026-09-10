@@ -77,3 +77,16 @@ out/
 # Do NOT ignore these important files
 !package-lock.json
 !yarn.lock
+# Env / secrets (do not push)
+.env.*
+!-Copy.env.example
+**/- Copy.env
+**/-Copy.env
+**/*.env
+!.env.example
+
+# Large DB dumps & deploy mirrors
+wildlwdl_ngenzi.sql
+guzedeveloper_ngenzi.sql
+deploy/staging/
+deploy/*.zip

@@ -7,11 +7,15 @@ import { useCurrency } from "../../context/CurrencyContext";
 import {
   ArrowLeft, Phone, Calendar, MapPin, Loader, Share2,
   ChevronLeft, ChevronRight, Copy, XCircle, Car, Gauge, Fuel,
-  Settings, Palette, Hash, CheckCircle
+  Settings, Palette, Hash, CheckCircle, Expand
 } from "lucide-react";
 import { Backendurl } from "../../utils/backendUrl";
 import { getYoutubeEmbedSrc } from "../../utils/youtubeEmbed";
 import ScheduleViewing from "../properties/ScheduleViewing";
+import ImageLightbox from "../ImageLightbox";
+import SEOHead from "../SEO/SEOHead";
+import StructuredData from "../SEO/StructuredData";
+import { clipDescription } from "../../utils/seoConfig";
 
 const parseFeatures = (features) => {
   if (!features) return [];
@@ -30,6 +34,7 @@ const CarDetails = () => {
   const [error, setError] = useState(null);
   const [showSchedule, setShowSchedule] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const navigate = useNavigate();
 
@@ -81,17 +86,17 @@ const CarDetails = () => {
   }, [car]);
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-16">
-      <Loader className="w-12 h-12 text-blue-600 animate-spin" />
+    <div className="min-h-screen flex items-center justify-center bg-cream-200 pt-16">
+      <Loader className="w-12 h-12 text-haven-700 animate-spin" />
     </div>
   );
 
   if (error) return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-16">
-      <div className="text-center max-w-md p-6 bg-red-50 border border-red-200 rounded-lg">
+    <div className="min-h-screen flex items-center justify-center bg-cream-200 pt-16">
+      <div className="text-center max-w-md p-6 bg-red-50 border border-red-200 rounded-haven">
         <XCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
         <p className="text-red-600 mb-4">{error}</p>
-        <button onClick={() => navigate('/cars')} className="px-4 py-2 bg-blue-600 text-white rounded-lg">Back to Cars</button>
+        <button onClick={() => navigate('/cars')} className="btn-haven !py-2 !px-4">Back to Cars</button>
       </div>
     </div>
   );
@@ -115,13 +120,35 @@ const CarDetails = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16">
-      <div className="bg-white dark:bg-gray-800 border-b sticky top-16 z-40">
+    <div className="min-h-screen bg-cream-200 pt-16">
+      <SEOHead
+        title={`${car.title}${car.year ? ` (${car.year})` : ''} — Cars Rwanda`}
+        description={clipDescription(
+          car.description ||
+            `${car.brand || ''} ${car.model || ''} ${car.year || ''} for sale in Rwanda with NGENZI REALESTATE.`
+        )}
+        keywords={`${car.brand}, ${car.model}, cars for sale Kigali, ${car.year}`}
+        image={car.frontImage || (Array.isArray(car.image) ? car.image[0] : null)}
+        type="article"
+        canonicalPath={`/cars/${id}`}
+      />
+      <StructuredData type="car" data={car} />
+      <StructuredData
+        type="breadcrumb"
+        data={{
+          breadcrumbs: [
+            { name: 'Home', path: '/' },
+            { name: 'Cars', path: '/cars' },
+            { name: car.title, path: `/cars/${id}` },
+          ],
+        }}
+      />
+      <div className="bg-cream-50 border-b border-cream-400 sticky top-16 z-40">
         <div className="max-w-[1600px] mx-auto px-4 py-4 flex items-center justify-between">
-          <button onClick={() => navigate('/cars')} className="flex items-center gap-2 text-gray-600 hover:text-blue-600">
+          <button onClick={() => navigate('/cars')} className="flex items-center gap-2 text-haven-700 hover:text-haven-900">
             <ArrowLeft className="w-5 h-5" /><span>Back to Cars</span>
           </button>
-          <button onClick={handleShare} className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-blue-600">
+          <button onClick={handleShare} className="flex items-center gap-2 px-4 py-2 text-haven-700 hover:text-haven-900">
             <Share2 className="w-5 h-5" /><span className="hidden sm:inline">Share</span>
             {copySuccess && <Copy className="w-4 h-4 text-green-600" />}
           </button>
@@ -130,10 +157,24 @@ const CarDetails = () => {
 
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-          <div className="relative bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg">
+          <div className="relative bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg group">
             {displayImage ? (
               <div className="relative h-[400px] md:h-[500px]">
-                <img src={displayImage} alt={car.title} className="w-full h-full object-cover" />
+                <img
+                  src={displayImage}
+                  alt={car.title}
+                  className="w-full h-full object-cover cursor-zoom-in"
+                  onClick={() => setLightboxOpen(true)}
+                />
+                <button
+                  type="button"
+                  onClick={() => setLightboxOpen(true)}
+                  className="absolute top-4 right-4 z-10 inline-flex items-center gap-2 px-3 py-2 bg-haven-900/90 text-cream-100 text-[10px] font-semibold uppercase tracking-[0.14em] hover:bg-accent-400 hover:text-haven-900 transition-colors"
+                  aria-label="View image full screen"
+                >
+                  <Expand className="w-4 h-4" />
+                  Full View
+                </button>
                 {images.length > 1 && (
                   <>
                     <button onClick={() => setActiveImage((p) => (p - 1 + images.length) % images.length)}
@@ -154,13 +195,23 @@ const CarDetails = () => {
               <div className="p-4 bg-gray-50 dark:bg-gray-700 border-t flex gap-2 overflow-x-auto">
                 {images.map((img, i) => (
                   <button key={i} onClick={() => setActiveImage(i)}
-                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${i === activeImage ? 'border-blue-600' : 'border-transparent'}`}>
+                    onDoubleClick={() => { setActiveImage(i); setLightboxOpen(true); }}
+                    className={`flex-shrink-0 w-20 h-20 rounded-haven overflow-hidden border-2 ${i === activeImage ? 'border-haven-700' : 'border-transparent'}`}>
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
             )}
           </div>
+
+          <ImageLightbox
+            images={images.length > 0 ? images : (displayImage ? [displayImage] : [])}
+            index={activeImage}
+            isOpen={lightboxOpen}
+            onClose={() => setLightboxOpen(false)}
+            onChangeIndex={setActiveImage}
+            alt={car.title}
+          />
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -168,21 +219,21 @@ const CarDetails = () => {
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
               <div className="flex items-start justify-between mb-2">
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{car.title}</h1>
+                  <h1 className="font-display text-3xl text-haven-900">{car.title}</h1>
                   <p className="text-gray-500 mt-1">{car.brand} {car.model} · {car.year}</p>
                   <div className="flex items-center gap-2 text-gray-600 mt-2">
-                    <MapPin className="w-5 h-5 text-blue-600" /><span>{car.location}</span>
+                    <MapPin className="w-5 h-5 text-haven-700" /><span>{car.location}</span>
                   </div>
                 </div>
-                <span className={`px-4 py-2 rounded-full text-sm font-semibold text-white ${car.availability === 'rent' ? 'bg-purple-600' : 'bg-green-600'}`}>
+                <span className={`px-4 py-2 rounded-full text-sm font-semibold text-white ${car.availability === 'rent' ? 'bg-accent-600' : 'bg-haven-700'}`}>
                   {car.availability === 'rent' ? 'For Rent' : 'For Sale'}
                 </span>
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-blue-500 to-cyan-600 rounded-xl p-6 text-white shadow-lg">
-              <p className="text-sm opacity-90 mb-1">Price</p>
-              <p className="text-4xl font-bold">{formatPrice(car.price)}</p>
+            <div className="bg-haven-800 rounded-haven p-6 text-cream-100 shadow-haven">
+              <p className="text-sm text-cream-200/80 mb-1">Price</p>
+              <p className="font-display text-4xl">{formatPrice(car.price)}</p>
             </div>
 
             {car.youtubeUrl && getYoutubeEmbedSrc(car.youtubeUrl) && (
@@ -198,8 +249,8 @@ const CarDetails = () => {
               <h2 className="text-2xl font-bold mb-6">Vehicle Specifications</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {specs.map(({ icon: Icon, label, value }) => (
-                  <div key={label} className="flex flex-col items-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                    <Icon className="w-7 h-7 text-blue-600 mb-2" />
+                  <div key={label} className="flex flex-col items-center p-4 bg-haven-50 rounded-haven border border-haven-100">
+                    <Icon className="w-7 h-7 text-haven-700 mb-2" />
                     <p className="text-xs text-gray-500 mb-1">{label}</p>
                     <p className="text-sm font-semibold text-center">{value}</p>
                   </div>
@@ -242,7 +293,7 @@ const CarDetails = () => {
                 </a>
               )}
               <button onClick={() => setShowSchedule(true)}
-                className="flex items-center justify-center gap-2 w-full py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-medium">
+                className="flex items-center justify-center gap-2 w-full btn-haven !py-3">
                 <Calendar className="w-5 h-5" /> Schedule Viewing
               </button>
             </div>

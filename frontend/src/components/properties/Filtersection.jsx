@@ -43,17 +43,17 @@ const FilterSection = ({ filters, setFilters, onApplyFilters }) => {
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 transition-colors duration-200"
+      className="bg-white dark:bg-haven-900 p-6 rounded-haven shadow-soft border border-cream-400/80 dark:border-haven-800 transition-colors duration-200"
     >
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center space-x-2">
-          <Filter className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Filters</h2>
+          <Filter className="w-5 h-5 text-accent-600" />
+          <h2 className="font-display text-lg text-haven-900 dark:text-cream-100">Filters</h2>
         </div>
         <button
           onClick={handleReset}
-          className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+          className="text-xs font-semibold uppercase tracking-[0.14em] text-accent-600 hover:text-accent-500"
         >
           Reset All
         </button>
@@ -63,7 +63,7 @@ const FilterSection = ({ filters, setFilters, onApplyFilters }) => {
         {/* Property Type */}
         <div className="filter-group">
           <label className="filter-label">
-            <Home className="w-4 h-4 mr-2" />
+            <Home className="w-4 h-4 mr-2 text-accent-500" />
             Property Type
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -73,10 +73,10 @@ const FilterSection = ({ filters, setFilters, onApplyFilters }) => {
                 onClick={() => handleChange({
                   target: { name: "propertyType", value: type.toLowerCase() }
                 })}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all
+                className={`px-3 py-2 rounded-haven text-xs font-semibold uppercase tracking-[0.12em] transition-all
                   ${filters.propertyType === type.toLowerCase()
-                    ? "bg-blue-600 dark:bg-blue-500 text-white"
-                    : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"}`}
+                    ? "bg-haven-900 text-white shadow-haven"
+                    : "bg-cream-200 dark:bg-haven-800 text-haven-800 dark:text-cream-200 border border-cream-400 dark:border-haven-700 hover:border-haven-900 dark:hover:border-accent-400"}`}
               >
                 {type}
               </button>
@@ -87,7 +87,7 @@ const FilterSection = ({ filters, setFilters, onApplyFilters }) => {
         {/* Price Range */}
         <div className="filter-group">
           <label className="filter-label">
-            <IndianRupee className="w-4 h-4 mr-2" />
+            <IndianRupee className="w-4 h-4 mr-2 text-accent-500" />
             Price Range
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -95,10 +95,10 @@ const FilterSection = ({ filters, setFilters, onApplyFilters }) => {
               <button
                 key={label}
                 onClick={() => handlePriceRangeChange(min, max)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all
+                className={`px-3 py-2 rounded-haven text-xs font-semibold uppercase tracking-[0.1em] transition-all
                   ${filters.priceRange[0] === min && filters.priceRange[1] === max
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+                    ? "bg-haven-900 text-white shadow-haven"
+                    : "bg-cream-200 dark:bg-haven-800 text-haven-800 dark:text-cream-200 border border-cream-400 dark:border-haven-700 hover:border-haven-900 dark:hover:border-accent-400"}`}
               >
                 {label}
               </button>
@@ -112,8 +112,7 @@ const FilterSection = ({ filters, setFilters, onApplyFilters }) => {
         <div className="flex space-x-4 mt-8">
           <button
             onClick={() => onApplyFilters(filters)}
-            className="flex-1 bg-blue-600 dark:bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 
-              transition-colors font-medium"
+            className="flex-1 btn-haven !py-3"
           >
             Apply Filters
           </button>

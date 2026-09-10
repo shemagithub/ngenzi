@@ -10,7 +10,7 @@ const Appointment = sequelize.define('Appointment', {
     autoIncrement: true
   },
   propertyId: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     references: {
       model: Property,

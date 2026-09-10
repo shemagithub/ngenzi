@@ -17,6 +17,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { toast } from 'react-toastify';
+import SEOHead from '../components/SEO/SEOHead';
 
 const Settings = () => {
   const { logout } = useAuth();
@@ -136,7 +137,8 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-cream-200 to-cream-100">
+      <SEOHead title="Account Settings" noindex canonicalPath="/settings" />
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -145,8 +147,8 @@ const Settings = () => {
           className="mb-8"
         >
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-              <SettingsIcon className="w-6 h-6 text-blue-600" />
+            <div className="w-12 h-12 bg-cream-300 rounded-xl flex items-center justify-center">
+              <SettingsIcon className="w-6 h-6 text-accent-600" />
             </div>
             <div>
               <h1 className="text-4xl font-bold text-gray-900">Settings</h1>
@@ -164,7 +166,7 @@ const Settings = () => {
                   onClick={() => setActiveTab('password')}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                     activeTab === 'password'
-                      ? 'bg-blue-50 text-blue-600'
+                      ? 'bg-cream-200 text-accent-600'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -175,7 +177,7 @@ const Settings = () => {
                   onClick={() => setActiveTab('notifications')}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                     activeTab === 'notifications'
-                      ? 'bg-blue-50 text-blue-600'
+                      ? 'bg-cream-200 text-accent-600'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -186,7 +188,7 @@ const Settings = () => {
                   onClick={() => setActiveTab('security')}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                     activeTab === 'security'
-                      ? 'bg-blue-50 text-blue-600'
+                      ? 'bg-cream-200 text-accent-600'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -221,7 +223,7 @@ const Settings = () => {
                           value={passwordData.currentPassword}
                           onChange={handlePasswordChange}
                           required
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-12"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-400 focus:border-transparent pr-12"
                           placeholder="Enter current password"
                         />
                         <button
@@ -246,7 +248,7 @@ const Settings = () => {
                           onChange={handlePasswordChange}
                           required
                           minLength={6}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-12"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-400 focus:border-transparent pr-12"
                           placeholder="Enter new password"
                         />
                         <button
@@ -271,7 +273,7 @@ const Settings = () => {
                           value={passwordData.confirmPassword}
                           onChange={handlePasswordChange}
                           required
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-12"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-400 focus:border-transparent pr-12"
                           placeholder="Confirm new password"
                         />
                         <button
@@ -287,7 +289,7 @@ const Settings = () => {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-haven-900 text-white rounded-lg hover:bg-haven-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {loading ? (
                         <>
@@ -318,7 +320,7 @@ const Settings = () => {
                       <button
                         onClick={() => handleNotificationChange('emailNotifications')}
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                          notificationSettings.emailNotifications ? 'bg-blue-600' : 'bg-gray-300'
+                          notificationSettings.emailNotifications ? 'bg-haven-900' : 'bg-gray-300'
                         }`}
                       >
                         <span
@@ -337,7 +339,7 @@ const Settings = () => {
                       <button
                         onClick={() => handleNotificationChange('propertyUpdates')}
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                          notificationSettings.propertyUpdates ? 'bg-blue-600' : 'bg-gray-300'
+                          notificationSettings.propertyUpdates ? 'bg-haven-900' : 'bg-gray-300'
                         }`}
                       >
                         <span
@@ -356,7 +358,7 @@ const Settings = () => {
                       <button
                         onClick={() => handleNotificationChange('appointmentReminders')}
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                          notificationSettings.appointmentReminders ? 'bg-blue-600' : 'bg-gray-300'
+                          notificationSettings.appointmentReminders ? 'bg-haven-900' : 'bg-gray-300'
                         }`}
                       >
                         <span
@@ -375,7 +377,7 @@ const Settings = () => {
                       <button
                         onClick={() => handleNotificationChange('marketingEmails')}
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                          notificationSettings.marketingEmails ? 'bg-blue-600' : 'bg-gray-300'
+                          notificationSettings.marketingEmails ? 'bg-haven-900' : 'bg-gray-300'
                         }`}
                       >
                         <span
@@ -388,7 +390,7 @@ const Settings = () => {
 
                     <button
                       onClick={handleNotificationSave}
-                      className="w-full mt-6 flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      className="w-full mt-6 flex items-center justify-center gap-2 px-6 py-3 bg-haven-900 text-white rounded-lg hover:bg-haven-800 transition-colors"
                     >
                       <Save className="w-5 h-5" />
                       Save Notification Settings
@@ -420,7 +422,7 @@ const Settings = () => {
                           <h3 className="font-medium text-gray-900 mb-1">Active Sessions</h3>
                           <p className="text-sm text-gray-600">Manage devices where you're logged in</p>
                         </div>
-                        <button className="px-4 py-2 text-blue-600 hover:text-blue-700 transition-colors text-sm font-medium">
+                        <button className="px-4 py-2 text-accent-600 hover:text-blue-700 transition-colors text-sm font-medium">
                           View All
                         </button>
                       </div>

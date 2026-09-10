@@ -2,7 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom utilities for the admin dashboard */
+@layer base {
+  :root {
+    --haven: #1b3a2f;
+    --accent: #c4a574;
+    --cream: #f7f5f0;
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream-200 text-haven-900 font-sans antialiased;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: "Fraunces", Georgia, serif;
+  }
+}
+
+@layer components {
+  .admin-page {
+    @apply min-h-[calc(100vh-4rem)] px-4 sm:px-6 lg:px-8 py-6 lg:py-8;
+  }
+
+  .admin-card {
+    @apply bg-white rounded-panel border border-cream-400/70 shadow-soft;
+  }
+
+  .admin-btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
+      bg-haven-800 text-white text-sm font-semibold tracking-wide
+      hover:bg-haven-700 transition-colors duration-200
+      disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .admin-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
+      bg-white border border-cream-400 text-haven-800 text-sm font-medium
+      hover:bg-cream-100 transition-colors duration-200;
+  }
+
+  .admin-input {
+    @apply w-full px-4 py-3 rounded-xl border border-cream-400 bg-white
+      text-haven-900 placeholder:text-haven-700/40
+      focus:outline-none focus:ring-2 focus:ring-haven-700/20 focus:border-haven-600
+      transition-all duration-200;
+  }
+
+  .admin-label {
+    @apply block text-sm font-medium text-haven-800 mb-2;
+  }
+
+  .nav-link {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
+      text-cream-300/80 hover:bg-white/10 hover:text-white transition-colors duration-200;
+  }
+
+  .nav-link-active {
+    @apply bg-accent-400/20 text-accent-200 hover:bg-accent-400/25 hover:text-accent-100;
+  }
+}
+
 @layer utilities {
   .line-clamp-2 {
     display: -webkit-box;
@@ -10,7 +73,7 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  
+
   .line-clamp-3 {
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -19,25 +82,33 @@
   }
 }
 
-/* Smooth scrolling for the entire app */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Custom scrollbar */
+/* Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #efeae2;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
+  background: #8bbba3;
+  border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #3d7a5f;
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
 }

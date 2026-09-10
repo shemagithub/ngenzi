@@ -244,9 +244,9 @@ const SettingsPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-20 flex items-center justify-center">
+      <div className="admin-page flex items-center justify-center">
         <div className="text-center">
-          <Loader className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-4" />
+          <Loader className="w-8 h-8 text-haven-700 animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading settings...</p>
         </div>
       </div>
@@ -254,7 +254,7 @@ const SettingsPage = () => {
   }
 
   return (
-    <div className="min-h-screen pt-20 px-4 bg-gray-50">
+    <div className="admin-page">
       <div className="max-w-5xl mx-auto py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -278,7 +278,7 @@ const SettingsPage = () => {
             {/* Company Information */}
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-blue-600" />
+                <Building2 className="w-5 h-5 text-haven-700" />
                 Company Information
               </h2>
               
@@ -293,7 +293,7 @@ const SettingsPage = () => {
                     value={formData.companyName}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   />
                 </div>
 
@@ -307,7 +307,7 @@ const SettingsPage = () => {
                     value={formData.companyEmail}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   />
                 </div>
 
@@ -320,7 +320,7 @@ const SettingsPage = () => {
                     name="companyPhone"
                     value={formData.companyPhone}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   />
                 </div>
 
@@ -334,7 +334,7 @@ const SettingsPage = () => {
                     value={formData.websiteUrl}
                     onChange={handleInputChange}
                     placeholder="https://www.example.com"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   />
                 </div>
 
@@ -347,7 +347,7 @@ const SettingsPage = () => {
                     value={formData.companyAddress}
                     onChange={handleInputChange}
                     rows={3}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -356,7 +356,7 @@ const SettingsPage = () => {
             {/* Logo Upload */}
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                <Upload className="w-5 h-5 text-blue-600" />
+                <Upload className="w-5 h-5 text-haven-700" />
                 Company Logo
               </h2>
               
@@ -387,7 +387,7 @@ const SettingsPage = () => {
                     name="logo"
                     accept="image/png,image/jpeg,image/jpg,image/webp"
                     onChange={handleLogoChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   />
                   <p className="text-xs text-gray-500 mt-1">
                     Recommended size: 200x200px or larger. Square images work best.
@@ -399,14 +399,14 @@ const SettingsPage = () => {
             {/* Social Media */}
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                <Globe className="w-5 h-5 text-blue-600" />
+                <Globe className="w-5 h-5 text-haven-700" />
                 Social Media Links
               </h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                    <Facebook className="w-4 h-4 text-blue-600" />
+                    <Facebook className="w-4 h-4 text-haven-700" />
                     Facebook
                   </label>
                   <input
@@ -415,7 +415,7 @@ const SettingsPage = () => {
                     value={formData.facebook}
                     onChange={handleInputChange}
                     placeholder="https://facebook.com/yourpage"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   />
                 </div>
 
@@ -430,7 +430,7 @@ const SettingsPage = () => {
                     value={formData.twitter}
                     onChange={handleInputChange}
                     placeholder="https://twitter.com/yourhandle"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   />
                 </div>
 
@@ -445,7 +445,7 @@ const SettingsPage = () => {
                     value={formData.instagram}
                     onChange={handleInputChange}
                     placeholder="https://instagram.com/yourhandle"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   />
                 </div>
 
@@ -460,7 +460,7 @@ const SettingsPage = () => {
                     value={formData.linkedin}
                     onChange={handleInputChange}
                     placeholder="https://linkedin.com/company/yourcompany"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   />
                 </div>
 
@@ -475,7 +475,7 @@ const SettingsPage = () => {
                     value={formData.youtube}
                     onChange={handleInputChange}
                     placeholder="https://youtube.com/@yourchannel"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   />
                 </div>
 
@@ -490,7 +490,7 @@ const SettingsPage = () => {
                     value={formData.whatsapp}
                     onChange={handleInputChange}
                     placeholder="+250 788 123 456"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -499,7 +499,7 @@ const SettingsPage = () => {
             {/* General Settings */}
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                <SettingsIcon className="w-5 h-5 text-blue-600" />
+                <SettingsIcon className="w-5 h-5 text-haven-700" />
                 General Settings
               </h2>
               
@@ -512,7 +512,7 @@ const SettingsPage = () => {
                     name="currency"
                     value={formData.currency}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   >
                     <option value="RWF">Rwandan Francs (RWF)</option>
                     <option value="USD">US Dollar (USD)</option>
@@ -529,7 +529,7 @@ const SettingsPage = () => {
                     name="timezone"
                     value={formData.timezone}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   >
                     <option value="Africa/Kigali">Africa/Kigali (Rwanda)</option>
                     <option value="UTC">UTC</option>
@@ -543,7 +543,7 @@ const SettingsPage = () => {
             {/* SEO Settings */}
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                <Globe className="w-5 h-5 text-blue-600" />
+                <Globe className="w-5 h-5 text-haven-700" />
                 SEO Settings
               </h2>
               
@@ -558,7 +558,7 @@ const SettingsPage = () => {
                     value={formData.metaTitle}
                     onChange={handleInputChange}
                     placeholder="Page title for search engines"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   />
                 </div>
 
@@ -572,7 +572,7 @@ const SettingsPage = () => {
                     onChange={handleInputChange}
                     rows={3}
                     placeholder="Brief description for search engines"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   />
                 </div>
 
@@ -586,7 +586,7 @@ const SettingsPage = () => {
                     value={formData.metaKeywords}
                     onChange={handleInputChange}
                     placeholder="keyword1, keyword2, keyword3"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -595,7 +595,7 @@ const SettingsPage = () => {
             {/* Additional Content */}
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-blue-600" />
+                <Building2 className="w-5 h-5 text-haven-700" />
                 Additional Content
               </h2>
               
@@ -610,7 +610,7 @@ const SettingsPage = () => {
                     onChange={handleInputChange}
                     rows={5}
                     placeholder="Write about your company..."
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   />
                 </div>
 
@@ -624,7 +624,7 @@ const SettingsPage = () => {
                     onChange={handleInputChange}
                     rows={5}
                     placeholder="Terms and conditions content..."
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   />
                 </div>
 
@@ -638,7 +638,7 @@ const SettingsPage = () => {
                     onChange={handleInputChange}
                     rows={5}
                     placeholder="Privacy policy content..."
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-haven-600 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -656,7 +656,7 @@ const SettingsPage = () => {
               <button
                 type="submit"
                 disabled={saving}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-6 py-2 bg-haven-800 text-white rounded-lg hover:bg-haven-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {saving ? (
                   <>

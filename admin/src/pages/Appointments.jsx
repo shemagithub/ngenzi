@@ -143,14 +143,14 @@ const Appointments = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-32 flex items-center justify-center">
+      <div className="admin-page flex items-center justify-center">
         <Loader className="w-8 h-8 text-blue-500 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pt-32 px-4 bg-gray-50">
+    <div className="admin-page">
       <div className="max-w-7xl mx-auto">
         {/* Header and Search Section - Keep existing code */}
         <div className="flex justify-between items-center mb-8">
@@ -170,7 +170,7 @@ const Appointments = () => {
                 placeholder="Search appointments..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-haven-600"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             </div>
@@ -180,7 +180,7 @@ const Appointments = () => {
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="rounded-lg border border-gray-200 px-4 py-2 focus:ring-2 focus:ring-blue-500"
+                className="rounded-lg border border-gray-200 px-4 py-2 focus:ring-2 focus:ring-haven-600"
               >
                 <option value="all">All Appointments</option>
                 <option value="pending">Pending</option>
@@ -291,13 +291,13 @@ const Appointments = () => {
                             value={meetingLink}
                             onChange={(e) => setMeetingLink(e.target.value)}
                             placeholder="Enter meeting link"
-                            className="px-2 py-1 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm w-full"
+                            className="px-2 py-1 border rounded-lg focus:ring-2 focus:ring-haven-600 text-sm w-full"
                           />
                           <button
                             onClick={() =>
                               handleMeetingLinkUpdate(appointment.id || appointment._id)
                             }
-                            className="p-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            className="p-1 bg-haven-700 text-white rounded hover:bg-haven-800"
                           >
                             <Send className="w-4 h-4" />
                           </button>
@@ -318,7 +318,7 @@ const Appointments = () => {
                               href={appointment.meetingLink}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
+                              className="text-haven-700 hover:text-blue-800 underline flex items-center gap-1"
                             >
                               <LinkIcon className="w-4 h-4" />
                               View Link

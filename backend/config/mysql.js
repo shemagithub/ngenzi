@@ -40,6 +40,7 @@ const connectdb = async () => {
     await import('../models/Usermodel.js');
     await import('../models/propertymodel.js');
     await import('../models/plotmodel.js');
+    await import('../models/carmodel.js');
     await import('../models/formmodel.js');
     await import('../models/newsmodel.js');
     await import('../models/statsModel.js');
@@ -68,9 +69,60 @@ const connectdb = async () => {
     await sequelize.authenticate();
     console.log('✅ MySQL Connected successfully');
 
-    // Sync models (only in development, use migrations in production)
-    if (process.env.NODE_ENV === 'development') {
-      await sequelize.sync({ alter: false }); // Set to true if you want to auto-update tables
+    // Ensure ALL registered models create their tables (empty cPanel DBs need this)
+    const shouldAlter = process.env.DB_SYNC_ALTER === 'true';
+    await sequelize.sync({ alter: shouldAlter });
+    console.log(`✅ Database tables synced (alter=${shouldAlter})`);
+
+    // Ensure admin exists and matches ADMIN_EMAIL / ADMIN_PASSWORD from .env
+    try {
+      const User = (await import('../models/Usermodel.js')).default;
+      const bcrypt = (await import('bcryptjs')).default;
+      const email = (process.env.ADMIN_EMAIL || 'admin@ngenzirealestate.com').trim().toLowerCase();
+      const password = process.env.ADMIN_PASSWORD || 'Admin@123';
+      const name = process.env.ADMIN_NAME || 'Admin User';
+      const hash = await bcrypt.hash(password, 10);
+
+      let admin = await User.findOne({ where: { email } });
+      if (!admin) {
+        admin = await User.create({ name, email, password: hash, role: 'admin' });
+        console.log(`✅ Default admin created: ${email}`);
+      } else {
+        const updates = {};
+        if (admin.role !== 'admin') updates.role = 'admin';
+        // Keep DB password in sync with .env so panel login always matches hosting config
+        const syncPw = process.env.ADMIN_SYNC_PASSWORD !== 'false';
+        if (syncPw && password) {
+          const ok = await bcrypt.compare(password, admin.password);
+          if (!ok) updates.password = hash;
+        }
+        if (Object.keys(updates).length) {
+          await admin.update(updates);
+          console.log(`✅ Admin account synced from .env: ${email}`);
+        } else {
+          console.log(`✅ Admin ready: ${email}`);
+        }
+      }
+    } catch (bootErr) {
+      console.warn('⚠️  Admin bootstrap skipped:', bootErr.message);
+    }
+
+    // Ensure a settings row exists
+    try {
+      const Settings = (await import('../models/settingsModel.js')).default;
+      const existing = await Settings.findOne();
+      if (!existing) {
+        await Settings.create({
+          companyName: 'NGENZI REALESTATE',
+          companyEmail: process.env.EMAIL || 'info@ngenzirealestate.com',
+          websiteUrl: process.env.WEBSITE_URL || 'https://ngenzirealestate.com',
+          currency: 'RWF',
+          timezone: 'Africa/Kigali',
+        });
+        console.log('✅ Default settings created');
+      }
+    } catch (settingsErr) {
+      console.warn('⚠️  Settings bootstrap skipped:', settingsErr.message);
     }
 
     // Graceful shutdown

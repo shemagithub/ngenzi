@@ -66,9 +66,10 @@ export default function ContactInfo() {
       initial={{ x: 20, opacity: 0 }}
       whileInView={{ x: 0, opacity: 1 }}
       viewport={{ once: true }}
-      className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-200"
+      className="bg-white dark:bg-haven-900 p-8 rounded-2xl shadow-haven border border-cream-400 dark:border-haven-700 transition-colors duration-200"
     >
-      <h2 className="text-2xl font-bold mb-8 text-gray-900 dark:text-gray-100">Our Office</h2>
+      <p className="section-eyebrow mb-2">Visit Us</p>
+      <h2 className="font-display text-2xl text-haven-900 dark:text-cream-100 mb-8">Our Office</h2>
       <div className="space-y-6">
         {displayContactInfo.map((info, index) => (
           <ContactInfoItem key={index} {...info} />

@@ -30,23 +30,16 @@ export const CurrencyProvider = ({ children }) => {
   const [currency, setCurrency] = useState('RWF');
   const [loading, setLoading] = useState(true);
 
-  // Fetch settings currency on mount
+  // Fetch settings currency on mount (public settings endpoint; token optional)
   useEffect(() => {
     const fetchSettingsCurrency = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`${backendurl}/api/settings`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-
+        const response = await axios.get(`${backendurl}/api/settings`);
         if (response.data.success && response.data.settings?.currency) {
           setCurrency(response.data.settings.currency);
         }
       } catch (error) {
-        console.error('Error fetching settings currency:', error);
-        // Keep default RWF if fetch fails
+        console.warn('Settings currency unavailable, using RWF default');
       } finally {
         setLoading(false);
       }

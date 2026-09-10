@@ -1,6 +1,6 @@
 import React from 'react';
-import { motion, useInView, useMotionValue, useSpring } from 'framer-motion';
-import { Building2, Home, Target } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Home, Target } from 'lucide-react';
 import CountUp from './Contup';
 
 const milestones = [
@@ -20,7 +20,7 @@ const milestones = [
 
 export default function Milestones() {
   return (
-    <section className="py-24 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 transition-colors duration-200">
+    <section className="py-24 bg-cream-100 dark:bg-haven-950 transition-colors duration-200">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
@@ -28,9 +28,10 @@ export default function Milestones() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100">Our Journey So Far</h2>
-          <div className="w-24 h-1 bg-blue-600 dark:bg-blue-500 mx-auto mb-6"></div>
-          <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
+          <p className="section-eyebrow">Our Growth</p>
+          <h2 className="section-title mt-3 mb-2">Our Journey So Far</h2>
+          <div className="section-divider" />
+          <p className="text-haven-700/70 dark:text-cream-200/60 text-lg max-w-2xl mx-auto leading-relaxed">
             Milestones that mark our growth and success
           </p>
         </motion.div>
@@ -45,17 +46,17 @@ export default function Milestones() {
                 whileInView={{ y: 0, opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.2 }}
-                className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700"
+                className="bg-white dark:bg-haven-900 p-8 rounded-2xl shadow-haven hover:shadow-lg transition-all duration-300 border border-cream-400 dark:border-haven-700 text-center"
                 whileHover={{ y: -5 }}
               >
-                <div className="w-24 h-24 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Icon className="w-12 h-12 text-blue-600 dark:text-blue-400" />
+                <div className="w-24 h-24 bg-cream-100 dark:bg-haven-800 border border-cream-400 dark:border-haven-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Icon className="w-12 h-12 text-accent-500 stroke-[1.25]" strokeWidth={1.25} />
                 </div>
-                <h3 className="text-5xl font-bold text-blue-600 dark:text-blue-400 mb-4">
+                <h3 className="font-display text-5xl text-accent-600 dark:text-accent-400 mb-4">
                   <CountUp from={0} to={milestone.value} duration={2} separator="," />
                 </h3>
-                <p className="text-2xl font-semibold mb-3 text-gray-900 dark:text-gray-100">{milestone.title}</p>
-                <p className="text-gray-600 dark:text-gray-400 text-lg">{milestone.description}</p>
+                <p className="font-display text-2xl text-haven-900 dark:text-cream-100 mb-3">{milestone.title}</p>
+                <p className="text-haven-700/70 dark:text-cream-200/60 text-lg">{milestone.description}</p>
               </motion.div>
             );
           })}

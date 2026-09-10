@@ -1,8 +1,18 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://buildestate.vercel.app/sitemap.xml
-
-# Prevent access to sensitive routes
+# Private / account areas — keep out of the index
+Disallow: /login
+Disallow: /signup
+Disallow: /forgot-password
 Disallow: /reset/
-Disallow: /forgot-password/
+Disallow: /profile
+Disallow: /settings
+Disallow: /notifications
+Disallow: /saved-properties
+
+Sitemap: https://ngenzirealestate.com/sitemap.xml
+Sitemap: https://backend.ngenzirealestate.com/sitemap.xml
+
+# Crawl politely
+Crawl-delay: 1

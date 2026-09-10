@@ -155,9 +155,9 @@ const PlotListings = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-20 flex items-center justify-center">
+      <div className="admin-page flex items-center justify-center">
         <div className="text-center">
-          <RefreshCw className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-4" />
+          <RefreshCw className="w-8 h-8 text-haven-700 animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading plots...</p>
         </div>
       </div>
@@ -169,7 +169,7 @@ const PlotListings = () => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="min-h-screen pt-20 bg-gradient-to-br from-gray-50 via-white to-gray-50"
+      className="admin-page"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
@@ -351,7 +351,7 @@ const PlotListings = () => {
                       </div>
                       <div className="absolute top-3 right-3">
                         <span className={`px-3 py-1 text-white text-xs font-semibold rounded-full ${
-                          plot.availability === 'rent' ? 'bg-green-600' : 'bg-blue-600'
+                          plot.availability === 'rent' ? 'bg-green-600' : 'bg-haven-800'
                         }`}>
                           {plot.availability?.toUpperCase() || 'BUY'}
                         </span>
@@ -458,7 +458,7 @@ const PlotListings = () => {
                         </Link>
                         <Link
                           to={`/update-plot/${plot.id ?? plot._id}`}
-                          className="flex items-center justify-center gap-1.5 px-2 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                          className="flex items-center justify-center gap-1.5 px-2 py-2 bg-haven-800 text-white rounded-lg hover:bg-haven-700 transition-colors text-sm font-medium"
                         >
                           <Edit3 className="w-4 h-4 shrink-0" />
                           <span className="hidden sm:inline">Edit</span>

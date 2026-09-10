@@ -6,17 +6,23 @@ import useContactForm from './useContactform';
 function ContactForm() {
   const { formData, errors, handleChange, handleSubmit } = useContactForm();
 
+  const inputClasses = (hasError) =>
+    `w-full px-4 py-2.5 border rounded-haven focus:ring-2 focus:ring-accent-400/50 focus:border-accent-400 bg-cream-50 dark:bg-haven-800 text-haven-900 dark:text-cream-100 border-cream-400 dark:border-haven-600 placeholder:text-haven-400/60 dark:placeholder:text-cream-200/40 transition-colors duration-200 ${
+      hasError ? 'border-red-500 dark:border-red-500' : ''
+    }`;
+
   return (
     <motion.div
       initial={{ x: -20, opacity: 0 }}
       whileInView={{ x: 0, opacity: 1 }}
       viewport={{ once: true }}
-      className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-200"
+      className="bg-white dark:bg-haven-900 p-8 rounded-2xl shadow-haven border border-cream-400 dark:border-haven-700 transition-colors duration-200"
     >
-      <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">Send Us a Message</h2>
+      <p className="section-eyebrow mb-2">Get in Touch</p>
+      <h2 className="font-display text-2xl text-haven-900 dark:text-cream-100 mb-6">Send Us a Message</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label htmlFor="name" className="block text-sm font-medium text-haven-800 dark:text-cream-200 mb-1">
             Name *
           </label>
           <input
@@ -25,15 +31,13 @@ function ContactForm() {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 ${
-              errors.name ? 'border-red-500 dark:border-red-500' : ''
-            }`}
+            className={inputClasses(errors.name)}
           />
           {errors.name && <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.name}</p>}
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label htmlFor="email" className="block text-sm font-medium text-haven-800 dark:text-cream-200 mb-1">
             Email *
           </label>
           <input
@@ -42,15 +46,13 @@ function ContactForm() {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 ${
-              errors.email ? 'border-red-500 dark:border-red-500' : ''
-            }`}
+            className={inputClasses(errors.email)}
           />
-          {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
+          {errors.email && <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.email}</p>}
         </div>
 
         <div>
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label htmlFor="phone" className="block text-sm font-medium text-haven-800 dark:text-cream-200 mb-1">
             Phone Number (Optional)
           </label>
           <input
@@ -59,12 +61,12 @@ function ContactForm() {
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            className={inputClasses(false)}
           />
         </div>
 
         <div>
-          <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label htmlFor="message" className="block text-sm font-medium text-haven-800 dark:text-cream-200 mb-1">
             Message *
           </label>
           <textarea
@@ -73,18 +75,16 @@ function ContactForm() {
             value={formData.message}
             onChange={handleChange}
             rows={4}
-            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 ${
-              errors.message ? 'border-red-500 dark:border-red-500' : ''
-            }`}
+            className={inputClasses(errors.message)}
           />
-          {errors.message && <p className="mt-1 text-sm text-red-500">{errors.message}</p>}
+          {errors.message && <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.message}</p>}
         </div>
 
         <button
           type="submit"
-          className="w-full bg-blue-600 dark:bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors flex items-center justify-center"
+          className="w-full btn-haven !py-3.5"
         >
-          <Send className="w-4 h-4 mr-2" />
+          <Send className="w-4 h-4" />
           Send Message
         </button>
       </form>

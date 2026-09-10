@@ -212,13 +212,13 @@ const PropertyListings = () => {
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="min-h-screen pt-20 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100"
+        className="admin-page flex items-center justify-center"
       >
         <div className="text-center">
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-6"
+            className="w-16 h-16 border-4 border-haven-600 border-t-transparent rounded-full mx-auto mb-6"
           />
           <motion.h3 
             initial={{ opacity: 0, y: 10 }}
@@ -246,7 +246,7 @@ const PropertyListings = () => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="min-h-screen pt-20 bg-gradient-to-br from-gray-50 via-white to-gray-50"
+      className="admin-page"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
@@ -312,7 +312,7 @@ const PropertyListings = () => {
                 <p className="text-2xl font-bold text-gray-900">{properties.length}</p>
               </div>
               <div className="p-3 bg-blue-50 rounded-xl">
-                <Home className="w-6 h-6 text-blue-600" />
+                <Home className="w-6 h-6 text-haven-700" />
               </div>
             </div>
           </div>
@@ -378,7 +378,7 @@ const PropertyListings = () => {
                 placeholder="Search by title, location, or property type..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="block w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                className="block w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-haven-600 focus:border-transparent transition-all duration-200"
               />
             </div>
 
@@ -397,7 +397,7 @@ const PropertyListings = () => {
                 <select
                   value={filterType}
                   onChange={(e) => setFilterType(e.target.value)}
-                  className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-haven-600 focus:border-transparent bg-white"
                 >
                   <option value="all">All Types</option>
                   <option value="house">Houses</option>
@@ -409,7 +409,7 @@ const PropertyListings = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-haven-600 focus:border-transparent bg-white"
                 >
                   <option value="newest">Newest First</option>
                   <option value="price-low">Price: Low to High</option>
@@ -422,7 +422,7 @@ const PropertyListings = () => {
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-lg transition-colors ${
                     viewMode === 'grid' 
-                      ? 'bg-blue-100 text-blue-600' 
+                      ? 'bg-blue-100 text-haven-700' 
                       : 'text-gray-400 hover:text-gray-600'
                   }`}
                 >
@@ -432,7 +432,7 @@ const PropertyListings = () => {
                   onClick={() => setViewMode('list')}
                   className={`p-2 rounded-lg transition-colors ${
                     viewMode === 'list' 
-                      ? 'bg-blue-100 text-blue-600' 
+                      ? 'bg-blue-100 text-haven-700' 
                       : 'text-gray-400 hover:text-gray-600'
                   }`}
                 >
@@ -473,7 +473,7 @@ const PropertyListings = () => {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-haven-800 text-white rounded-xl hover:bg-haven-700 transition-colors"
                     >
                       <Plus className="w-5 h-5" />
                       Add Your First Property
@@ -528,7 +528,7 @@ const PropertyListings = () => {
                         <span className={`px-3 py-1 text-xs font-medium rounded-full backdrop-blur-sm shadow-sm ${
                           property.availability === 'rent' 
                             ? 'bg-green-500/90 text-white' 
-                            : 'bg-blue-500/90 text-white'
+                            : 'bg-haven-700/90 text-white'
                         }`}>
                           For {property.availability}
                         </span>
@@ -552,7 +552,7 @@ const PropertyListings = () => {
                         </Link>
                         <Link 
                           to={`/update/${property.id || property._id}`}
-                          className="p-2 bg-white/90 backdrop-blur-sm text-blue-600 rounded-full hover:bg-blue-600 hover:text-white transition-all duration-200 shadow-lg"
+                          className="p-2 bg-white/90 backdrop-blur-sm text-haven-700 rounded-full hover:bg-haven-800 hover:text-white transition-all duration-200 shadow-lg"
                         >
                           <Edit3 className="w-4 h-4" />
                         </Link>
@@ -575,7 +575,7 @@ const PropertyListings = () => {
                             to={`/view-property/${property.id || property._id}`}
                             className="group/title block"
                           >
-                            <h3 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-2 group-hover/title:text-blue-600 transition-colors">
+                            <h3 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-2 group-hover/title:text-haven-700 transition-colors">
                               {property.title}
                             </h3>
                           </Link>
@@ -652,7 +652,7 @@ const PropertyListings = () => {
                             </Link>
                             <Link 
                               to={`/update/${property.id || property._id}`}
-                              className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                              className="p-2 text-gray-400 hover:text-haven-700 transition-colors"
                             >
                               <Edit3 className="w-4 h-4" />
                             </Link>

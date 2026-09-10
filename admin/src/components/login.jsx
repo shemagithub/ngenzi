@@ -1,50 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Mail, Lock, Shield, Building, ArrowRight, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, Shield, ArrowRight, Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import { backendurl } from "../config/constants";
 
-// Auto-detect protocol based on current page protocol
-const getBackendUrl = () => {
-  let url = '';
-  
-  if (import.meta.env.VITE_BACKEND_URL) {
-    url = import.meta.env.VITE_BACKEND_URL.trim();
-    // If env URL is HTTP but page is HTTPS, convert to HTTPS
-    if (window.location.protocol === 'https:' && url.startsWith('http://')) {
-      url = url.replace('http://', 'https://');
-    }
-  } else if (window.location.protocol === 'https:') {
-    const hostname = window.location.hostname;
-    if (hostname.includes('ngenziadmin.guzekustomz.com')) {
-      url = 'https://ngenzi.guzekustomz.com';
-    } else {
-      // Default to production API for HTTPS
-      url = 'https://myambi.wildjourneysrwanda.com';
-    }
-  } else {
-    // Default to production API for local development
-    url = 'https://myambi.wildjourneysrwanda.com';
-  }
-  
-  // Ensure URL always has protocol
-  if (!url.startsWith('http://') && !url.startsWith('https://')) {
-    url = 'https://' + url;
-  }
-  
-  // Remove trailing slash if present
-  return url.replace(/\/$/, '');
-};
-
-const backendUrl = getBackendUrl();
-
-// Create axios instance with baseURL
 const api = axios.create({
-  baseURL: backendUrl,
-  headers: {
-    'Content-Type': 'application/json'
-  }
+  baseURL: backendurl,
+  headers: { "Content-Type": "application/json" },
 });
 
 const Login = () => {
@@ -58,229 +22,202 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
-      // Validate inputs
       if (!email || !password) {
-        toast.error('Please enter both email and password');
+        toast.error("Please enter both email and password");
         setLoading(false);
         return;
       }
 
-      // Change the endpoint to /api/users/admin for admin login
-      const response = await api.post('/api/users/admin', {
+      const response = await api.post("/api/users/admin", {
         email: email.trim(),
-        password: password
+        password: password.trim(),
       });
 
       if (response.data.success) {
-        // Store the admin token
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('isAdmin', 'true');
-        
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("isAdmin", "true");
         toast.success("Welcome back, Admin!");
         navigate("/dashboard");
       } else {
         toast.error(response.data.message || "Login failed");
       }
     } catch (error) {
-      console.error('Error logging in:', error);
-      toast.error(error.response?.data?.message || 'Invalid admin credentials');
+      console.error("Error logging in:", error);
+      const msg =
+        error.response?.data?.message ||
+        (error.code === "ERR_NETWORK"
+          ? "Cannot reach API. Check backend URL."
+          : "Invalid email or password");
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
   };
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        duration: 0.6,
-        ease: "easeOut",
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
-
-  const floatingElements = {
-    animate: {
-      y: [0, -10, 0],
-      transition: {
-        duration: 3,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
-    }
-  };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div 
-          variants={floatingElements}
-          animate="animate"
-          className="absolute top-20 left-20 w-32 h-32 bg-blue-200/20 rounded-full blur-xl"
-        />
-        <motion.div 
-          variants={floatingElements}
-          animate="animate"
-          transition={{ delay: 1 }}
-          className="absolute bottom-20 right-20 w-40 h-40 bg-indigo-200/20 rounded-full blur-xl"
-        />
-        <motion.div 
-          variants={floatingElements}
-          animate="animate"
-          transition={{ delay: 2 }}
-          className="absolute top-1/2 left-1/4 w-24 h-24 bg-purple-200/20 rounded-full blur-xl"
-        />
-      </div>
+    <div className="relative min-h-screen overflow-hidden bg-haven-950">
+      <div
+        className="absolute inset-0 opacity-90"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 60% at 20% 20%, rgba(196,165,116,0.25), transparent 55%), radial-gradient(ellipse 70% 50% at 90% 10%, rgba(61,122,95,0.35), transparent 50%), linear-gradient(160deg, #0a1612 0%, #1b3a2f 45%, #122620 100%)",
+        }}
+      />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.07]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.4) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
+      />
 
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="relative w-full max-w-md mx-4"
-      >
-        {/* Main Card */}
-        <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8 relative overflow-hidden">
-          {/* Card decorative gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5" />
-          
-          {/* Header */}
-          <motion.div variants={itemVariants} className="text-center mb-8 relative">
-            <div className="flex justify-center mb-4">
-              <div className="relative">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <Shield className="w-8 h-8 text-white" />
-                </div>
-                <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                  <Building className="w-3 h-3 text-white" />
-                </div>
+      <div className="relative z-10 flex min-h-screen flex-col lg:flex-row">
+        {/* Brand panel */}
+        <motion.div
+          initial={{ opacity: 0, x: -24 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+          className="hidden lg:flex lg:w-[46%] flex-col justify-between p-12 xl:p-16"
+        >
+          <div>
+            <div className="inline-flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-400 text-haven-950 shadow-lg">
+                <span className="font-display text-2xl font-bold">N</span>
+              </div>
+              <div>
+                <p className="font-display text-2xl font-semibold tracking-wide text-white">
+                  NGENZI
+                </p>
+                <p className="text-[11px] uppercase tracking-[0.2em] text-accent-300">
+                  Real Estate Admin
+                </p>
               </div>
             </div>
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">
-              Admin Portal
+          </div>
+
+          <div className="max-w-md">
+            <h1 className="font-display text-4xl xl:text-5xl font-semibold leading-tight text-white">
+              Manage listings with clarity and speed.
             </h1>
-            <p className="text-gray-600 text-sm">
-              Sign in to manage NGENZI REALESTATE properties
+            <p className="mt-5 text-base leading-relaxed text-cream-300/75">
+              Properties, plots, cars, content, and appointments — one calm control center for NGENZI REALESTATE.
             </p>
-          </motion.div>
+          </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6 relative">
-            {/* Email Input */}
-            <motion.div variants={itemVariants}>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className={`h-5 w-5 transition-colors duration-200 ${
-                    focusedField === 'email' ? 'text-blue-500' : 'text-gray-400'
-                  }`} />
-                </div>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onFocus={() => setFocusedField('email')}
-                  onBlur={() => setFocusedField(null)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
-                  placeholder="admin@ngenzirealestate.com"
-                />
+          <div className="flex items-center gap-3 text-sm text-cream-300/55">
+            <Shield className="h-4 w-4 text-accent-400" />
+            Secure admin access · ngenzirealestate.com
+          </div>
+        </motion.div>
+
+        {/* Form panel */}
+        <div className="flex flex-1 items-center justify-center px-4 py-12 sm:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.08 }}
+            className="w-full max-w-md"
+          >
+            <div className="mb-8 text-center lg:hidden">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-400 text-haven-950">
+                <span className="font-display text-2xl font-bold">N</span>
               </div>
-            </motion.div>
+              <h1 className="font-display text-2xl font-semibold text-white">NGENZI Admin</h1>
+              <p className="mt-1 text-sm text-cream-300/70">Sign in to continue</p>
+            </div>
 
-            {/* Password Input */}
-            <motion.div variants={itemVariants}>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className={`h-5 w-5 transition-colors duration-200 ${
-                    focusedField === 'password' ? 'text-blue-500' : 'text-gray-400'
-                  }`} />
+            <div className="rounded-2xl border border-white/10 bg-white/95 p-7 sm:p-8 shadow-panel backdrop-blur">
+              <div className="mb-7 hidden lg:block">
+                <h2 className="font-display text-2xl font-semibold text-haven-900">Welcome back</h2>
+                <p className="mt-1 text-sm text-haven-700/70">
+                  Sign in with your administrator credentials
+                </p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div>
+                  <label htmlFor="email" className="admin-label">
+                    Email
+                  </label>
+                  <div className="relative">
+                    <Mail
+                      className={`pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 ${
+                        focusedField === "email" ? "text-haven-700" : "text-haven-700/40"
+                      }`}
+                    />
+                    <input
+                      type="email"
+                      id="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      onFocus={() => setFocusedField("email")}
+                      onBlur={() => setFocusedField(null)}
+                      className="admin-input pl-10"
+                      placeholder="admin@ngenzirealestate.com"
+                      autoComplete="username"
+                    />
+                  </div>
                 </div>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  id="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  onFocus={() => setFocusedField('password')}
-                  onBlur={() => setFocusedField(null)}
-                  className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
-                  placeholder="Enter your password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-blue-500 transition-colors duration-200"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400" />
+
+                <div>
+                  <label htmlFor="password" className="admin-label">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Lock
+                      className={`pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 ${
+                        focusedField === "password" ? "text-haven-700" : "text-haven-700/40"
+                      }`}
+                    />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      id="password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      onFocus={() => setFocusedField("password")}
+                      onBlur={() => setFocusedField(null)}
+                      className="admin-input pl-10 pr-11"
+                      placeholder="Your password"
+                      autoComplete="current-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-haven-700/50 hover:text-haven-800"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <button type="submit" disabled={loading} className="admin-btn w-full !py-3">
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Signing in…
+                    </>
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400" />
+                    <>
+                      Sign in
+                      <ArrowRight className="h-4 w-4" />
+                    </>
                   )}
                 </button>
-              </div>
-            </motion.div>
+              </form>
+            </div>
 
-            {/* Submit Button */}
-            <motion.div variants={itemVariants}>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 px-4 rounded-xl font-medium hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 shadow-lg"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Signing in...
-                  </>
-                ) : (
-                  <>
-                    Sign in to Dashboard
-                    <ArrowRight className="w-5 h-5" />
-                  </>
-                )}
-              </button>
-            </motion.div>
-          </form>
-
-          {/* Footer */}
-          <motion.div variants={itemVariants} className="mt-8 text-center">
-            <p className="text-xs text-gray-500">
-              Secure admin access • NGENZI REALESTATE © 2025
+            <p className="mt-6 text-center text-xs text-cream-300/50">
+              NGENZI REALESTATE · Admin Panel
             </p>
           </motion.div>
         </div>
-
-        {/* Security badge */}
-        <motion.div 
-          variants={itemVariants}
-          className="mt-6 text-center"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-full text-green-700 text-sm">
-            <Shield className="w-4 h-4" />
-            <span>Secured with 256-bit encryption</span>
-          </div>
-        </motion.div>
-      </motion.div>
+      </div>
     </div>
   );
 };

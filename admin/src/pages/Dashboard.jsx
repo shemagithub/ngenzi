@@ -66,7 +66,7 @@ const barChartOptions = {
         usePointStyle: true,
         font: {
           size: 12,
-          family: "'Inter', sans-serif"
+          family: "'DM Sans', sans-serif"
         }
       }
     },
@@ -159,7 +159,7 @@ const Dashboard = () => {
           usePointStyle: true,
           font: {
             size: 12,
-            family: "'Inter', sans-serif"
+            family: "'DM Sans', sans-serif"
           }
         }
       },
@@ -297,7 +297,7 @@ const Dashboard = () => {
       title: "Total Properties",
       value: stats.totalProperties || 0,
       icon: Home,
-      color: "from-blue-500 to-blue-600",
+      color: "from-haven-700 to-haven-900",
       bgColor: "bg-blue-50",
       iconColor: "text-blue-600",
       description: "Total properties listed",
@@ -377,18 +377,18 @@ const Dashboard = () => {
 
   if (stats.loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="admin-page flex items-center justify-center">
         <motion.div 
           initial={{ opacity: 1, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center bg-white p-8 rounded-2xl shadow-lg"
+          className="text-center admin-card p-8"
         >
           <div className="relative">
-            <Loader className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
-            <div className="absolute inset-0 w-12 h-12 border-4 border-blue-100 rounded-full mx-auto"></div>
+            <Loader className="w-12 h-12 text-haven-700 animate-spin mx-auto mb-4" />
+            <div className="absolute inset-0 w-12 h-12 border-4 border-haven-100 rounded-full mx-auto"></div>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Loading Dashboard</h3>
-          <p className="text-gray-600">Fetching your latest data...</p>
+          <h3 className="text-lg font-semibold text-haven-900 mb-2">Loading Dashboard</h3>
+          <p className="text-haven-700/70">Fetching your latest data...</p>
         </motion.div>
       </div>
     );
@@ -396,25 +396,23 @@ const Dashboard = () => {
 
   if (stats.error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="admin-page flex items-center justify-center">
         <motion.div 
           initial={{ opacity: 1, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center bg-white p-8 rounded-2xl shadow-lg max-w-md"
+          className="text-center admin-card p-8 max-w-md"
         >
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <AlertCircle className="w-8 h-8 text-red-500" />
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <h3 className="text-xl font-semibold text-haven-900 mb-2">
             Unable to Load Dashboard
           </h3>
-          <p className="text-gray-600 mb-6">{stats.error}</p>
+          <p className="text-haven-700/70 mb-6">{stats.error}</p>
           <button
             onClick={fetchStats}
             disabled={refreshing}
-            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg 
-              hover:from-blue-600 hover:to-blue-700 transition-all duration-200 
-              flex items-center gap-2 mx-auto disabled:opacity-50 disabled:cursor-not-allowed"
+            className="admin-btn mx-auto"
           >
             {refreshing ? (
               <Loader className="w-4 h-4 animate-spin" />
@@ -432,7 +430,7 @@ const Dashboard = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="min-h-screen pt-24 px-4 bg-gradient-to-br from-gray-50 via-white to-gray-50"
+      className="admin-page"
     >
       <div className="max-w-7xl mx-auto">
         {/* Enhanced Header */}
@@ -442,26 +440,25 @@ const Dashboard = () => {
           className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4"
         >
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-2">
-              Dashboard Overview
+            <h1 className="font-display text-3xl sm:text-4xl font-semibold text-haven-900 mb-2">
+              Dashboard
             </h1>
-            <p className="text-lg text-gray-600 flex items-center gap-2">
-              <Clock className="w-5 h-5" />
-              Welcome back! Here&apos;s what&apos;s happening with your properties
+            <p className="text-base text-haven-700/70 flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              Live overview of listings, content, and appointments
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Time Range Selector */}
-            <div className="flex items-center bg-white rounded-lg shadow-sm border p-1">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center bg-white rounded-xl shadow-soft border border-cream-400 p-1">
               {['7', '30', '90'].map((days) => (
                 <button
                   key={days}
                   onClick={() => setTimeRange(days)}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                     timeRange === days
-                      ? 'bg-blue-500 text-white shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                      ? 'bg-haven-800 text-white shadow-sm'
+                      : 'text-haven-700/70 hover:text-haven-900 hover:bg-cream-100'
                   }`}
                 >
                   {days} days
@@ -469,13 +466,10 @@ const Dashboard = () => {
               ))}
             </div>
 
-            {/* Refresh Button */}
             <button
               onClick={fetchStats}
               disabled={refreshing}
-              className="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg 
-                hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 
-                flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+              className="admin-btn-ghost disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
               {refreshing ? 'Updating...' : 'Refresh'}
@@ -494,8 +488,8 @@ const Dashboard = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="group relative bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl 
-                  transition-all duration-300 border border-gray-100 hover:border-gray-200
+                className="group relative admin-card p-6 hover:shadow-panel 
+                  transition-all duration-300 hover:border-haven-300
                   overflow-hidden cursor-pointer"
               >
               {/* Background Gradient */}
@@ -619,7 +613,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-            <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
+            <div className="p-4 bg-blue-50 rounded-xl border border-haven-100">
               <div className="flex items-center gap-2 mb-2">
                 <Home className="w-4 h-4 text-blue-600" />
                 <span className="text-xs font-medium text-gray-600">Properties</span>
@@ -709,7 +703,7 @@ const Dashboard = () => {
                   >
                     <div className={`w-10 h-10 bg-gradient-to-br rounded-lg 
                       flex items-center justify-center flex-shrink-0 ${
-                        activity.type === 'property' ? 'from-blue-500 to-blue-600' :
+                        activity.type === 'property' ? 'from-haven-700 to-haven-900' :
                         activity.type === 'plot' ? 'from-amber-500 to-orange-600' :
                         activity.type === 'testimonial' ? 'from-pink-500 to-rose-600' :
                         activity.type === 'user' ? 'from-purple-500 to-purple-600' :
@@ -760,7 +754,7 @@ const Dashboard = () => {
             <div className="space-y-4">
               {/* System Overview */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">
+                <div className="p-4 bg-gradient-to-r from-cream-100 to-cream-300 rounded-xl">
                   <p className="text-xs text-gray-600 mb-1">Active Listings</p>
                   <p className="text-xl font-bold text-gray-900">
                     {stats.totalProperties > 0 ? Math.round((stats.activeListings / stats.totalProperties) * 100) : 0}%

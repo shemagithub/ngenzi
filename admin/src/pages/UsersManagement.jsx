@@ -235,19 +235,19 @@ const UsersManagement = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader className="w-8 h-8 animate-spin text-haven-700" />
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="admin-page max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Users className="w-8 h-8 text-blue-600" />
+            <Users className="w-8 h-8 text-haven-700" />
             User Management
           </h1>
           <p className="text-gray-600 mt-1">
@@ -379,7 +379,7 @@ const UsersManagement = () => {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => openEditModal(user)}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            className="p-2 text-haven-700 hover:bg-blue-50 rounded-lg transition-colors"
                             title="Edit user"
                           >
                             <Edit3 className="w-4 h-4" />
@@ -494,7 +494,7 @@ const UsersManagement = () => {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                    className="flex-1 px-4 py-2 bg-haven-800 text-white rounded-lg hover:bg-haven-700 transition-colors flex items-center justify-center gap-2"
                   >
                     <Save className="w-4 h-4" />
                     Save Changes
@@ -629,7 +629,7 @@ const UsersManagement = () => {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                    className="flex-1 px-4 py-2 bg-haven-800 text-white rounded-lg hover:bg-haven-700 transition-colors flex items-center justify-center gap-2"
                   >
                     <Key className="w-4 h-4" />
                     Reset Password

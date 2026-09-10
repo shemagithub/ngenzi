@@ -202,25 +202,25 @@ const TestimonialsManagement = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader className="w-8 h-8 animate-spin text-haven-700" />
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="admin-page max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <MessageSquare className="w-8 h-8 text-blue-600" />
+            <MessageSquare className="w-8 h-8 text-haven-700" />
             Testimonials Management
           </h1>
           <p className="text-gray-600 mt-1">Manage customer testimonials and reviews</p>
         </div>
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-haven-800 text-white rounded-lg hover:bg-haven-700 transition-colors"
         >
           <Plus className="w-5 h-5" />
           Add Testimonial
@@ -253,14 +253,14 @@ const TestimonialsManagement = () => {
                     <p className="text-sm text-gray-600">{testimonial.position}</p>
                   )}
                   {testimonial.company && (
-                    <p className="text-sm text-blue-600">{testimonial.company}</p>
+                    <p className="text-sm text-haven-700">{testimonial.company}</p>
                   )}
                 </div>
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => handleEdit(testimonial)}
-                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  className="p-2 text-haven-700 hover:bg-blue-50 rounded-lg transition-colors"
                 >
                   <Edit3 className="w-4 h-4" />
                 </button>
@@ -430,7 +430,7 @@ const TestimonialsManagement = () => {
                         name="isActive"
                         checked={formData.isActive}
                         onChange={handleInputChange}
-                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        className="w-4 h-4 text-haven-700 border-gray-300 rounded focus:ring-blue-500"
                       />
                       <label className="text-sm font-medium text-gray-700">
                         Active
@@ -442,7 +442,7 @@ const TestimonialsManagement = () => {
                         name="isFeatured"
                         checked={formData.isFeatured}
                         onChange={handleInputChange}
-                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        className="w-4 h-4 text-haven-700 border-gray-300 rounded focus:ring-blue-500"
                       />
                       <label className="text-sm font-medium text-gray-700">
                         Featured
@@ -479,7 +479,7 @@ const TestimonialsManagement = () => {
                 <div className="flex gap-3 pt-4">
                   <button
                     type="submit"
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-haven-800 text-white rounded-lg hover:bg-haven-700 transition-colors"
                   >
                     <Save className="w-5 h-5" />
                     {editingTestimonial ? 'Update' : 'Add'} Testimonial

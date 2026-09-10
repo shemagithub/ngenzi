@@ -191,13 +191,38 @@ const addcar = async (req, res) => {
 
 const listcar = async (req, res) => {
   try {
-    const cars = await Car.findAll({ order: [["createdAt", "DESC"]] });
+    let cars;
+    try {
+      cars = await Car.findAll({ order: [["createdAt", "DESC"]] });
+    } catch (dbErr) {
+      const missingTable =
+        dbErr?.parent?.code === "ER_NO_SUCH_TABLE" ||
+        String(dbErr?.message || "").includes("doesn't exist");
+      const badColumn =
+        dbErr?.parent?.code === "ER_BAD_FIELD_ERROR" ||
+        String(dbErr?.message || "").toLowerCase().includes("unknown column");
+
+      if (missingTable || badColumn) {
+        console.warn("⚠️  cars table missing/outdated — syncing…");
+        await Car.sync({ alter: true });
+        cars = await Car.findAll({ order: [["createdAt", "DESC"]] });
+      } else {
+        throw dbErr;
+      }
+    }
+
     const baseUrl = `${req.protocol}://${req.get("host")}`;
-    const carData = cars.map((c) => toFullUrls(c.toJSON(), baseUrl));
-    res.json({ success: true, cars: carData });
+    const carData = (cars || []).map((c) => toFullUrls(c.toJSON(), baseUrl));
+    return res.json({ success: true, cars: carData });
   } catch (error) {
-    console.error("Error listing cars:", error);
-    res.status(500).json({ message: "Server Error", success: false });
+    console.error("Error listing cars:", error?.message || error);
+    // Prefer empty list over hard 500 so the Cars page still loads
+    return res.status(200).json({
+      success: true,
+      cars: [],
+      message: "No cars available yet",
+      warning: error?.message || "Database error",
+    });
   }
 };
 
@@ -293,16 +318,33 @@ const singlecar = async (req, res) => {
       return res.status(400).json({ message: "Invalid car ID", success: false });
     }
 
-    const car = await Car.findByPk(carId);
+    let car;
+    try {
+      car = await Car.findByPk(carId);
+    } catch (dbErr) {
+      const missingTable =
+        dbErr?.parent?.code === "ER_NO_SUCH_TABLE" ||
+        String(dbErr?.message || "").includes("doesn't exist");
+      const badColumn =
+        dbErr?.parent?.code === "ER_BAD_FIELD_ERROR" ||
+        String(dbErr?.message || "").toLowerCase().includes("unknown column");
+      if (missingTable || badColumn) {
+        await Car.sync({ alter: true });
+        car = await Car.findByPk(carId);
+      } else {
+        throw dbErr;
+      }
+    }
+
     if (!car) {
       return res.status(404).json({ message: "Car not found", success: false });
     }
 
     const carData = toFullUrls(car.toJSON(), `${req.protocol}://${req.get("host")}`);
-    res.json({ success: true, car: carData });
+    return res.json({ success: true, car: carData });
   } catch (error) {
-    console.error("Error fetching car:", error);
-    res.status(500).json({ message: "Server Error", success: false });
+    console.error("Error fetching car:", error?.message || error);
+    return res.status(500).json({ message: error?.message || "Server Error", success: false });
   }
 };
 

@@ -2,83 +2,77 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { backendurl } from '../config/constants';
 
+const FALLBACK_FAVICON = '/favicon.png';
+
+const resolveLogoUrl = (logo) => {
+  if (!logo) return FALLBACK_FAVICON;
+  if (/^https?:\/\//i.test(logo) || logo.startsWith('data:')) return logo;
+  return `${backendurl.replace(/\/$/, '')}${logo.startsWith('/') ? logo : `/${logo}`}`;
+};
+
+const ensureLink = (rel, attrs = {}) => {
+  let el = document.querySelector(`link[rel="${rel}"]`);
+  if (!el) {
+    el = document.createElement('link');
+    el.rel = rel;
+    document.head.appendChild(el);
+  }
+  Object.entries(attrs).forEach(([key, value]) => {
+    if (value != null) el.setAttribute(key, value);
+  });
+  return el;
+};
+
+/**
+ * Fetches public settings and applies company name + logo to the admin tab.
+ */
 const DynamicHead = () => {
-  const [settings, setSettings] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [settings, setSettings] = useState({
+    companyName: 'NGENZI REALESTATE',
+    companyLogo: null,
+  });
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchSettings = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          // No token, use defaults
-          setSettings({
-            companyName: 'NGENZI REALESTATE',
-            companyLogo: null
-          });
-          setLoading(false);
-          return;
-        }
-
-        const response = await axios.get(`${backendurl}/api/settings`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-
-        if (response.data.success) {
+        const response = await axios.get(`${backendurl}/api/settings`);
+        if (!cancelled && response.data?.success && response.data.settings) {
           setSettings(response.data.settings);
-        } else {
-          // Use defaults if fetch fails
-          setSettings({
-            companyName: 'NGENZI REALESTATE',
-            companyLogo: null
-          });
         }
       } catch (error) {
-        console.error('Error fetching settings for head:', error);
-        // Use defaults if fetch fails
-        setSettings({
-          companyName: 'NGENZI REALESTATE',
-          companyLogo: null
-        });
-      } finally {
-        setLoading(false);
+        console.warn('Admin head settings unavailable:', error?.message || error);
       }
     };
 
     fetchSettings();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
-    if (!loading && settings) {
-      // Update document title
-      const companyName = settings.companyName || 'NGENZI REALESTATE';
-      document.title = `${companyName} - Admin Panel`;
+    const companyName = settings.companyName || 'NGENZI REALESTATE';
+    document.title = `${companyName} — Admin`;
 
-      // Update favicon
-      const faviconLink = document.querySelector("link[rel='icon']") || document.createElement('link');
-      faviconLink.rel = 'icon';
-      
-      if (settings.companyLogo) {
-        // Use company logo as favicon
-        const logoUrl = settings.companyLogo.startsWith('http') 
-          ? settings.companyLogo 
-          : `${backendurl}${settings.companyLogo}`;
-        faviconLink.href = logoUrl;
-      } else {
-        // Fallback to default favicon
-        faviconLink.href = './src/assets/administrator.png';
-      }
-      
-      if (!document.querySelector("link[rel='icon']")) {
-        document.head.appendChild(faviconLink);
-      }
-    }
-  }, [settings, loading]);
+    const logoUrl = resolveLogoUrl(settings.companyLogo);
+    const href = logoUrl.includes('?')
+      ? `${logoUrl}&v=${Date.now()}`
+      : `${logoUrl}?v=${Date.now()}`;
+
+    const type = href.includes('.svg')
+      ? 'image/svg+xml'
+      : href.includes('.jpg') || href.includes('.jpeg')
+        ? 'image/jpeg'
+        : 'image/png';
+
+    ensureLink('icon', { href, type });
+    ensureLink('shortcut icon', { href, type });
+    ensureLink('apple-touch-icon', { href });
+  }, [settings]);
 
   return null;
 };
 
 export default DynamicHead;
-

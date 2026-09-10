@@ -69,7 +69,7 @@ const AnalysisDisplay = ({ analysis }) => {
         className="ml-3 mt-1 text-gray-700 dark:text-gray-300 flex items-start"
       >
         {!ordered && (
-          <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-500 mt-3 mr-2 flex-shrink-0"></span>
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent-500 mt-3 mr-2 flex-shrink-0"></span>
         )}
         <span className="break-words" {...props} />
       </motion.li>
@@ -88,13 +88,13 @@ const AnalysisDisplay = ({ analysis }) => {
       <em className="text-gray-800 dark:text-gray-200 italic" {...props} />
     ),
     a: ({node, ...props}) => (
-      <a className="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener noreferrer" {...props} />
+      <a className="text-haven-700 hover:text-haven-900 underline" target="_blank" rel="noopener noreferrer" {...props} />
     ),
     blockquote: ({node, ...props}) => (
       <motion.blockquote
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="border-l-4 border-blue-200 dark:border-blue-800 pl-4 my-4 text-gray-600 dark:text-gray-400 italic"
+        className="border-l-4 border-accent-400 pl-4 my-4 text-haven-700 italic"
         {...props}
       />
     ),
@@ -122,16 +122,16 @@ const AnalysisDisplay = ({ analysis }) => {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md border border-gray-100 dark:border-gray-700 w-full overflow-hidden"
+      className="bg-cream-50 p-4 sm:p-6 rounded-haven shadow-soft border border-cream-400 w-full overflow-hidden"
     >
-      <div className="flex justify-between items-center mb-3 sm:mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center">
-          <Info className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 flex-shrink-0 text-blue-600 dark:text-blue-400" />
+      <div className="flex justify-between items-center mb-3 sm:mb-4 pb-2 border-b border-cream-400">
+        <h2 className="font-display text-lg sm:text-xl text-haven-900 flex items-center">
+          <Info className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 flex-shrink-0 text-haven-700" />
           <span className="truncate">Expert Analysis</span>
         </h2>
         <button 
           onClick={() => setExpanded(!expanded)} 
-          className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 flex-shrink-0"
+          className="text-haven-600 hover:text-haven-800 transition-colors p-1 rounded-full hover:bg-cream-200 flex-shrink-0"
           aria-label={expanded ? "Collapse analysis" : "Expand analysis"}
         >
           {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}

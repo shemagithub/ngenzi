@@ -15,6 +15,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { toast } from 'react-toastify';
+import SEOHead from '../components/SEO/SEOHead';
 
 const MyProfile = () => {
   const { user, login } = useAuth();
@@ -92,7 +93,8 @@ const MyProfile = () => {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-cream-200 to-cream-100">
+      <SEOHead title="My Profile" noindex canonicalPath="/profile" />
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -114,7 +116,7 @@ const MyProfile = () => {
           {/* Profile Header */}
           <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 px-8 py-12">
             <div className="flex items-center gap-6">
-              <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center text-3xl font-bold text-blue-600 shadow-lg">
+              <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center text-3xl font-bold text-accent-600 shadow-lg">
                 {getInitials(user?.name)}
               </div>
               <div className="flex-1 text-white">
@@ -135,7 +137,7 @@ const MyProfile = () => {
               {!isEditing && (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-haven-900 text-white rounded-lg hover:bg-haven-800 transition-colors"
                 >
                   <Edit2 className="w-4 h-4" />
                   Edit Profile
@@ -156,7 +158,7 @@ const MyProfile = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-400 focus:border-transparent"
                     placeholder="Enter your name"
                   />
                 ) : (
@@ -178,7 +180,7 @@ const MyProfile = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-400 focus:border-transparent"
                     placeholder="Enter your email"
                   />
                 ) : (
@@ -212,7 +214,7 @@ const MyProfile = () => {
                 <button
                   onClick={handleSave}
                   disabled={loading}
-                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-haven-900 text-white rounded-lg hover:bg-haven-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
@@ -252,8 +254,8 @@ const MyProfile = () => {
                 <p className="text-sm text-gray-600 mb-1">Saved Properties</p>
                 <p className="text-2xl font-bold text-gray-900">0</p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-blue-600" />
+              <div className="w-12 h-12 bg-cream-300 rounded-lg flex items-center justify-center">
+                <CheckCircle className="w-6 h-6 text-accent-600" />
               </div>
             </div>
           </div>

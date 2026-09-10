@@ -39,7 +39,7 @@ const CarCard = ({ car, viewType }) => {
   return (
     <motion.div layout initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
       whileHover={{ y: -5 }} transition={{ duration: 0.3 }}
-      className={`group bg-white dark:bg-gray-800 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer
+      className={`group bg-white dark:bg-haven-900 overflow-hidden shadow-soft border border-cream-400/80 dark:border-haven-800 hover:border-accent-400 transition-all duration-300 cursor-pointer
         ${isGrid ? 'flex flex-col h-full' : 'flex flex-col sm:flex-row'}`}
       onClick={handleNavigate}
       onMouseEnter={() => setShowControls(true)} onMouseLeave={() => setShowControls(false)}>
@@ -48,20 +48,22 @@ const CarCard = ({ car, viewType }) => {
           onError={(e) => { e.target.src = defaultImage; }} />
         {images.length > 1 && showControls && (
           <>
-            <button onClick={(e) => handleImageNavigation(e, 'prev')} className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 bg-white/90 rounded-full shadow">
+            <button onClick={(e) => handleImageNavigation(e, 'prev')} className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 bg-white/90 rounded-haven shadow">
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <button onClick={(e) => handleImageNavigation(e, 'next')} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-white/90 rounded-full shadow">
+            <button onClick={(e) => handleImageNavigation(e, 'next')} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-white/90 rounded-haven shadow">
               <ChevronRight className="w-4 h-4" />
             </button>
           </>
         )}
         <div className="absolute top-3 left-3 flex flex-wrap gap-2">
-          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold text-white shadow-md ${car.availability === 'rent' ? 'bg-purple-600' : 'bg-green-600'}`}>
+          <span className={`px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-white shadow-md ${
+            car.availability === 'rent' ? 'bg-green-600' : 'bg-haven-900'
+          }`}>
             {car.availability === 'rent' ? 'For Rent' : 'For Sale'}
           </span>
           {youtubeEmbed && (
-            <span className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium text-white bg-red-600/95">
+            <span className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-white bg-red-600/95">
               <Youtube className="w-3.5 h-3.5" /> Video
             </span>
           )}
@@ -70,25 +72,25 @@ const CarCard = ({ car, viewType }) => {
 
       <div className={`flex-1 p-6 ${isGrid ? '' : 'flex flex-col justify-between'}`}>
         <div className="space-y-3">
-          <div className="flex items-center text-gray-500 text-sm">
-            <MapPin className="w-4 h-4 mr-2 text-blue-500" />{car.location}
+          <div className="flex items-center text-haven-700/70 dark:text-cream-200/60 text-sm">
+            <MapPin className="w-4 h-4 mr-2 text-accent-500" />{car.location}
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 group-hover:text-blue-600 transition-colors">{car.title}</h3>
-          <p className="text-sm text-gray-500">{car.brand} {car.model} · {car.year}</p>
-          <p className="text-2xl font-bold text-blue-600">{formatPrice(car.price)}</p>
+          <h3 className="font-display text-xl text-haven-900 dark:text-cream-100 line-clamp-2 group-hover:text-accent-600 transition-colors">{car.title}</h3>
+          <p className="text-sm text-haven-700/60 dark:text-cream-200/50">{car.brand} {car.model} · {car.year}</p>
+          <p className="font-display text-2xl text-haven-900 dark:text-cream-100">{formatPrice(car.price)}</p>
         </div>
         <div className="grid grid-cols-3 gap-2 mt-4">
-          <div className="flex flex-col items-center gap-1 bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg">
-            <Calendar className="w-4 h-4 text-blue-600" />
-            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{car.year}</span>
+          <div className="flex flex-col items-center gap-1 bg-cream-200 dark:bg-haven-800 p-2">
+            <Calendar className="w-4 h-4 text-accent-500" />
+            <span className="text-xs font-medium text-haven-700 dark:text-cream-200">{car.year}</span>
           </div>
-          <div className="flex flex-col items-center gap-1 bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg">
-            <Gauge className="w-4 h-4 text-blue-600" />
-            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{car.mileage?.toLocaleString()} {car.mileageUnit || 'km'}</span>
+          <div className="flex flex-col items-center gap-1 bg-cream-200 dark:bg-haven-800 p-2">
+            <Gauge className="w-4 h-4 text-accent-500" />
+            <span className="text-xs font-medium text-haven-700 dark:text-cream-200">{car.mileage?.toLocaleString()} {car.mileageUnit || 'km'}</span>
           </div>
-          <div className="flex flex-col items-center gap-1 bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg">
-            <Fuel className="w-4 h-4 text-blue-600" />
-            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{car.fuelType}</span>
+          <div className="flex flex-col items-center gap-1 bg-cream-200 dark:bg-haven-800 p-2">
+            <Fuel className="w-4 h-4 text-accent-500" />
+            <span className="text-xs font-medium text-haven-700 dark:text-cream-200">{car.fuelType}</span>
           </div>
         </div>
       </div>

@@ -20,6 +20,7 @@ import {
   ArrowRight,
   Loader
 } from 'lucide-react';
+import SEOHead from '../components/SEO/SEOHead';
 
 const Notifications = () => {
   const { isLoggedIn } = useAuth();
@@ -148,11 +149,11 @@ const Notifications = () => {
       case 'error':
         return <AlertCircle className="w-5 h-5 text-red-500" />;
       case 'appointment':
-        return <Calendar className="w-5 h-5 text-blue-500" />;
+        return <Calendar className="w-5 h-5 text-accent-500" />;
       case 'property':
         return <Home className="w-5 h-5 text-purple-500" />;
       default:
-        return <Info className="w-5 h-5 text-blue-500" />;
+        return <Info className="w-5 h-5 text-accent-500" />;
     }
   };
 
@@ -165,7 +166,7 @@ const Notifications = () => {
       case 'error':
         return 'bg-red-50 border-red-200';
       case 'appointment':
-        return 'bg-blue-50 border-blue-200';
+        return 'bg-cream-200 border-blue-200';
       case 'property':
         return 'bg-purple-50 border-purple-200';
       default:
@@ -191,13 +192,13 @@ const Notifications = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-cream-200 to-cream-100 flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           className="text-center"
         >
-          <Loader className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+          <Loader className="w-12 h-12 text-accent-600 animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading notifications...</p>
         </motion.div>
       </div>
@@ -205,7 +206,8 @@ const Notifications = () => {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-cream-200 to-cream-100">
+      <SEOHead title="Notifications" noindex canonicalPath="/notifications" />
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -215,8 +217,8 @@ const Notifications = () => {
         >
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-blue-100 rounded-xl">
-                <Bell className="w-6 h-6 text-blue-600" />
+              <div className="p-3 bg-cream-300 rounded-xl">
+                <Bell className="w-6 h-6 text-accent-600" />
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
@@ -230,7 +232,7 @@ const Notifications = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleMarkAllAsRead}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-haven-900 text-white rounded-lg hover:bg-haven-800 transition-colors"
               >
                 <CheckCheck className="w-4 h-4" />
                 Mark all read
@@ -246,7 +248,7 @@ const Notifications = () => {
                 onClick={() => setFilter(tab)}
                 className={`px-4 py-2 font-medium transition-colors capitalize ${
                   filter === tab
-                    ? 'text-blue-600 border-b-2 border-blue-600'
+                    ? 'text-accent-600 border-b-2 border-haven-900'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -320,7 +322,7 @@ const Notifications = () => {
                               whileHover={{ scale: 1.1 }}
                               whileTap={{ scale: 0.9 }}
                               onClick={() => handleMarkAsRead(notification.id)}
-                              className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                              className="p-2 text-gray-400 hover:text-accent-600 transition-colors"
                               title="Mark as read"
                             >
                               <Check className="w-4 h-4" />
@@ -340,7 +342,7 @@ const Notifications = () => {
                       {notification.link && (
                         <Link
                           to={notification.link}
-                          className="inline-flex items-center gap-1 mt-3 text-blue-600 hover:text-blue-700 text-sm font-medium"
+                          className="inline-flex items-center gap-1 mt-3 text-accent-600 hover:text-blue-700 text-sm font-medium"
                         >
                           View details
                           <ArrowRight className="w-4 h-4" />

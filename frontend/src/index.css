@@ -3,34 +3,106 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Dark mode base styles */
 @layer base {
   :root {
-    @apply bg-white text-gray-900;
+    --haven: #1b3a2f;
+    --haven-light: #2d4a3d;
+    --accent: #c4a574;
+    --cream: #f7f5f0;
+    --sand: #e8e0d5;
+    color-scheme: light;
   }
-  
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream-200 text-haven-900 font-sans antialiased;
+  }
+
   .dark {
-    @apply bg-gray-900 text-gray-100;
+    @apply bg-haven-950 text-cream-100;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: "Playfair Display", Georgia, Cambria, serif;
+  }
+
+  /* Accessibility: skip link for keyboard / screen-reader users (Google UX signal) */
+  .skip-to-content {
+    position: absolute;
+    left: 1rem;
+    top: -100px;
+    z-index: 9999;
+    padding: 0.75rem 1.25rem;
+    background: #1b3a2f;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 0.25rem;
+    text-decoration: none;
+    transition: top 0.2s ease;
+  }
+
+  .skip-to-content:focus {
+    top: 1rem;
+    outline: 2px solid #c4a574;
+    outline-offset: 2px;
   }
 }
 
-/* Add to your global CSS or relevant component */
+@layer components {
+  .btn-haven {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-haven-900 text-white
+      text-xs font-semibold uppercase tracking-[0.14em] rounded-haven
+      hover:bg-haven-800 transition-all duration-300 shadow-haven;
+  }
 
-.filter-group {
-  @apply space-y-3;
+  .btn-accent {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent-400 text-haven-900
+      text-xs font-semibold uppercase tracking-[0.14em] rounded-haven
+      hover:bg-accent-500 transition-all duration-300;
+  }
+
+  .btn-ghost-light {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 border border-white/70 text-white
+      text-xs font-semibold uppercase tracking-[0.14em] rounded-haven
+      hover:bg-white/10 transition-all duration-300 backdrop-blur-sm;
+  }
+
+  .section-eyebrow {
+    @apply text-[11px] font-semibold uppercase tracking-[0.28em] text-accent-600;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl lg:text-5xl font-semibold text-haven-900 dark:text-cream-100;
+    font-family: "Playfair Display", Georgia, Cambria, serif;
+  }
+
+  .section-divider {
+    @apply mx-auto my-5 h-px w-16 bg-accent-400;
+  }
+
+  .filter-group {
+    @apply space-y-3;
+  }
+
+  .filter-label {
+    @apply flex items-center text-haven-800 dark:text-cream-200 font-medium text-sm;
+  }
 }
 
-.filter-label {
-  @apply flex items-center text-gray-700 dark:text-gray-300 font-medium text-sm;
+/* Theme color transitions — exclude transforms/opacity for smoother motion */
+*:not(.no-transition):not(.no-transition *) {
+  transition-property: color, background-color, border-color, fill, stroke;
+  transition-duration: 200ms;
 }
 
-/* Smooth transitions for theme changes */
-* {
-  @apply transition-colors duration-200;
-}
-
-/* Override for specific elements that shouldn't transition */
 .no-transition,
 .no-transition * {
-  @apply transition-none;
+  transition: none !important;
 }

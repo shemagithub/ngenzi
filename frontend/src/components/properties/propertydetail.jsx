@@ -20,11 +20,16 @@ import {
   ChevronRight,
   Copy,
   Compass,
-  Heart
+  Heart,
+  Expand
 } from "lucide-react";
 import { Backendurl } from "../../utils/backendUrl";
 import { getYoutubeEmbedSrc } from "../../utils/youtubeEmbed";
 import ScheduleViewing from "./ScheduleViewing";
+import ImageLightbox from "../ImageLightbox";
+import SEOHead from "../SEO/SEOHead";
+import StructuredData from "../SEO/StructuredData";
+import { clipDescription } from "../../utils/seoConfig";
 
 const PropertyDetails = () => {
   const { id } = useParams();
@@ -35,6 +40,7 @@ const PropertyDetails = () => {
   const [error, setError] = useState(null);
   const [showSchedule, setShowSchedule] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -287,7 +293,7 @@ const PropertyDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-16">
+      <div className="min-h-screen bg-cream-200 pt-16">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Navigation Skeleton */}
           <div className="flex items-center justify-between mb-8">
@@ -323,7 +329,7 @@ const PropertyDetails = () => {
                 {/* Left Column */}
                 <div className="space-y-6">
                   {/* Price Box */}
-                  <div className="h-28 bg-blue-50/50 rounded-lg animate-pulse"></div>
+                  <div className="h-28 bg-haven-50 rounded-lg animate-pulse"></div>
                   
                   {/* Features Grid */}
                   <div className="grid grid-cols-3 gap-4">
@@ -339,7 +345,7 @@ const PropertyDetails = () => {
                   </div>
                   
                   {/* Button */}
-                  <div className="h-12 bg-blue-200 rounded-lg animate-pulse"></div>
+                  <div className="h-12 bg-haven-200 rounded-lg animate-pulse"></div>
                 </div>
                 
                 {/* Right Column */}
@@ -368,7 +374,7 @@ const PropertyDetails = () => {
           </div>
           
           {/* Map Location Skeleton */}
-          <div className="mt-8 p-6 bg-blue-50/50 rounded-xl animate-pulse">
+          <div className="mt-8 p-6 bg-haven-50 rounded-xl animate-pulse">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-5 h-5 bg-gray-300 rounded-full"></div>
               <div className="h-7 bg-gray-300 rounded-lg w-1/6"></div>
@@ -384,7 +390,7 @@ const PropertyDetails = () => {
   // Show error state with helpful message
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-cream-200">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -394,7 +400,7 @@ const PropertyDetails = () => {
             <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
               <Loader className="w-8 h-8 text-red-500 animate-spin" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Property Not Found</h2>
+            <h2 className="font-display text-2xl text-haven-900 mb-2">Property Not Found</h2>
             <p className="text-red-500 mb-2">{error}</p>
             <p className="text-gray-600 text-sm">
               The property you're looking for doesn't exist or may have been removed.
@@ -403,7 +409,7 @@ const PropertyDetails = () => {
           <div className="flex gap-4 justify-center">
             <Link
               to="/properties"
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center btn-haven !py-2 !px-4"
             >
               <ArrowLeft className="w-4 h-4 mr-2" /> Back to Properties
             </Link>
@@ -423,14 +429,36 @@ const PropertyDetails = () => {
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-gray-50 pt-16"
+      className="min-h-screen bg-cream-200 pt-16"
     >
+      <SEOHead
+        title={`${property.title} in ${property.location || 'Rwanda'}`}
+        description={clipDescription(
+          property.description ||
+            `${property.title} — ${property.beds || ''} bed property in ${property.location || 'Rwanda'} listed with NGENZI REALESTATE.`
+        )}
+        keywords={`${property.title}, ${property.location}, ${property.type || 'property'}, real estate Rwanda`}
+        image={property.frontImage || (Array.isArray(property.image) ? property.image[0] : null)}
+        type="article"
+        canonicalPath={`/properties/single/${id}`}
+      />
+      <StructuredData type="property" data={property} />
+      <StructuredData
+        type="breadcrumb"
+        data={{
+          breadcrumbs: [
+            { name: 'Home', path: '/' },
+            { name: 'Properties', path: '/properties' },
+            { name: property.title, path: `/properties/single/${id}` },
+          ],
+        }}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Navigation */}
         <nav className="flex items-center justify-between mb-8">
           <Link
             to="/properties"
-            className="inline-flex items-center text-blue-600 hover:text-blue-700"
+            className="inline-flex items-center text-haven-700 hover:text-haven-900"
           >
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Properties
           </Link>
@@ -470,7 +498,7 @@ const PropertyDetails = () => {
 
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           {/* Image Gallery */}
-          <div className="relative h-[500px] bg-gray-100 rounded-xl overflow-hidden mb-8">
+          <div className="relative h-[500px] bg-gray-100 rounded-xl overflow-hidden mb-8 group">
             <AnimatePresence mode="wait">
               <motion.img
                 key={activeImage}
@@ -480,29 +508,49 @@ const PropertyDetails = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover cursor-zoom-in"
+                onClick={() => images.length > 0 && setLightboxOpen(true)}
                 onError={(e) => {
                   e.target.src = defaultImage;
                 }}
               />
             </AnimatePresence>
 
+            {/* Full screen button */}
+            {images.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setLightboxOpen(true)}
+                className="absolute top-4 right-4 z-10 inline-flex items-center gap-2 px-3 py-2 bg-haven-900/90 text-cream-100 text-[10px] font-semibold uppercase tracking-[0.14em] hover:bg-accent-400 hover:text-haven-900 transition-colors opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                aria-label="View image full screen"
+              >
+                <Expand className="w-4 h-4" />
+                Full View
+              </button>
+            )}
+
             {/* Image Navigation */}
             {images.length > 1 && (
               <>
                 <button
-                  onClick={() => setActiveImage(prev => 
-                    prev === 0 ? images.length - 1 : prev - 1
-                  )}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveImage(prev => 
+                      prev === 0 ? images.length - 1 : prev - 1
+                    );
+                  }}
                   className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full
                     bg-white/80 backdrop-blur-sm hover:bg-white transition-colors"
                 >
                   <ChevronLeft className="w-6 h-6" />
                 </button>
                 <button
-                  onClick={() => setActiveImage(prev => 
-                    prev === images.length - 1 ? 0 : prev + 1
-                  )}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveImage(prev => 
+                      prev === images.length - 1 ? 0 : prev + 1
+                    );
+                  }}
                   className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full
                     bg-white/80 backdrop-blur-sm hover:bg-white transition-colors"
                 >
@@ -520,10 +568,19 @@ const PropertyDetails = () => {
             )}
           </div>
 
+          <ImageLightbox
+            images={images}
+            index={activeImage}
+            isOpen={lightboxOpen}
+            onClose={() => setLightboxOpen(false)}
+            onChangeIndex={setActiveImage}
+            alt={property.title}
+          />
+
           <div className="p-8">
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <h1 className="font-display text-3xl text-haven-900 mb-2">
                   {property.title}
                 </h1>
                 <div className="flex items-center text-gray-600">
@@ -556,8 +613,8 @@ const PropertyDetails = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <div className="bg-blue-50 rounded-lg p-6 mb-6">
-                  <p className="text-3xl font-bold text-blue-600 mb-2">
+                <div className="bg-haven-50 rounded-haven p-6 mb-6 border border-haven-100">
+                  <p className="font-display text-3xl text-haven-800 mb-2">
                     {formatPrice(property.price)}
                   </p>
                   <p className="text-gray-600">
@@ -584,19 +641,19 @@ const PropertyDetails = () => {
 
                 <div className="grid grid-cols-3 gap-4 mb-6">
                   <div className="bg-gray-50 p-4 rounded-lg text-center">
-                    <BedDouble className="w-6 h-6 text-blue-600 mx-auto mb-2" />
+                    <BedDouble className="w-6 h-6 text-haven-700 mx-auto mb-2" />
                     <p className="text-sm text-gray-600">
                       {property.beds} {property.beds > 1 ? 'Beds' : 'Bed'}
                     </p>
                   </div>
                   <div className="bg-gray-50 p-4 rounded-lg text-center">
-                    <Bath className="w-6 h-6 text-blue-600 mx-auto mb-2" />
+                    <Bath className="w-6 h-6 text-haven-700 mx-auto mb-2" />
                     <p className="text-sm text-gray-600">
                       {property.baths} {property.baths > 1 ? 'Baths' : 'Bath'}
                     </p>
                   </div>
                   <div className="bg-gray-50 p-4 rounded-lg text-center">
-                    <Maximize className="w-6 h-6 text-blue-600 mx-auto mb-2" />
+                    <Maximize className="w-6 h-6 text-haven-700 mx-auto mb-2" />
                     <p className="text-sm text-gray-600">{property.sqft} sqft</p>
                   </div>
                 </div>
@@ -611,9 +668,7 @@ const PropertyDetails = () => {
 
                 <button
                   onClick={() => setShowSchedule(true)}
-                  className="w-full bg-blue-600 text-white py-3 rounded-lg 
-                    hover:bg-blue-700 transition-colors flex items-center 
-                    justify-center gap-2"
+                  className="w-full btn-haven !py-3 flex items-center justify-center gap-2"
                 >
                   <Calendar className="w-5 h-5" />
                   Schedule Viewing
@@ -636,7 +691,7 @@ const PropertyDetails = () => {
                         key={index}
                         className="flex items-center text-gray-600"
                       >
-                        <Building className="w-4 h-4 mr-2 text-blue-600" />
+                        <Building className="w-4 h-4 mr-2 text-haven-700" />
                         {amenity}
                       </div>
                     ))}
@@ -648,8 +703,8 @@ const PropertyDetails = () => {
         </div>
 
         {/* Add Map Location */}
-        <div className="mt-8 p-6 bg-blue-50 rounded-xl">
-          <div className="flex items-center gap-2 text-blue-600 mb-4">
+        <div className="mt-8 p-6 bg-haven-50 rounded-haven border border-haven-100">
+          <div className="flex items-center gap-2 text-haven-800 mb-4">
             <Compass className="w-5 h-5" />
             <h3 className="text-lg font-semibold">Location</h3>
           </div>
@@ -660,7 +715,7 @@ const PropertyDetails = () => {
             href={`https://maps.google.com/?q=${encodeURIComponent(property.location)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700"
+            className="inline-flex items-center gap-2 text-haven-700 hover:text-haven-900"
           >
             <MapPin className="w-4 h-4" />
             View on Google Maps

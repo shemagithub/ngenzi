@@ -47,11 +47,16 @@ export const Backendurl = BACKEND_URL;
 console.log('🔗 Backend URL configured:', Backendurl);
 console.log('🔗 Environment VITE_API_BASE_URL:', import.meta.env.VITE_API_BASE_URL);
 
-// Verify it's not the old URL
-if (Backendurl.includes('ngenzi.guzekustomz.com')) {
-  console.error('❌ ERROR: Backend URL is still using old URL!', Backendurl);
-} else {
+// Verify we are not stuck on an obsolete host
+if (
+  Backendurl.includes('ngenzi.guzekustomz.com') ||
+  Backendurl.includes('myambi.wildjourneysrwanda.com')
+) {
+  console.error('❌ ERROR: Backend URL is still using an old host!', Backendurl);
+} else if (Backendurl.includes('backend.ngenzirealestate.com')) {
   console.log('✅ Backend URL is correct:', Backendurl);
+} else {
+  console.log('🔗 Backend URL:', Backendurl);
 }
 
 const App = () => {
@@ -70,7 +75,7 @@ const App = () => {
       
       <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
       <Navbar />
-      <main className="pt-16">
+      <main id="main-content" className="pt-[4.5rem]" tabIndex={-1}>
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />

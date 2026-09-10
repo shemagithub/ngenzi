@@ -7,7 +7,7 @@ import Testimonial from "../models/testimonialModel.js";
 import Blog from "../models/blogModel.js";
 import Service from "../models/serviceModel.js";
 import Team from "../models/teamModel.js";
-import transporter from "../config/nodemailer.js";
+import { sendEmail, getDefaultFrom } from "../config/nodemailer.js";
 import { getEmailTemplate } from "../email.js";
 import { Op } from 'sequelize';
 import { sequelize } from '../config/mysql.js';
@@ -353,15 +353,15 @@ export const updateAppointmentStatus = async (req, res) => {
 
     // Send email notification using the template from email.js
     const mailOptions = {
-      from: process.env.EMAIL,
+      from: getDefaultFrom(),
       to: appointment.user.email,
       subject: `Viewing Appointment ${
         status.charAt(0).toUpperCase() + status.slice(1)
-      } - BuildEstate`,
+      } — NGENZI REALESTATE`,
       html: getEmailTemplate(appointment, status),
     };
 
-    await transporter.sendMail(mailOptions);
+    await sendEmail(mailOptions);
 
     res.json({
       success: true,

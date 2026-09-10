@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Backendurl } from '../utils/backendUrl';
+import SEOHead from '../components/SEO/SEOHead';
+import StructuredData from '../components/SEO/StructuredData';
 
 const BlogDetail = () => {
   const { slug } = useParams();
@@ -98,9 +100,9 @@ const BlogDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50">
+      <div className="min-h-screen flex items-center justify-center bg-cream-200">
         <div className="text-center">
-          <Loader className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+          <Loader className="w-12 h-12 text-haven-700 animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading blog post...</p>
         </div>
       </div>
@@ -109,13 +111,13 @@ const BlogDetail = () => {
 
   if (error || !blog) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50">
+      <div className="min-h-screen flex items-center justify-center bg-cream-200">
         <div className="text-center max-w-md mx-auto px-4">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Blog Not Found</h2>
-          <p className="text-gray-600 mb-8">{error || "The blog post you're looking for doesn't exist."}</p>
+          <h2 className="font-display text-2xl text-haven-900 mb-4">Blog Not Found</h2>
+          <p className="text-haven-700 mb-8">{error || "The blog post you're looking for doesn't exist."}</p>
           <button
             onClick={() => navigate('/')}
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
+            className="btn-haven"
           >
             Go Back Home
           </button>
@@ -128,14 +130,41 @@ const BlogDetail = () => {
   const estimatedReadTime = Math.ceil(contentText.replace(/<[^>]*>/g, '').split(' ').length / 200) || 5;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50 pt-24 pb-16">
+    <div className="min-h-screen bg-cream-200 pt-24 pb-16">
+      <SEOHead
+        title={blog.metaTitle || blog.title}
+        description={blog.metaDescription || blog.excerpt || blog.content}
+        keywords={blog.metaKeywords || (Array.isArray(blog.tags) ? blog.tags.join(', ') : undefined)}
+        image={blog.image}
+        type="article"
+        canonicalPath={`/blogs/${blog.slug || slug}`}
+      />
+      <StructuredData
+        type="blog"
+        data={{
+          ...blog,
+          breadcrumbs: [
+            { name: 'Home', path: '/' },
+            { name: blog.title, path: `/blogs/${blog.slug || slug}` },
+          ],
+        }}
+      />
+      <StructuredData
+        type="breadcrumb"
+        data={{
+          breadcrumbs: [
+            { name: 'Home', path: '/' },
+            { name: blog.title, path: `/blogs/${blog.slug || slug}` },
+          ],
+        }}
+      />
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back button */}
         <motion.button
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           onClick={() => navigate(-1)}
-          className="mb-8 flex items-center text-gray-600 hover:text-blue-600 transition-colors"
+          className="mb-8 flex items-center text-haven-700 hover:text-haven-900 transition-colors"
         >
           <ArrowLeft className="w-5 h-5 mr-2" />
           Back
@@ -149,13 +178,13 @@ const BlogDetail = () => {
         >
           <div className="flex items-center gap-4 mb-4">
             {blog.category && (
-              <span className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold rounded-full">
+              <span className="px-4 py-2 bg-haven-800 text-cream-100 text-sm font-semibold rounded-full">
                 {blog.category}
               </span>
             )}
             <div className="flex items-center gap-4 text-sm text-gray-600">
               <div className="flex items-center">
-                <Calendar className="w-4 h-4 mr-2 text-blue-500" />
+                <Calendar className="w-4 h-4 mr-2 text-haven-700" />
                 {formatDate(blog.publishedAt || blog.createdAt)}
               </div>
               <div className="flex items-center">
@@ -164,14 +193,14 @@ const BlogDetail = () => {
               </div>
               {blog.views !== undefined && (
                 <div className="flex items-center">
-                  <Eye className="w-4 h-4 mr-2 text-purple-500" />
+                  <Eye className="w-4 h-4 mr-2 text-accent-600" />
                   {blog.views} views
                 </div>
               )}
             </div>
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+          <h1 className="font-display text-4xl md:text-5xl text-haven-900 mb-4 leading-tight">
             {blog.title}
           </h1>
 
@@ -190,7 +219,7 @@ const BlogDetail = () => {
             )}
             <button
               onClick={handleShare}
-              className="flex items-center px-4 py-2 bg-white rounded-full shadow-md hover:shadow-lg transition-all text-gray-700 hover:text-blue-600"
+              className="flex items-center px-4 py-2 bg-cream-50 rounded-full shadow-soft hover:shadow-haven transition-all text-haven-700 hover:text-haven-900 border border-cream-400"
             >
               <Share2 className="w-4 h-4 mr-2" />
               Share
@@ -221,10 +250,10 @@ const BlogDetail = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-2xl p-8 md:p-12 shadow-xl"
+          className="bg-cream-50 rounded-haven p-8 md:p-12 shadow-soft border border-cream-400"
         >
           <div
-            className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-strong:text-gray-900 prose-ul:text-gray-700 prose-ol:text-gray-700"
+            className="prose prose-lg max-w-none prose-headings:text-haven-900 prose-p:text-haven-800 prose-p:leading-relaxed prose-a:text-haven-700 prose-a:no-underline hover:prose-a:underline prose-strong:text-haven-900 prose-ul:text-haven-800 prose-ol:text-haven-800"
             dangerouslySetInnerHTML={{ __html: blog.content }}
           />
         </motion.article>
@@ -241,7 +270,7 @@ const BlogDetail = () => {
             {blog.tags.map((tag, index) => (
               <span
                 key={index}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-blue-100 hover:text-blue-700 transition-colors cursor-pointer"
+                className="px-4 py-2 bg-cream-200 text-haven-800 rounded-full text-sm font-medium hover:bg-haven-100 hover:text-haven-900 transition-colors cursor-pointer border border-cream-400"
               >
                 {tag}
               </span>

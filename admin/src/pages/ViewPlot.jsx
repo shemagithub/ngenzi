@@ -78,7 +78,7 @@ const ViewPlot = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-24 flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-amber-50/30">
+      <div className="admin-page flex items-center justify-center">
         <p className="text-gray-600">Loading plot…</p>
       </div>
     );
@@ -106,7 +106,7 @@ const ViewPlot = () => {
   const areaVal = plot.area != null ? plot.area : plot.sqft;
 
   return (
-    <div className="min-h-screen pt-20 pb-12 bg-gradient-to-br from-gray-50 via-white to-amber-50/40">
+    <div className="admin-page">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 8 }}

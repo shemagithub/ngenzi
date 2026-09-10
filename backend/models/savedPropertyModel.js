@@ -17,7 +17,7 @@ const SavedProperty = sequelize.define('SavedProperty', {
     onDelete: 'CASCADE'
   },
   propertyId: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     references: {
       model: 'properties',

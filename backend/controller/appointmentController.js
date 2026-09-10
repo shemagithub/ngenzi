@@ -2,7 +2,7 @@ import Stats from '../models/statsModel.js';
 import Property from '../models/propertymodel.js';
 import Appointment from '../models/appointmentModel.js';
 import User from '../models/Usermodel.js';
-import transporter from "../config/nodemailer.js";
+import { sendEmail, getDefaultFrom } from "../config/nodemailer.js";
 import { getSchedulingEmailTemplate, getEmailTemplate } from '../email.js';
 import { Op } from 'sequelize';
 import { sequelize } from '../config/mysql.js';
@@ -169,23 +169,49 @@ const calculateRevenue = async () => {
 // Appointment management
 export const getAllAppointments = async (req, res) => {
   try {
-    const appointments = await Appointment.findAll({
-      include: [
-        { model: Property, as: 'property', attributes: ['title', 'location'] },
-        { model: User, as: 'user', attributes: ['name', 'email'] }
-      ],
-      order: [['createdAt', 'DESC']]
-    });
+    let appointments;
+    try {
+      appointments = await Appointment.findAll({
+        include: [
+          { model: Property, as: 'property', attributes: ['id', 'title', 'location'], required: false },
+          { model: User, as: 'user', attributes: ['id', 'name', 'email'], required: false },
+        ],
+        order: [['createdAt', 'DESC']],
+      });
+    } catch (dbErr) {
+      const missingTable =
+        dbErr?.parent?.code === 'ER_NO_SUCH_TABLE' ||
+        String(dbErr?.message || '').includes("doesn't exist");
+      const badColumn =
+        dbErr?.parent?.code === 'ER_BAD_FIELD_ERROR' ||
+        String(dbErr?.message || '').toLowerCase().includes('unknown column');
 
-    res.json({
+      if (missingTable || badColumn) {
+        console.warn('⚠️  appointments table missing/outdated — syncing…');
+        await Appointment.sync({ alter: true });
+        appointments = await Appointment.findAll({
+          include: [
+            { model: Property, as: 'property', attributes: ['id', 'title', 'location'], required: false },
+            { model: User, as: 'user', attributes: ['id', 'name', 'email'], required: false },
+          ],
+          order: [['createdAt', 'DESC']],
+        });
+      } else {
+        throw dbErr;
+      }
+    }
+
+    return res.json({
       success: true,
-      appointments
+      appointments: appointments || [],
     });
   } catch (error) {
-    console.error('Error fetching appointments:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error fetching appointments'
+    console.error('Error fetching appointments:', error?.message || error);
+    // Prefer empty list so admin UI still loads
+    return res.status(200).json({
+      success: true,
+      appointments: [],
+      warning: error?.message || 'Database error',
     });
   }
 };
@@ -232,13 +258,13 @@ export const updateAppointmentStatus = async (req, res) => {
 
     // Send email notification
     const mailOptions = {
-      from: process.env.EMAIL,
+      from: getDefaultFrom(),
       to: appointment.user.email,
-      subject: `Viewing Appointment ${status.charAt(0).toUpperCase() + status.slice(1)} - BuildEstate`,
+      subject: `Viewing Appointment ${status.charAt(0).toUpperCase() + status.slice(1)} — NGENZI REALESTATE`,
       html: getEmailTemplate(appointment, status)
     };
 
-    await transporter.sendMail(mailOptions);
+    await sendEmail(mailOptions);
 
     res.json({
       success: true,
@@ -306,13 +332,13 @@ export const scheduleViewing = async (req, res) => {
 
     // Send confirmation email
     const mailOptions = {
-      from: process.env.EMAIL,
+      from: getDefaultFrom(),
       to: req.user.email,
-      subject: "Viewing Scheduled - BuildEstate",
+      subject: "Viewing Scheduled — NGENZI REALESTATE",
       html: getSchedulingEmailTemplate(appointment, date, time, notes)
     };
 
-    await transporter.sendMail(mailOptions);
+    await sendEmail(mailOptions);
 
     res.status(201).json({
       success: true,
@@ -360,9 +386,9 @@ export const cancelAppointment = async (req, res) => {
 
     // Send cancellation email
     const mailOptions = {
-      from: process.env.EMAIL,
+      from: getDefaultFrom(),
       to: appointment.user.email,
-      subject: 'Appointment Cancelled - BuildEstate',
+      subject: 'Appointment Cancelled — NGENZI REALESTATE',
       html: `
         <div style="max-width: 600px; margin: 20px auto; padding: 30px; background: #ffffff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
           <h1 style="color: #2563eb; text-align: center;">Appointment Cancelled</h1>
@@ -377,7 +403,7 @@ export const cancelAppointment = async (req, res) => {
       `
     };
 
-    await transporter.sendMail(mailOptions);
+    await sendEmail(mailOptions);
 
     res.json({
       success: true,
@@ -439,9 +465,9 @@ export const updateAppointmentMeetingLink = async (req, res) => {
 
     // Send email notification with meeting link
     const mailOptions = {
-      from: process.env.EMAIL,
+      from: getDefaultFrom(),
       to: appointment.user.email,
-      subject: "Meeting Link Updated - BuildEstate",
+      subject: "Meeting Link Updated — NGENZI REALESTATE",
       html: `
         <div style="max-width: 600px; margin: 20px auto; font-family: 'Arial', sans-serif; line-height: 1.6;">
           <div style="background: linear-gradient(135deg, #2563eb, #1e40af); padding: 40px 20px; border-radius: 15px 15px 0 0; text-align: center;">
@@ -463,7 +489,7 @@ export const updateAppointmentMeetingLink = async (req, res) => {
       `
     };
 
-    await transporter.sendMail(mailOptions);
+    await sendEmail(mailOptions);
 
     res.json({
       success: true,

@@ -160,10 +160,10 @@ const CarForm = () => {
   const inputClass = "mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm";
 
   return (
-    <div className="min-h-screen pt-32 px-4 bg-gray-50 pb-12">
+    <div className="admin-page pb-12">
       <div className="max-w-3xl mx-auto rounded-lg shadow-xl bg-white p-6">
         <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-blue-100 rounded-lg"><Car className="w-6 h-6 text-blue-600" /></div>
+          <div className="p-2 bg-blue-100 rounded-lg"><Car className="w-6 h-6 text-haven-700" /></div>
           <h2 className="text-2xl font-bold text-gray-900">Add New Car</h2>
         </div>
         <p className="text-sm text-gray-600 mb-6">Enter all car details buyers need: brand, model, specs, pricing, and photos.</p>
@@ -287,7 +287,7 @@ const CarForm = () => {
                 {CAR_FEATURES.map(f => (
                   <label key={f} className="flex items-center gap-2 text-sm cursor-pointer">
                     <input type="checkbox" checked={formData.features.includes(f)} onChange={() => handleFeatureToggle(f)}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                      className="rounded border-gray-300 text-haven-700 focus:ring-haven-600" />
                     {f}
                   </label>
                 ))}
@@ -340,7 +340,7 @@ const CarForm = () => {
           </div>
 
           <button type="submit" disabled={loading}
-            className="w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors">
+            className="w-full py-3 px-4 bg-haven-800 text-white font-semibold rounded-lg hover:bg-haven-700 disabled:opacity-50 transition-colors">
             {loading ? 'Adding Car...' : 'Add Car'}
           </button>
         </form>

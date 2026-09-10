@@ -1,16 +1,28 @@
 /**
  * Centralized backend URL for the public frontend.
- * Set VITE_BACKEND_URL in .env (e.g. http://localhost:4000 or https://api.example.com) for local/dev.
- * When unset, production API is used.
+ * Set VITE_BACKEND_URL in .env (e.g. http://localhost:4000).
+ * In Vite DEV mode, defaults to local backend when unset.
  */
 
-const PRODUCTION_API_URL = 'https://myambi.wildjourneysrwanda.com';
+const PRODUCTION_API_URL = 'https://backend.ngenzirealestate.com';
 
 const getBackendUrl = () => {
   const env = import.meta.env?.VITE_BACKEND_URL;
   if (env && String(env).trim()) {
     let url = String(env).trim();
-    if (typeof window !== 'undefined' && window.location?.protocol === 'https:' && url.startsWith('http://')) {
+    // Don't force https upgrade for localhost
+    const isLocal =
+      url.includes('localhost') ||
+      url.includes('127.0.0.1') ||
+      url.startsWith('http://localhost') ||
+      url.startsWith('http://127.0.0.1');
+
+    if (
+      !isLocal &&
+      typeof window !== 'undefined' &&
+      window.location?.protocol === 'https:' &&
+      url.startsWith('http://')
+    ) {
       url = url.replace('http://', 'https://');
     }
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -18,6 +30,8 @@ const getBackendUrl = () => {
     }
     return url.replace(/\/$/, '');
   }
+
+  // Default: live API (override with VITE_BACKEND_URL=http://localhost:4000 for local backend)
   return PRODUCTION_API_URL;
 };
 
@@ -29,4 +43,3 @@ if (import.meta.env?.DEV) {
 }
 
 export default BACKEND_URL;
-

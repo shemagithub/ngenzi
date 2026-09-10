@@ -40,7 +40,8 @@ const getSettings = async (req, res) => {
         console.error("Error fetching settings:", error);
         res.status(500).json({ 
             message: "Server Error", 
-            success: false 
+            success: false,
+            error: error.message
         });
     }
 };

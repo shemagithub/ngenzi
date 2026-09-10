@@ -7,12 +7,12 @@ import {
   Home, 
   X, 
   Search, 
-  Filter,
   ChevronLeft,
   Loader,
   Info
 } from 'lucide-react';
 import { Backendurl } from '../utils/backendUrl';
+import SEOHead from '../components/SEO/SEOHead';
 
 // Rwanda default center (Kigali)
 const DEFAULT_CENTER = { lat: -1.9441, lng: 30.0619 };
@@ -161,142 +161,155 @@ const MapSearch = () => {
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location + ', Rwanda')}`;
   };
 
-  // Get coordinates for location (simplified)
-  const getLocationCoords = (location) => {
-    const rwandaLocations = {
-      'Kigali': { lat: -1.9441, lng: 30.0619 },
-      'Musanze': { lat: -1.4998, lng: 29.6344 },
-      'Huye': { lat: -2.5967, lng: 29.7439 },
-      'Rubavu': { lat: -1.6936, lng: 29.3481 },
-      'Nyagatare': { lat: -1.3000, lng: 30.3333 },
-      'Karongi': { lat: -2.0167, lng: 29.3500 },
-      'Rusizi': { lat: -2.4833, lng: 28.9000 },
-      'Muhanga': { lat: -2.0833, lng: 29.7500 }
-    };
-
-    // Try to find exact match
-    for (const [key, coords] of Object.entries(rwandaLocations)) {
-      if (location.toLowerCase().includes(key.toLowerCase())) {
-        return coords;
-      }
-    }
-
-    return DEFAULT_CENTER;
-  };
-
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cream-200 via-cream-100 to-cream-300">
+        <div className="text-center">
+          <Loader className="w-8 h-8 animate-spin text-accent-500 mx-auto mb-3" />
+          <p className="text-sm text-haven-600 font-sans">Loading map…</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+    <div className="min-h-screen bg-gradient-to-br from-cream-200 via-cream-100 to-cream-300">
+      <SEOHead
+        title="Map Search — Properties & Plots in Rwanda"
+        description="Explore NGENZI REALESTATE listings on an interactive map. Find properties and land plots by location across Kigali and Rwanda."
+        keywords="map search Rwanda property, Kigali property map, find land on map Rwanda"
+        canonicalPath="/map"
+      />
+      {/* Page toolbar */}
+      <div className="bg-haven-950/95 backdrop-blur-sm border-b border-haven-800 sticky top-0 z-40 shadow-haven">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 sm:gap-4 min-w-0">
               <button
                 onClick={() => navigate(-1)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 rounded-haven text-cream-200 hover:bg-haven-800 hover:text-accent-300 transition-colors shrink-0"
+                aria-label="Go back"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                  <MapPin className="w-6 h-6 text-blue-600" />
+              <div className="min-w-0">
+                <h1 className="font-display text-xl sm:text-2xl text-cream-100 flex items-center gap-2 truncate">
+                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-accent-400 shrink-0" />
                   Search via Map
                 </h1>
-                <p className="text-sm text-gray-600">
-                  {category === 'properties' ? 'Properties' : 'Plots'} on Map
+                <p className="text-sm text-cream-300/70 font-sans">
+                  {category === 'properties' ? 'Properties' : 'Plots'} across Rwanda
                 </p>
               </div>
             </div>
-            
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => navigate(`/map?category=${category === 'properties' ? 'plots' : 'properties'}`)}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2"
-              >
-                {category === 'properties' ? <Home className="w-4 h-4" /> : <MapPin className="w-4 h-4" />}
-                <span>Switch to {category === 'properties' ? 'Plots' : 'Properties'}</span>
-              </button>
-            </div>
+
+            <button
+              onClick={() =>
+                navigate(
+                  `/map?category=${category === 'properties' ? 'plots' : 'properties'}`
+                )
+              }
+              className="px-3 sm:px-4 py-2 rounded-haven bg-accent-400 text-haven-950 font-sans text-sm font-semibold hover:bg-accent-300 transition-colors flex items-center gap-2 shrink-0 shadow-soft"
+            >
+              {category === 'properties' ? (
+                <Home className="w-4 h-4" />
+              ) : (
+                <MapPin className="w-4 h-4" />
+              )}
+              <span className="hidden sm:inline">
+                Switch to {category === 'properties' ? 'Plots' : 'Properties'}
+              </span>
+              <span className="sm:hidden">
+                {category === 'properties' ? 'Plots' : 'Homes'}
+              </span>
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="flex h-[calc(100vh-80px)]">
-        {/* Sidebar - Location List */}
-        <div className="w-full md:w-96 bg-white border-r border-gray-200 overflow-y-auto">
-          {/* Search */}
-          <div className="p-4 border-b border-gray-200 sticky top-0 bg-white z-10">
+      <div className="flex h-[calc(100vh-88px)]">
+        {/* Sidebar */}
+        <div className="w-full md:w-96 bg-cream-50/95 border-r border-cream-400 overflow-y-auto backdrop-blur-sm">
+          <div className="p-4 border-b border-cream-400 sticky top-0 bg-cream-50 z-10">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-haven-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search locations..."
+                placeholder="Search locations…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2.5 border border-cream-400 rounded-haven bg-white text-haven-900 placeholder:text-haven-400 font-sans focus:outline-none focus:ring-2 focus:ring-accent-400/50 focus:border-accent-400"
               />
             </div>
           </div>
 
-          {/* Location List */}
           <div className="p-4 space-y-3">
             {filteredLocations.length === 0 ? (
-              <div className="text-center py-12">
-                <MapPin className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500">No locations found</p>
+              <div className="text-center py-12 px-4">
+                <div className="w-14 h-14 rounded-full bg-haven-100 flex items-center justify-center mx-auto mb-4">
+                  <MapPin className="w-7 h-7 text-haven-400" />
+                </div>
+                <p className="text-haven-600 font-sans font-medium">No locations found</p>
+                <p className="text-sm text-haven-400 mt-1 font-sans">
+                  Try another search or switch category
+                </p>
               </div>
             ) : (
-              filteredLocations.map((locationData) => (
-                <motion.button
-                  key={locationData.location}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleLocationClick(locationData)}
-                  className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
-                    selectedLocation?.location === locationData.location
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300 bg-white'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        selectedLocation?.location === locationData.location
-                          ? 'bg-blue-500'
-                          : 'bg-gray-100'
-                      }`}>
-                        <MapPin className={`w-5 h-5 ${
-                          selectedLocation?.location === locationData.location
-                            ? 'text-white'
-                            : 'text-gray-600'
-                        }`} />
+              filteredLocations.map((locationData) => {
+                const active =
+                  selectedLocation?.location === locationData.location;
+                return (
+                  <motion.button
+                    key={locationData.location}
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    onClick={() => handleLocationClick(locationData)}
+                    className={`w-full text-left p-4 rounded-haven border transition-all ${
+                      active
+                        ? 'border-accent-400 bg-haven-50 shadow-soft ring-1 ring-accent-400/30'
+                        : 'border-cream-400 bg-white hover:border-haven-300 hover:bg-cream-100'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div
+                          className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
+                            active
+                              ? 'bg-haven-900'
+                              : 'bg-cream-300'
+                          }`}
+                        >
+                          <MapPin
+                            className={`w-5 h-5 ${
+                              active ? 'text-accent-400' : 'text-haven-700'
+                            }`}
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="font-sans font-semibold text-haven-900 truncate">
+                            {locationData.location}
+                          </h3>
+                          <p className="text-sm text-haven-500 font-sans">
+                            {locationData.count}{' '}
+                            {category === 'properties' ? 'properties' : 'plots'}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900">{locationData.location}</h3>
-                        <p className="text-sm text-gray-500">
-                          {locationData.count} {category === 'properties' ? 'properties' : 'plots'}
-                        </p>
-                      </div>
+                      <Info
+                        className={`w-5 h-5 shrink-0 ${
+                          active ? 'text-accent-500' : 'text-haven-300'
+                        }`}
+                      />
                     </div>
-                    <Info className="w-5 h-5 text-gray-400" />
-                  </div>
-                </motion.button>
-              ))
+                  </motion.button>
+                );
+              })
             )}
           </div>
         </div>
 
-        {/* Map Area */}
-        <div className="flex-1 relative bg-gray-100">
-          {/* Google Maps Embed - Using search URL (no API key needed) */}
+        {/* Map */}
+        <div className="flex-1 relative bg-haven-100">
           <iframe
             key={selectedLocation?.location || searchQuery || 'default'}
             src={getMapUrl()}
@@ -311,62 +324,69 @@ const MapSearch = () => {
             title="Google Maps"
           />
 
-          {/* Map Controls Overlay */}
           <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
             <a
-              href={selectedLocation ? getGoogleMapsSearchUrl(selectedLocation.location) : 'https://www.google.com/maps?q=Rwanda'}
+              href={
+                selectedLocation
+                  ? getGoogleMapsSearchUrl(selectedLocation.location)
+                  : 'https://www.google.com/maps?q=Rwanda'
+              }
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 bg-white rounded-lg shadow-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium text-gray-700"
+              className="px-4 py-2.5 bg-haven-950 text-cream-100 rounded-haven shadow-haven hover:bg-haven-800 transition-colors flex items-center gap-2 text-sm font-sans font-medium border border-haven-700"
             >
-              <MapPin className="w-4 h-4" />
+              <MapPin className="w-4 h-4 text-accent-400" />
               Open in Google Maps
             </a>
           </div>
 
-          {/* Location Markers Overlay - Visual indicators */}
           <div className="absolute inset-0 pointer-events-none z-20">
             {filteredLocations.map((locationData, index) => {
-              const coords = getLocationCoords(locationData.location);
-              // Calculate approximate position on map (simplified)
               const position = {
                 left: `${20 + (index % 5) * 15}%`,
-                top: `${15 + Math.floor(index / 5) * 20}%`
+                top: `${15 + Math.floor(index / 5) * 20}%`,
               };
-              
+              const active =
+                selectedLocation?.location === locationData.location;
+
               return (
                 <motion.div
                   key={locationData.location}
                   initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: selectedLocation?.location === locationData.location ? 1 : 0.7 }}
+                  animate={{
+                    scale: 1,
+                    opacity: active ? 1 : 0.75,
+                  }}
                   transition={{ delay: index * 0.05 }}
                   className="absolute pointer-events-auto"
                   style={position}
                 >
                   <button
                     onClick={() => handleLocationClick(locationData)}
-                    className={`relative group ${
-                      selectedLocation?.location === locationData.location
-                        ? 'z-50'
-                        : 'z-10'
-                    }`}
+                    className={`relative group ${active ? 'z-50' : 'z-10'}`}
                   >
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all cursor-pointer ${
-                      selectedLocation?.location === locationData.location
-                        ? 'bg-blue-600 scale-125 ring-4 ring-blue-200'
-                        : 'bg-white hover:bg-blue-500 hover:scale-110'
-                    }`}>
-                      <MapPin className={`w-6 h-6 ${
-                        selectedLocation?.location === locationData.location
-                          ? 'text-white'
-                          : 'text-blue-600 group-hover:text-white'
-                      }`} />
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all cursor-pointer border-2 ${
+                        active
+                          ? 'bg-haven-900 border-accent-400 scale-125 ring-4 ring-accent-400/25'
+                          : 'bg-cream-50 border-haven-700 hover:bg-haven-900 hover:scale-110'
+                      }`}
+                    >
+                      <MapPin
+                        className={`w-5 h-5 ${
+                          active
+                            ? 'text-accent-400'
+                            : 'text-haven-800 group-hover:text-accent-400'
+                        }`}
+                      />
                     </div>
-                    <div className={`absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all pointer-events-none ${
-                      selectedLocation?.location === locationData.location
-                        ? 'bg-blue-600 text-white opacity-100'
-                        : 'bg-gray-900 text-white opacity-0 group-hover:opacity-100'
-                    }`}>
+                    <div
+                      className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1 rounded-haven text-xs font-sans font-semibold whitespace-nowrap transition-all pointer-events-none ${
+                        active
+                          ? 'bg-haven-950 text-accent-300 opacity-100'
+                          : 'bg-haven-900 text-cream-100 opacity-0 group-hover:opacity-100'
+                      }`}
+                    >
                       {locationData.location} ({locationData.count})
                     </div>
                   </button>
@@ -375,28 +395,29 @@ const MapSearch = () => {
             })}
           </div>
 
-          {/* Loading Overlay */}
           {!mapLoaded && (
-            <div className="absolute inset-0 bg-gray-100 flex items-center justify-center z-0">
-              <Loader className="w-8 h-8 animate-spin text-blue-600" />
+            <div className="absolute inset-0 bg-cream-200/90 flex items-center justify-center z-0">
+              <Loader className="w-8 h-8 animate-spin text-accent-500" />
             </div>
           )}
 
-          {/* Selected Location Info Panel */}
           <AnimatePresence>
             {selectedLocation && (
               <motion.div
                 initial={{ x: 400, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: 400, opacity: 0 }}
-                className="absolute right-4 top-4 bottom-4 w-96 bg-white rounded-xl shadow-2xl overflow-hidden z-50"
+                className="absolute right-4 top-4 bottom-4 w-[min(24rem,calc(100%-2rem))] bg-cream-50 rounded-haven shadow-haven overflow-hidden z-50 border border-cream-400"
               >
-                <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h2 className="text-xl font-bold">{selectedLocation.location}</h2>
-                      <p className="text-sm text-blue-100">
-                        {selectedLocation.count} {category === 'properties' ? 'properties' : 'plots'} found
+                <div className="p-4 bg-haven-950 text-cream-100 border-b border-haven-800">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <h2 className="font-display text-xl text-accent-300 truncate">
+                        {selectedLocation.location}
+                      </h2>
+                      <p className="text-sm text-cream-300/70 font-sans">
+                        {selectedLocation.count}{' '}
+                        {category === 'properties' ? 'properties' : 'plots'} found
                       </p>
                     </div>
                     <button
@@ -404,19 +425,20 @@ const MapSearch = () => {
                         setSelectedLocation(null);
                         setLocationItems([]);
                       }}
-                      className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                      className="p-2 hover:bg-haven-800 rounded-haven transition-colors shrink-0 text-cream-200 hover:text-accent-300"
+                      aria-label="Close"
                     >
                       <X className="w-5 h-5" />
                     </button>
                   </div>
                 </div>
 
-                <div className="overflow-y-auto h-[calc(100%-80px)] p-4 space-y-4">
+                <div className="overflow-y-auto h-[calc(100%-80px)] p-4 space-y-4 bg-gradient-to-b from-cream-100 to-cream-200">
                   {locationItems.map((item) => (
                     <motion.div
                       key={item.id}
-                      whileHover={{ scale: 1.02 }}
-                      className="bg-gray-50 rounded-lg p-4 border border-gray-200 cursor-pointer hover:shadow-md transition-shadow"
+                      whileHover={{ scale: 1.01 }}
+                      className="bg-white rounded-haven p-4 border border-cream-400 cursor-pointer hover:border-accent-400 hover:shadow-soft transition-all"
                       onClick={() => {
                         if (category === 'properties') {
                           navigate(`/properties/single/${item.id}`);
@@ -427,31 +449,34 @@ const MapSearch = () => {
                     >
                       {item.frontImage && (
                         <img
-                          src={item.frontImage.startsWith('http') ? item.frontImage : `${Backendurl}${item.frontImage}`}
+                          src={
+                            item.frontImage.startsWith('http')
+                              ? item.frontImage
+                              : `${Backendurl}${item.frontImage}`
+                          }
                           alt={item.title}
-                          className="w-full h-32 object-cover rounded-lg mb-3"
+                          className="w-full h-32 object-cover rounded-haven mb-3"
                         />
                       )}
-                      <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
-                      <p className="text-sm text-gray-600 mb-2">{item.location}</p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-lg font-bold text-blue-600">
-                          {category === 'properties' 
-                            ? `RWF ${parseFloat(item.price).toLocaleString()}`
-                            : `RWF ${parseFloat(item.price).toLocaleString()}`
-                          }
+                      <h3 className="font-sans font-semibold text-haven-900 mb-1">
+                        {item.title}
+                      </h3>
+                      <p className="text-sm text-haven-500 mb-2 font-sans">
+                        {item.location}
+                      </p>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-display text-lg text-accent-600">
+                          RWF {parseFloat(item.price).toLocaleString()}
                         </span>
                         {category === 'properties' && (
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                          <div className="flex items-center gap-2 text-sm text-haven-500 font-sans">
                             <span>{item.beds} beds</span>
-                            <span>•</span>
+                            <span className="text-cream-500">•</span>
                             <span>{item.baths} baths</span>
-                            <span>•</span>
-                            <span>{item.sqft} sqft</span>
                           </div>
                         )}
                         {category === 'plots' && (
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-haven-500 font-sans">
                             {item.area} {item.areaUnit || 'sqft'}
                           </div>
                         )}

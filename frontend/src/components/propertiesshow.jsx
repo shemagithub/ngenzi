@@ -4,21 +4,18 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import { 
   MapPin, 
-  IndianRupee, 
   BedDouble, 
   Bath, 
   Maximize, 
   Heart,
   Eye,
   ArrowRight,
-  Building,
   Search
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Backendurl } from '../utils/backendUrl';
 import { useCurrency } from '../context/CurrencyContext';
 
-// Sample featured properties for fallback
 const sampleProperties = [
   {
     _id: "sample1",
@@ -71,135 +68,126 @@ const PropertyCard = ({ property }) => {
   const toggleFavorite = (e) => {
     e.stopPropagation();
     setIsFavorite(!isFavorite);
-    // Here you would typically call an API to save to user's favorites
+  };
+
+  const getImage = () => {
+    let images = [];
+    if (property.image) {
+      if (Array.isArray(property.image)) {
+        images = property.image;
+      } else if (typeof property.image === 'string') {
+        try {
+          const parsed = JSON.parse(property.image);
+          images = Array.isArray(parsed) ? parsed : [property.image];
+        } catch {
+          images = [property.image];
+        }
+      }
+    }
+    const defaultImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2U1ZTdlYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
+    return images.length > 0 ? images[0] : defaultImage;
   };
 
   return (
     <motion.div
-      whileHover={{ y: -8 }}
+      whileHover={{ y: -6 }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-200 dark:border-gray-700"
+      className="bg-white dark:bg-haven-900 overflow-hidden cursor-pointer border border-cream-400/80 dark:border-haven-800 group shadow-soft"
       onClick={handleNavigate}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Property Image */}
-      <div className="relative h-64">
+      <div className="relative h-64 overflow-hidden">
         <img
-          src={(() => {
-            // Normalize image field
-            let images = [];
-            if (property.image) {
-              if (Array.isArray(property.image)) {
-                images = property.image;
-              } else if (typeof property.image === 'string') {
-                try {
-                  const parsed = JSON.parse(property.image);
-                  images = Array.isArray(parsed) ? parsed : [property.image];
-                } catch {
-                  images = [property.image];
-                }
-              }
-            }
-            // Base64 encoded placeholder image (gray 400x300)
-            const defaultImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2U1ZTdlYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
-            return images.length > 0 ? images[0] : defaultImage;
-          })()}
+          src={getImage()}
           alt={property.title}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           onError={(e) => {
-            // Base64 encoded placeholder image (gray 400x300)
             e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2U1ZTdlYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
           }}
         />
         
-        {/* Property badges */}
         <div className="absolute top-4 left-4 flex flex-col gap-2">
-          <span className="bg-blue-600 text-white text-xs font-medium px-3 py-1.5 rounded-full shadow-md">
+          <span className="bg-haven-900 text-white text-[10px] font-semibold uppercase tracking-[0.14em] px-3 py-1.5">
             {property.type}
           </span>
-          <span className={`text-xs font-medium px-3 py-1.5 rounded-full shadow-md 
-            ${property.availability === 'Rent' 
-              ? 'bg-green-600 text-white' 
-              : 'bg-purple-600 text-white'}`}>
+          <span className="bg-accent-400 text-haven-900 text-[10px] font-semibold uppercase tracking-[0.14em] px-3 py-1.5">
             For {property.availability}
           </span>
         </div>
         
-        {/* Favorite button */}
         <button 
           onClick={toggleFavorite}
-          className={`absolute top-4 right-4 p-2 rounded-full transition-all duration-300 
+          className={`absolute top-4 right-4 p-2 transition-all duration-300 
             ${isFavorite 
-              ? 'bg-red-500 text-white' 
-              : 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-700 dark:text-gray-300 hover:text-red-500'}`}
+              ? 'bg-accent-500 text-haven-900' 
+              : 'bg-white/90 text-haven-800 hover:text-accent-600'}`}
         >
-          <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+          <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
         </button>
         
-        {/* View overlay on hover */}
         <AnimatePresence>
           {isHovered && (
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent flex items-center justify-center"
+              className="absolute inset-0 bg-haven-950/45 flex items-center justify-center"
             >
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.8, opacity: 0 }}
-                className="px-5 py-3 bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 rounded-lg font-medium flex items-center gap-2 shadow-lg border border-gray-200 dark:border-gray-700"
-              >
-                <Eye className="w-5 h-5" />
+              <div className="px-5 py-3 bg-white text-haven-900 text-xs font-semibold uppercase tracking-[0.14em] flex items-center gap-2">
+                <Eye className="w-4 h-4" />
                 View Details
-              </motion.div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
       
-      {/* Property Content */}
       <div className="p-6">
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+        <h3 className="font-display text-xl text-haven-900 dark:text-cream-100 mb-2 line-clamp-1">
           {property.title}
         </h3>
         
-        <div className="flex items-center text-gray-600 dark:text-gray-400 mb-4">
-          <MapPin className="h-4 w-4 mr-2 flex-shrink-0 text-blue-500 dark:text-blue-400" />
+        <div className="flex items-center text-haven-700/70 dark:text-cream-200/60 mb-4 text-sm">
+          <MapPin className="h-4 w-4 mr-2 flex-shrink-0 text-accent-500" />
           <span className="line-clamp-1">{property.location}</span>
         </div>
         
-        {/* Property Features */}
-        <div className="flex justify-between items-center py-3 border-y border-gray-100 dark:border-gray-700 mb-4">
-          <div className="flex items-center gap-1">
-            <BedDouble className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-            <span className="text-sm text-gray-600 dark:text-gray-400">{property.beds} {property.beds > 1 ? 'Beds' : 'Bed'}</span>
+        <div className="flex justify-between items-center py-3 border-y border-cream-400/80 dark:border-haven-700 mb-5">
+          <div className="flex items-center gap-1.5">
+            <BedDouble className="w-4 h-4 text-accent-500" />
+            <span className="text-xs text-haven-700 dark:text-cream-200/70">{property.beds} Beds</span>
           </div>
-          <div className="flex items-center gap-1">
-            <Bath className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-            <span className="text-sm text-gray-600 dark:text-gray-400">{property.baths} {property.baths > 1 ? 'Baths' : 'Bath'}</span>
+          <div className="flex items-center gap-1.5">
+            <Bath className="w-4 h-4 text-accent-500" />
+            <span className="text-xs text-haven-700 dark:text-cream-200/70">{property.baths} Baths</span>
           </div>
-          <div className="flex items-center gap-1">
-            <Maximize className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-            <span className="text-sm text-gray-600 dark:text-gray-400">{property.sqft} sqft</span>
+          <div className="flex items-center gap-1.5">
+            <Maximize className="w-4 h-4 text-accent-500" />
+            <span className="text-xs text-haven-700 dark:text-cream-200/70">{property.sqft} sqft</span>
           </div>
         </div>
         
-        <div className="flex items-center justify-between">
-          <div className="flex items-center text-blue-600 dark:text-blue-400 font-bold">
-            <span className="text-xl">{formatPrice(property.price)}</span>
-          </div>
-          
-          <div className="text-sm bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-1 rounded-md flex items-center">
-            <Building className="w-3.5 h-3.5 mr-1" />
-            {property.availability === 'Rent' ? 'Rental' : 'Purchase'}
-          </div>
+        <div className="mb-4">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-accent-600 font-semibold mb-1">
+            From
+          </p>
+          <p className="font-display text-2xl text-haven-900 dark:text-cream-100">
+            {formatPrice(property.price)}
+          </p>
         </div>
+
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleNavigate();
+          }}
+          className="w-full btn-haven"
+        >
+          View Details
+        </button>
       </div>
     </motion.div>
   );
@@ -223,9 +211,7 @@ const PropertiesShow = () => {
     hidden: { opacity: 0 },
     visible: { 
       opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
+      transition: { staggerChildren: 0.1 }
     }
   };
   
@@ -234,11 +220,7 @@ const PropertiesShow = () => {
     visible: { 
       opacity: 1, 
       y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 15
-      }
+      transition: { type: "spring", stiffness: 100, damping: 15 }
     }
   };
 
@@ -249,18 +231,15 @@ const PropertiesShow = () => {
         const response = await axios.get(`${Backendurl}/api/products/list`);
         
         if (response.data.success) {
-          // Take only the first 6 properties for featured section
           const featuredProperties = response.data.property.slice(0, 6);
           setProperties(featuredProperties);
         } else {
           setError('Failed to fetch properties');
-          // Fallback to sample data in case of API error
           setProperties(sampleProperties);
         }
       } catch (err) {
         console.error('Error fetching properties:', err);
         setError('Failed to load properties. Using sample data instead.');
-        // Fallback to sample data
         setProperties(sampleProperties);
       } finally {
         setLoading(false);
@@ -274,39 +253,18 @@ const PropertiesShow = () => {
     ? properties 
     : properties.filter(property => property.type.toLowerCase() === activeCategory);
 
-  const viewAllProperties = () => {
-    navigate('/properties');
-  };
-
   if (loading) {
     return (
-      <div className="py-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-        <div className="max-w-[1600px] mx-auto px-4 text-center">
-          <div className="animate-pulse">
-            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mx-auto mb-4"></div>
-            <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mx-auto mb-16"></div>
-            
-            <div className="h-10 bg-gray-100 dark:bg-gray-800 rounded-lg w-full max-w-md mx-auto mb-8 flex justify-center gap-4">
-              {[1, 2, 3, 4].map(n => (
-                <div key={n} className="h-8 bg-gray-200 dark:bg-gray-700 rounded-full w-24"></div>
-              ))}
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[1, 2, 3].map((n) => (
-                <div key={n} className="bg-white dark:bg-gray-800 rounded-xl shadow h-96">
-                  <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-t-xl"></div>
-                  <div className="p-6">
-                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
-                    <div className="flex justify-between">
-                      <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
-                      <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+      <div className="py-24 bg-cream-200 dark:bg-haven-950">
+        <div className="max-w-[1600px] mx-auto px-4 text-center animate-pulse">
+          <div className="h-4 bg-cream-400 rounded w-32 mx-auto mb-4"></div>
+          <div className="h-10 bg-cream-400 rounded w-1/3 mx-auto mb-16"></div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="bg-white dark:bg-haven-900 h-96">
+                <div className="h-64 bg-cream-400"></div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -314,54 +272,42 @@ const PropertiesShow = () => {
   }
 
   return (
-    <section className="py-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-200">
+    <section className="py-24 bg-cream-100 dark:bg-haven-950">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <span className="text-blue-600 dark:text-blue-400 font-semibold tracking-wide uppercase text-sm">Explore Properties</span>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 mt-2 mb-4">
-            Featured Properties
-          </h2>
-          <div className="w-24 h-1 bg-blue-600 dark:bg-blue-500 mx-auto mb-6"></div>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Discover our handpicked selection of premium properties designed to match your lifestyle needs
+          <p className="section-eyebrow">Explore Properties</p>
+          <h2 className="section-title mt-3 mb-2">Featured Residences</h2>
+          <div className="section-divider" />
+          <p className="text-haven-700/70 dark:text-cream-200/60 max-w-2xl mx-auto leading-relaxed">
+            Discover our handpicked selection of premium properties designed to match your lifestyle
           </p>
         </motion.div>
 
-        {/* Category filter */}
-        <motion.div 
-          className="flex flex-wrap justify-center gap-4 mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
           {categories.map((category) => (
             <button
               key={category.id}
               onClick={() => setActiveCategory(category.id)}
-              className={`px-6 py-2.5 rounded-full font-medium text-sm transition-all duration-200
+              className={`px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] transition-all duration-200
                 ${activeCategory === category.id 
-                  ? 'bg-blue-600 dark:bg-blue-500 text-white shadow-lg shadow-blue-600/20' 
-                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm border border-gray-200 dark:border-gray-700'}`}
+                  ? 'bg-haven-900 text-white' 
+                  : 'bg-white dark:bg-haven-900 text-haven-800 dark:text-cream-200 border border-cream-400 dark:border-haven-700 hover:border-haven-900'}`}
             >
               {category.label}
             </button>
           ))}
-        </motion.div>
+        </div>
 
         {error && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800 mb-8 max-w-md mx-auto text-center"
-          >
+          <div className="text-accent-800 bg-accent-50 p-4 border border-accent-200 mb-8 max-w-md mx-auto text-center text-sm">
             <p className="font-medium mb-1">Note: {error}</p>
-            <p className="text-sm">Showing sample properties for demonstration.</p>
-          </motion.div>
+            <p>Showing sample properties for demonstration.</p>
+          </div>
         )}
 
         {properties.length > 0 ? (
@@ -378,36 +324,27 @@ const PropertiesShow = () => {
             ))}
           </motion.div>
         ) : (
-          <div className="text-center py-10 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-            <Search className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-gray-800 dark:text-gray-200 mb-2">No properties available</h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">No properties found in this category.</p>
+          <div className="text-center py-12 bg-white dark:bg-haven-900 border border-cream-400 dark:border-haven-800">
+            <Search className="w-12 h-12 text-cream-500 mx-auto mb-4" />
+            <h3 className="font-display text-xl text-haven-900 dark:text-cream-100 mb-2">No properties available</h3>
             <button 
               onClick={() => setActiveCategory('all')} 
-              className="px-6 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
+              className="mt-4 btn-haven"
             >
               View All Properties
             </button>
           </div>
         )}
 
-        <motion.div 
-          className="mt-16 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
+        <div className="mt-16 text-center">
           <button
-            onClick={viewAllProperties}
-            className="inline-flex items-center px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors shadow-lg shadow-blue-600/20 dark:shadow-blue-500/30 font-medium"
+            onClick={() => navigate('/properties')}
+            className="inline-flex items-center px-8 py-3 border border-haven-900 dark:border-cream-200 text-haven-900 dark:text-cream-100 text-xs font-semibold uppercase tracking-[0.16em] hover:bg-haven-900 hover:text-white dark:hover:bg-cream-100 dark:hover:text-haven-900 transition-all"
           >
-            Browse All Properties
+            View All Accommodations
             <ArrowRight className="ml-2 w-4 h-4" />
           </button>
-          <p className="text-gray-600 dark:text-gray-400 mt-4 text-sm">
-            Discover our complete collection of premium properties
-          </p>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

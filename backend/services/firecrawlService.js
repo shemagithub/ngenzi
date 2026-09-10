@@ -1,14 +1,50 @@
 import FirecrawlApp from "@mendable/firecrawl-js";
 import { config } from '../config/config.js';
 
+const isValidApiKey = (key) => {
+    if (!key || typeof key !== 'string') return false;
+    const trimmed = key.trim();
+    if (!trimmed) return false;
+    // Treat common placeholders as unset
+    const placeholders = [
+        'your-firecrawl-api-key',
+        'your_api_key',
+        'changeme',
+        'xxx',
+    ];
+    return !placeholders.includes(trimmed.toLowerCase());
+};
+
 class FirecrawlService {
     constructor() {
-        this.firecrawl = new FirecrawlApp({
-            apiKey: config.firecrawlApiKey
-        });
+        this.firecrawl = null;
+        this.enabled = isValidApiKey(config.firecrawlApiKey);
+
+        if (this.enabled) {
+            try {
+                this.firecrawl = new FirecrawlApp({
+                    apiKey: config.firecrawlApiKey,
+                });
+            } catch (error) {
+                console.warn('⚠️  Firecrawl init failed — AI property scrape features disabled:', error.message);
+                this.enabled = false;
+                this.firecrawl = null;
+            }
+        } else {
+            console.warn('⚠️  FIRECRAWL_API_KEY not set — AI property scrape features disabled');
+        }
+    }
+
+    ensureReady() {
+        if (!this.enabled || !this.firecrawl) {
+            throw new Error(
+                'Firecrawl is not configured. Set a valid FIRECRAWL_API_KEY in backend/.env to enable this feature.'
+            );
+        }
     }
 
     async findProperties(city, maxPrice, propertyCategory = "Residential", propertyType = "Flat", limit = 6) {
+        this.ensureReady();
         try {
             const formattedLocation = city.toLowerCase().replace(/\s+/g, '-');
             
@@ -99,6 +135,7 @@ class FirecrawlService {
     }
 
     async getLocationTrends(city, limit = 5) {
+        this.ensureReady();
         try {
             const formattedLocation = city.toLowerCase().replace(/\s+/g, '-');
             

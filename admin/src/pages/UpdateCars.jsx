@@ -169,13 +169,13 @@ const UpdateCars = () => {
 
   const inputClass = "mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm";
 
-  if (fetching) return <div className="min-h-screen pt-32 flex items-center justify-center"><p>Loading car...</p></div>;
+  if (fetching) return <div className="admin-page flex items-center justify-center"><p>Loading car...</p></div>;
 
   return (
-    <div className="min-h-screen pt-32 px-4 bg-gray-50 pb-12">
+    <div className="admin-page pb-12">
       <div className="max-w-3xl mx-auto rounded-lg shadow-xl bg-white p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-blue-100 rounded-lg"><Car className="w-6 h-6 text-blue-600" /></div>
+          <div className="p-2 bg-blue-100 rounded-lg"><Car className="w-6 h-6 text-haven-700" /></div>
           <h2 className="text-2xl font-bold text-gray-900">Update Car</h2>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -245,7 +245,7 @@ const UpdateCars = () => {
               </label>
             ))}
           </div>
-          <button type="submit" disabled={loading} className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50">
+          <button type="submit" disabled={loading} className="w-full py-3 bg-haven-800 text-white font-semibold rounded-lg hover:bg-haven-700 disabled:opacity-50">
             {loading ? 'Updating...' : 'Update Car'}
           </button>
         </form>

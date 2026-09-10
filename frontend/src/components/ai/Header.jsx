@@ -20,16 +20,15 @@ const Header = ({ title = "AI Property Assistant" }) => {
     <motion.header
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 px-4 sm:px-6 shadow-lg relative z-50"
+      className="bg-haven-900 text-cream-100 py-4 px-4 sm:px-6 shadow-haven relative z-50"
     >
       <div className="container mx-auto flex justify-between items-center">
-        {/* Logo and Title */}
         <Link to="/ai-property-hub" className="flex items-center gap-2">
           <motion.div
             whileHover={{ rotate: 10 }}
             transition={{ duration: 0.2 }}
           >
-            <Brain className="w-6 h-6 sm:w-7 sm:h-7" />
+            <Brain className="w-6 h-6 sm:w-7 sm:h-7 text-accent-400" />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, x: -10 }}
@@ -37,36 +36,33 @@ const Header = ({ title = "AI Property Assistant" }) => {
             transition={{ delay: 0.2 }}
             className="hidden sm:block"
           >
-            <h1 className="text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-100">
+            <h1 className="font-display text-xl sm:text-2xl text-cream-100">
               {title}
             </h1>
           </motion.div>
         </Link>
 
-        {/* Mobile Title (centered) */}
         <div className="sm:hidden absolute left-1/2 transform -translate-x-1/2">
-          <h1 className="text-lg font-bold text-white">
+          <h1 className="font-display text-lg text-cream-100">
             {title.split(' ').slice(0, 2).join(' ')}
           </h1>
         </div>
 
-        {/* Navigation */}
         <div className="flex items-center gap-3">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleBack}
-            className="hidden sm:flex items-center gap-1 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium backdrop-blur-sm transition-colors"
+            className="hidden sm:flex items-center gap-1 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-haven text-sm font-medium backdrop-blur-sm transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back Home</span>
           </motion.button>
 
-          {/* Mobile Menu Button */}
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={toggleMenu}
-            className="sm:hidden p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+            className="sm:hidden p-2 rounded-haven bg-white/10 hover:bg-white/20 transition-colors"
             aria-label="Toggle menu"
           >
             {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -74,7 +70,6 @@ const Header = ({ title = "AI Property Assistant" }) => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
@@ -82,13 +77,13 @@ const Header = ({ title = "AI Property Assistant" }) => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="sm:hidden bg-indigo-700 shadow-lg overflow-hidden"
+            className="sm:hidden bg-haven-950 shadow-lg overflow-hidden"
           >
             <div className="p-4 flex flex-col gap-3">
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={handleBack}
-                className="flex items-center justify-center gap-2 px-4 py-3 bg-white/10 hover:bg-white/20 rounded-lg text-white transition-colors w-full"
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-white/10 hover:bg-white/20 rounded-haven text-cream-100 transition-colors w-full"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back to Home</span>
@@ -97,7 +92,7 @@ const Header = ({ title = "AI Property Assistant" }) => {
               <Link 
                 to="/properties" 
                 onClick={() => setIsMenuOpen(false)}
-                className="text-center px-4 py-3 bg-white/10 hover:bg-white/20 rounded-lg text-white transition-colors"
+                className="text-center px-4 py-3 bg-white/10 hover:bg-white/20 rounded-haven text-cream-100 transition-colors"
               >
                 Browse Properties
               </Link>

@@ -22,7 +22,7 @@ const LocationTrends = ({ locations }) => {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md text-center border border-gray-200 dark:border-gray-700"
+        className="bg-cream-50 p-4 sm:p-6 rounded-haven shadow-soft text-center border border-cream-400"
       >
         <div className="flex flex-col items-center justify-center py-8 sm:py-10">
           <MapPin className="w-10 h-10 sm:w-12 sm:h-12 text-gray-300 dark:text-gray-600 mb-3 sm:mb-4" />
@@ -57,20 +57,20 @@ const LocationTrends = ({ locations }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
+      className="bg-cream-50 p-4 sm:p-6 rounded-haven shadow-soft border border-cream-400"
     >
       {/* Header - Stacked on mobile, side by side on larger screens */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex items-center">
-          <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg mr-3">
-            <MapPin className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          <div className="p-2 bg-haven-100 rounded-haven mr-3">
+            <MapPin className="h-5 w-5 text-haven-700" />
           </div>
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-200">Location Price Trends</h2>
+          <h2 className="font-display text-lg sm:text-xl text-haven-900">Location Price Trends</h2>
         </div>
         
-        <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1 self-start sm:self-center">
+        <div className="flex bg-cream-200 rounded-haven p-1 self-start sm:self-center">
           <button 
-            className={`px-3 py-1 text-sm rounded-md transition-all ${activeTab === 'table' ? 'bg-white dark:bg-gray-600 shadow-sm text-gray-900 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'}`}
+            className={`px-3 py-1 text-sm rounded-haven transition-all ${activeTab === 'table' ? 'bg-cream-50 shadow-sm text-haven-900' : 'text-haven-600 hover:text-haven-900'}`}
             onClick={() => setActiveTab('table')}
           >
             <span className="flex items-center gap-1">
@@ -78,7 +78,7 @@ const LocationTrends = ({ locations }) => {
             </span>
           </button>
           <button 
-            className={`px-3 py-1 text-sm rounded-md transition-all ${activeTab === 'insights' ? 'bg-white dark:bg-gray-600 shadow-sm text-gray-900 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'}`}
+            className={`px-3 py-1 text-sm rounded-haven transition-all ${activeTab === 'insights' ? 'bg-cream-50 shadow-sm text-haven-900' : 'text-haven-600 hover:text-haven-900'}`}
             onClick={() => setActiveTab('insights')}
           >
             <span className="flex items-center gap-1">
@@ -108,7 +108,7 @@ const LocationTrends = ({ locations }) => {
                   transition={{ delay: index * 0.1 }}
                 >
                   <div className="flex items-center mb-3">
-                    <MapPin className="w-4 h-4 mr-2 text-blue-500 dark:text-blue-400" />
+                    <MapPin className="w-4 h-4 mr-2 text-haven-700" />
                     <h3 className="font-medium text-gray-900 dark:text-gray-200">{location.location}</h3>
                   </div>
                   <div className="grid grid-cols-2 gap-3 text-sm">
@@ -145,7 +145,7 @@ const LocationTrends = ({ locations }) => {
                       {location.rental_yield != null && (
                         <div className="w-full mt-2 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                           <div 
-                            className="h-full bg-blue-600 rounded-full"
+                            className="h-full bg-haven-700 rounded-full"
                             style={{ width: `${Math.min(100, location.rental_yield * 10)}%` }}
                           ></div>
                         </div>
@@ -174,11 +174,11 @@ const LocationTrends = ({ locations }) => {
                       className={`${index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-700/50'} cursor-pointer transition-colors`}
                       onMouseEnter={() => setHighlightedRow(index)}
                       onMouseLeave={() => setHighlightedRow(null)}
-                      animate={{ backgroundColor: highlightedRow === index ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? '#1e3a8a' : '#f0f9ff') : index % 2 === 0 ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? '#1f2937' : '#ffffff') : (window.matchMedia('(prefers-color-scheme: dark)').matches ? '#374151' : '#f9fafb') }}
+                      animate={{ backgroundColor: highlightedRow === index ? '#e3ebe6' : index % 2 === 0 ? '#fdfcfa' : '#f7f5f0' }}
                     >
                       <td className="py-3 px-4 font-medium">
                         <div className="flex items-center">
-                          <MapPin className={`w-4 h-4 mr-2 ${highlightedRow === index ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'}`} />
+                          <MapPin className={`w-4 h-4 mr-2 ${highlightedRow === index ? 'text-haven-700' : 'text-haven-400'}`} />
                           {location.location}
                         </div>
                       </td>
@@ -208,7 +208,7 @@ const LocationTrends = ({ locations }) => {
                               {location.rental_yield}%
                               <div className="ml-2 w-16 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                                 <div 
-                                  className="h-full bg-blue-600 rounded-full"
+                                  className="h-full bg-haven-700 rounded-full"
                                   style={{ width: `${Math.min(100, location.rental_yield * 10)}%` }}
                                 ></div>
                               </div>
@@ -246,16 +246,16 @@ const LocationTrends = ({ locations }) => {
             
             {/* Responsive grid - 1 column on mobile, 2 on medium screens */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+              <div className="bg-haven-50 p-4 rounded-haven border border-haven-200">
                 <div className="flex items-center mb-2">
-                  <DollarSign className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2 flex-shrink-0" />
-                  <h3 className="font-medium text-blue-800 dark:text-blue-300">Best Rental Yield</h3>
+                  <DollarSign className="h-5 w-5 text-haven-700 mr-2 flex-shrink-0" />
+                  <h3 className="font-medium text-haven-800">Best Rental Yield</h3>
                 </div>
                 <div className="ml-7">
-                  <div className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1 break-words">
+                  <div className="font-display text-xl sm:text-2xl text-haven-900 mb-1 break-words">
                     {bestRentalYield?.location || 'N/A'}
                   </div>
-                  <div className="text-blue-700 dark:text-blue-300">
+                  <div className="text-haven-700">
                     {bestRentalYield?.rental_yield != null ? `${bestRentalYield.rental_yield}% annual return` : 'Data not available'}
                   </div>
                 </div>
@@ -277,9 +277,9 @@ const LocationTrends = ({ locations }) => {
               </div>
             </div>
             
-            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 sm:p-5 rounded-lg border border-blue-100 dark:border-blue-800">
+            <div className="bg-cream-100 p-4 sm:p-5 rounded-haven border border-cream-400">
               <div className="flex items-center mb-4">
-                <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2 flex-shrink-0" />
+                <Info className="h-5 w-5 text-haven-700 mr-2 flex-shrink-0" />
                 <h3 className="font-medium text-gray-800 dark:text-gray-200">Investment Insights</h3>
               </div>
               
@@ -291,7 +291,7 @@ const LocationTrends = ({ locations }) => {
                     transition={{ delay: 0.1 }}
                     className="flex items-start"
                   >
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 mr-2 flex-shrink-0"></span>
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent-500 mt-2 mr-2 flex-shrink-0"></span>
                     <span className="break-words">
                       <strong>{bestRentalYield.location}</strong> offers the highest rental yield at {bestRentalYield.rental_yield}%, making it ideal for income-focused investors.
                     </span>
@@ -305,7 +305,7 @@ const LocationTrends = ({ locations }) => {
                     transition={{ delay: 0.2 }}
                     className="flex items-start"
                   >
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 mr-2 flex-shrink-0"></span>
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent-500 mt-2 mr-2 flex-shrink-0"></span>
                     <span className="break-words">
                       <strong>{bestAppreciation.location}</strong> shows the strongest appreciation at {bestAppreciation.percent_increase}%, suggesting good potential for capital growth.
                     </span>
@@ -318,7 +318,7 @@ const LocationTrends = ({ locations }) => {
                   transition={{ delay: 0.3 }}
                   className="flex items-start"
                 >
-                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 mr-2 flex-shrink-0"></span>
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent-500 mt-2 mr-2 flex-shrink-0"></span>
                   <span className="break-words">
                     Areas with rental yields above 4% and appreciation above 8% offer balanced investment opportunities for both income and growth.
                   </span>

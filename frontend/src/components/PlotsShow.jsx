@@ -173,7 +173,7 @@ const PlotsShow = () => {
   }
 
   return (
-    <section className="py-24 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 transition-colors duration-200">
+    <section className="py-24 bg-cream-200 dark:bg-haven-900/40 transition-colors duration-200">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -181,19 +181,16 @@ const PlotsShow = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="text-amber-600 dark:text-amber-400 font-semibold tracking-wide uppercase text-sm">Explore Plots</span>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 mt-2 mb-4">
-            Featured Plots
-          </h2>
-          <div className="w-24 h-1 bg-amber-600 dark:bg-amber-500 mx-auto mb-6"></div>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="section-eyebrow">Explore Plots</p>
+          <h2 className="section-title mt-3 mb-2">Featured Land</h2>
+          <div className="section-divider" />
+          <p className="text-haven-700/70 dark:text-cream-200/60 max-w-2xl mx-auto leading-relaxed">
             Discover our handpicked selection of premium plots perfect for your dream project
           </p>
         </motion.div>
 
-        {/* Category filter */}
         <motion.div 
-          className="flex flex-wrap justify-center gap-4 mb-12"
+          className="flex flex-wrap justify-center gap-3 mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -202,10 +199,10 @@ const PlotsShow = () => {
             <button
               key={category.id}
               onClick={() => setActiveCategory(category.id)}
-              className={`px-6 py-2.5 rounded-full font-medium text-sm transition-all duration-200
+              className={`px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] transition-all duration-200
                 ${activeCategory === category.id 
-                  ? 'bg-amber-600 dark:bg-amber-500 text-white shadow-lg shadow-amber-600/20' 
-                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm border border-gray-200 dark:border-gray-700'}`}
+                  ? 'bg-haven-900 text-white' 
+                  : 'bg-white dark:bg-haven-900 text-haven-800 dark:text-cream-200 border border-cream-400 dark:border-haven-700 hover:border-haven-900'}`}
             >
               {category.label}
             </button>
@@ -243,7 +240,7 @@ const PlotsShow = () => {
             <p className="text-gray-600 dark:text-gray-400 mb-6">No plots found in this category.</p>
             <button 
               onClick={() => setActiveCategory('all')} 
-              className="px-6 py-2 bg-amber-600 dark:bg-amber-500 text-white rounded-lg hover:bg-amber-700 dark:hover:bg-amber-600 transition-colors"
+              className="btn-haven mt-4"
             >
               View All Plots
             </button>
@@ -258,14 +255,11 @@ const PlotsShow = () => {
         >
           <button
             onClick={viewAllPlots}
-            className="inline-flex items-center px-6 py-3 bg-amber-600 dark:bg-amber-500 text-white rounded-lg hover:bg-amber-700 dark:hover:bg-amber-600 transition-colors shadow-lg shadow-amber-600/20 dark:shadow-amber-500/30 font-medium"
+            className="inline-flex items-center px-8 py-3 border border-haven-900 dark:border-cream-200 text-haven-900 dark:text-cream-100 text-xs font-semibold uppercase tracking-[0.16em] hover:bg-haven-900 hover:text-white dark:hover:bg-cream-100 dark:hover:text-haven-900 transition-all"
           >
             Browse All Plots
             <ArrowRight className="ml-2 w-4 h-4" />
           </button>
-          <p className="text-gray-600 dark:text-gray-400 mt-4 text-sm">
-            Discover our complete collection of premium plots
-          </p>
         </motion.div>
       </div>
     </section>

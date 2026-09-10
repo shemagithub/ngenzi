@@ -46,7 +46,7 @@ const ViewCar = () => {
     load();
   }, [id, navigate]);
 
-  if (loading) return <div className="min-h-screen pt-24 flex items-center justify-center"><p>Loading car…</p></div>;
+  if (loading) return <div className="admin-page flex items-center justify-center"><p>Loading car…</p></div>;
   if (!car) return null;
 
   let images = [];
@@ -61,7 +61,7 @@ const ViewCar = () => {
   const videoSrc = getYoutubeEmbedSrc(car.youtubeUrl);
 
   return (
-    <div className="min-h-screen pt-20 pb-12 bg-gradient-to-br from-gray-50 via-white to-blue-50/40">
+    <div className="admin-page">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <Link to="/list-cars" className="inline-flex items-center gap-2 text-gray-600 hover:text-blue-700 text-sm font-medium">

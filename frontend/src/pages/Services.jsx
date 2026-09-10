@@ -18,6 +18,8 @@ import {
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Backendurl } from '../utils/backendUrl';
+import PageHero from '../components/PageHero';
+import SEOHead from '../components/SEO/SEOHead';
 
 // Icon mapping
 const iconMap = {
@@ -100,14 +102,14 @@ const Services = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-cream-200 dark:bg-haven-950 flex items-center justify-center transition-colors duration-200">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="text-center"
         >
-          <Loader className="w-12 h-12 text-blue-600 dark:text-blue-400 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 dark:text-gray-400">Loading services...</p>
+          <Loader className="w-12 h-12 text-accent-500 animate-spin mx-auto mb-4" />
+          <p className="text-haven-700/70 dark:text-cream-200/60 text-sm uppercase tracking-[0.14em]">Loading services...</p>
         </motion.div>
       </div>
     );
@@ -115,18 +117,19 @@ const Services = () => {
 
   if (error && services.length === 0) {
     return (
-      <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-cream-200 dark:bg-haven-950 flex items-center justify-center transition-colors duration-200">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="text-center max-w-md mx-auto px-4"
         >
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
-            <p className="text-lg font-semibold text-red-800 dark:text-red-400 mb-2">Unable to Load Services</p>
-            <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
+          <div className="bg-white dark:bg-haven-900 border border-cream-400/80 dark:border-haven-800 shadow-soft p-8">
+            <p className="font-display text-xl text-haven-900 dark:text-cream-100 mb-2">Unable to Load Services</p>
+            <div className="section-divider !my-4" />
+            <p className="text-haven-700/75 dark:text-cream-200/65 mb-6">{error}</p>
             <button
               onClick={fetchServices}
-              className="px-4 py-2 bg-red-600 dark:bg-red-700 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-600 transition-colors"
+              className="btn-haven"
             >
               Try Again
             </button>
@@ -281,20 +284,32 @@ const Services = () => {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-200">
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
+    <div className="bg-cream-200 dark:bg-haven-950 transition-colors duration-200">
+      <SEOHead
+        title="Real Estate Services in Rwanda"
+        description="Construction, legal, valuation, and property management services from NGENZI REALESTATE. End-to-end support for buyers and investors in Rwanda."
+        keywords="real estate services Rwanda, property management Kigali, land valuation Rwanda"
+        canonicalPath="/services"
+      />
+      <PageHero
+        compact
+        eyebrow="Services"
+        title="Our Services"
+        subtitle="Comprehensive real estate services to meet all your property needs. From construction to legal assistance, we've got you covered."
+      />
+
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+        {/* Section intro */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16"
+          className="text-center mb-14"
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-            Our Services
-          </h1>
-          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-            Comprehensive real estate services to meet all your property needs.
-            From construction to legal assistance, we've got you covered.
+          <p className="section-eyebrow">What We Offer</p>
+          <h2 className="section-title mt-3 mb-2">Tailored Property Services</h2>
+          <div className="section-divider" />
+          <p className="text-haven-700/75 dark:text-cream-200/65 max-w-3xl mx-auto leading-relaxed">
+            Every service is delivered with the same attention to detail and care that defines the Ngenzi experience.
           </p>
         </motion.div>
 
@@ -305,10 +320,11 @@ const Services = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center py-16"
           >
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 max-w-md mx-auto">
-              <Briefcase className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-200 mb-2">No Services Available</h3>
-              <p className="text-gray-600 dark:text-gray-400">
+            <div className="bg-white dark:bg-haven-900 border border-cream-400/80 dark:border-haven-800 shadow-soft p-10 max-w-md mx-auto">
+              <Briefcase className="w-14 h-14 text-accent-500 mx-auto mb-5 stroke-[1.25]" strokeWidth={1.25} />
+              <h3 className="font-display text-xl text-haven-900 dark:text-cream-100 mb-2">No Services Available</h3>
+              <div className="section-divider !my-4" />
+              <p className="text-haven-700/75 dark:text-cream-200/65 text-sm leading-relaxed">
                 Services will be displayed here once they are added to the system.
               </p>
             </div>
@@ -318,7 +334,7 @@ const Services = () => {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
           >
             {services.map((service, index) => {
               const IconComponent = typeof service.icon === 'function' ? service.icon : (iconMap[service.icon] || Building2);
@@ -328,67 +344,71 @@ const Services = () => {
                 <motion.div
                   key={service.id || index}
                   variants={itemVariants}
-                  whileHover={{ y: -8, scale: 1.02 }}
-                  className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 group"
+                  whileHover={{ y: -4 }}
+                  className="bg-white dark:bg-haven-900 border border-cream-400/80 dark:border-haven-800 shadow-soft overflow-hidden hover:border-accent-400/60 transition-all duration-300 group flex flex-col"
                 >
                   {/* Image or Icon Header */}
                   {service.image ? (
-                    <div className="relative h-48 overflow-hidden">
+                    <div className="relative h-48 overflow-hidden border-b border-cream-400/60 dark:border-haven-800">
                       <img
                         src={service.image}
                         alt={service.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         onError={(e) => {
                           // Fallback to icon if image fails to load
                           e.target.style.display = 'none';
                           e.target.nextElementSibling.style.display = 'flex';
                         }}
                       />
-                      <div className={`hidden absolute inset-0 bg-gradient-to-r ${service.color || 'from-blue-500 to-cyan-500'} p-6 items-center justify-between`}>
-                        <IconComponent className="w-12 h-12 text-white" />
-                        <ArrowRight className="w-6 h-6 text-white/80 group-hover:translate-x-2 transition-transform" />
+                      <div className="hidden absolute inset-0 bg-haven-900/90 dark:bg-haven-950/90 p-6 items-center justify-between">
+                        <div className="flex h-14 w-14 items-center justify-center border border-accent-400/40">
+                          <IconComponent className="w-8 h-8 text-accent-400 stroke-[1.25]" strokeWidth={1.25} />
+                        </div>
+                        <ArrowRight className="w-6 h-6 text-accent-400/80 group-hover:translate-x-2 transition-transform" />
                       </div>
                     </div>
                   ) : (
-                    <div className={`bg-gradient-to-r ${service.color || 'from-blue-500 to-cyan-500'} p-6`}>
+                    <div className="bg-haven-900 dark:bg-haven-800 p-6 border-b border-haven-800 dark:border-haven-700">
                       <div className="flex items-center justify-between">
-                        <IconComponent className="w-12 h-12 text-white" />
-                        <ArrowRight className="w-6 h-6 text-white/80 group-hover:translate-x-2 transition-transform" />
+                        <div className="flex h-14 w-14 items-center justify-center border border-accent-400/40">
+                          <IconComponent className="w-8 h-8 text-accent-400 stroke-[1.25]" strokeWidth={1.25} />
+                        </div>
+                        <ArrowRight className="w-6 h-6 text-accent-400/80 group-hover:translate-x-2 transition-transform" />
                       </div>
                     </div>
                   )}
 
-                {/* Content */}
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-gray-200 mb-2">
-                    {service.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm leading-relaxed">
-                    {service.description}
-                  </p>
+                  {/* Content */}
+                  <div className="p-6 flex flex-col flex-1">
+                    <h3 className="font-display text-xl text-haven-900 dark:text-cream-100 mb-3">
+                      {service.title}
+                    </h3>
+                    <p className="text-haven-700/75 dark:text-cream-200/65 mb-5 text-sm leading-relaxed flex-1">
+                      {service.description}
+                    </p>
 
-                  {/* Features */}
-                  {serviceFeatures.length > 0 && (
-                    <div className="space-y-2 mb-6">
-                      {serviceFeatures.map((feature, idx) => (
-                        <div key={idx} className="flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                          <span className="text-sm text-gray-700 dark:text-gray-300">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                    {/* Features */}
+                    {serviceFeatures.length > 0 && (
+                      <div className="space-y-2.5 mb-6 pt-4 border-t border-cream-400/60 dark:border-haven-800">
+                        {serviceFeatures.map((feature, idx) => (
+                          <div key={idx} className="flex items-center gap-2.5">
+                            <CheckCircle className="w-4 h-4 text-accent-500 flex-shrink-0 stroke-[1.5]" strokeWidth={1.5} />
+                            <span className="text-sm text-haven-800/80 dark:text-cream-200/70">{feature}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
-                  {/* CTA Button */}
-                  <Link
-                    to={service.link || '/contact'}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors font-medium text-sm group/btn"
-                  >
-                    Get Started
-                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </Link>
-                </div>
-              </motion.div>
+                    {/* CTA Button */}
+                    <Link
+                      to={service.link || '/contact'}
+                      className="btn-haven !py-2.5 !px-5 w-fit group/btn"
+                    >
+                      Get Started
+                      <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
+                </motion.div>
               );
             })}
           </motion.div>
@@ -399,18 +419,20 @@ const Services = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mt-16 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-2xl p-8 md:p-12 text-center text-white"
+          className="mt-20 bg-haven-900 dark:bg-haven-950 border border-haven-800 dark:border-haven-800 p-10 md:p-14 text-center"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <p className="text-accent-400 text-[11px] font-semibold uppercase tracking-[0.28em] mb-4">Custom Solutions</p>
+          <h2 className="font-display text-3xl md:text-4xl text-cream-100 mb-4">
             Need Custom Services?
           </h2>
-          <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
+          <div className="h-px w-16 bg-accent-400 mx-auto mb-6" />
+          <p className="text-cream-200/75 max-w-2xl mx-auto mb-8 leading-relaxed">
             We offer customized solutions tailored to your specific needs.
             Contact us today to discuss how we can help with your property requirements.
           </p>
           <Link
             to="/contact"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 rounded-lg hover:bg-gray-100 transition-colors font-semibold text-lg shadow-lg"
+            className="btn-accent !py-3.5 !px-8"
           >
             Contact Us
             <ArrowRight className="w-5 h-5" />
@@ -422,4 +444,3 @@ const Services = () => {
 };
 
 export default Services;
-

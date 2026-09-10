@@ -77,7 +77,7 @@ const PlotCard = ({ plot, viewType }) => {
       exit={{ opacity: 0, y: 20 }}
       whileHover={{ y: -5 }}
       transition={{ duration: 0.3 }}
-      className={`group bg-white dark:bg-gray-800 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300
+      className={`group bg-white dark:bg-haven-900 overflow-hidden shadow-soft border border-cream-400/80 dark:border-haven-800 hover:border-accent-400 transition-all duration-300
         ${isGrid ? 'flex flex-col' : 'flex flex-row gap-6'}`}
       onClick={handleNavigateToDetails}
       onMouseEnter={() => setShowControls(true)}
@@ -109,7 +109,7 @@ const PlotCard = ({ plot, viewType }) => {
               animate={{ opacity: 0.8 }}
               whileHover={{ opacity: 1 }}
               onClick={(e) => handleImageNavigation(e, 'prev')}
-              className="p-1 rounded-full bg-white/80 backdrop-blur-sm"
+              className="p-1  bg-white/80 backdrop-blur-sm"
             >
               <ChevronLeft className="w-5 h-5 text-gray-800" />
             </motion.button>
@@ -118,7 +118,7 @@ const PlotCard = ({ plot, viewType }) => {
               animate={{ opacity: 0.8 }}
               whileHover={{ opacity: 1 }}
               onClick={(e) => handleImageNavigation(e, 'next')}
-              className="p-1 rounded-full bg-white/80 backdrop-blur-sm"
+              className="p-1  bg-white/80 backdrop-blur-sm"
             >
               <ChevronRight className="w-5 h-5 text-gray-800" />
             </motion.button>
@@ -131,7 +131,7 @@ const PlotCard = ({ plot, viewType }) => {
             {images.map((_, index) => (
               <div
                 key={index}
-                className={`w-1.5 h-1.5 rounded-full transition-all duration-300
+                className={`w-1.5 h-1.5  transition-all duration-300
                   ${index === currentImageIndex ? 'bg-white w-3' : 'bg-white/60'}`}
               />
             ))}
@@ -144,7 +144,7 @@ const PlotCard = ({ plot, viewType }) => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleShare}
-            className="p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-amber-50 
+            className="p-2 bg-white/90 backdrop-blur-sm hover:bg-accent-50 
               transition-colors shadow-lg"
             title="Share plot"
           >
@@ -154,13 +154,13 @@ const PlotCard = ({ plot, viewType }) => {
 
         {/* Availability Badge */}
         <div className="absolute top-4 left-4 flex flex-col gap-2 items-start">
-          <span className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${
-            plot.availability === 'rent' ? 'bg-green-600' : 'bg-amber-600'
+          <span className={`px-3 py-1  text-xs font-semibold text-white ${
+            plot.availability === 'rent' ? 'bg-green-600' : 'bg-haven-900'
           }`}>
             {plot.availability === 'rent' ? 'For Rent' : 'For Sale'}
           </span>
           {youtubeEmbed && (
-            <span className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium text-white bg-red-600/95 shadow-md">
+            <span className="flex items-center gap-1 px-2 py-1  text-xs font-medium text-white bg-red-600/95 shadow-md">
               <Youtube className="w-3.5 h-3.5 shrink-0" aria-hidden />
               Video
             </span>
@@ -173,7 +173,7 @@ const PlotCard = ({ plot, viewType }) => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center text-gray-500 text-sm">
-              <MapPin className="w-4 h-4 mr-2 text-amber-500" />
+              <MapPin className="w-4 h-4 mr-2 text-accent-500" />
               {plot.location}
             </div>
             <div className="flex items-center gap-1 text-gray-500 text-sm">
@@ -182,16 +182,16 @@ const PlotCard = ({ plot, viewType }) => {
             </div>
           </div>
 
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 
-            group-hover:text-amber-600 transition-colors">
+          <h3 className="font-display text-xl text-haven-900 dark:text-cream-100 line-clamp-2 
+            group-hover:text-accent-600 transition-colors">
             {plot.title}
           </h3>
 
           <div className="flex items-center gap-2">
             <div className="flex-1">
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Price</p>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-accent-600 font-semibold mb-1">From</p>
               <div className="flex items-center gap-1">
-                <span className="text-2xl font-bold text-amber-600">
+                <span className="font-display text-2xl text-haven-900 dark:text-cream-100">
                   {formatPrice(plot.price)}
                 </span>
               </div>
@@ -201,9 +201,9 @@ const PlotCard = ({ plot, viewType }) => {
 
         {/* Plot Features */}
         <div className="grid grid-cols-1 gap-3 mt-6">
-          <div className="flex flex-col items-center gap-1 bg-amber-50 p-3 rounded-lg">
-            <Maximize className="w-5 h-5 text-amber-600" />
-            <span className="text-sm font-medium text-gray-600">
+          <div className="flex flex-col items-center gap-1 bg-cream-200 dark:bg-haven-800 p-3">
+            <Maximize className="w-5 h-5 text-accent-500" />
+            <span className="text-sm font-medium text-haven-700 dark:text-cream-200">
               {plot.area ? `${Number(plot.area).toLocaleString()} ${plot.areaUnit || 'sqft'}` : 'N/A'}
             </span>
           </div>
@@ -211,14 +211,14 @@ const PlotCard = ({ plot, viewType }) => {
 
         {youtubeEmbed && (
           <div
-            className="mt-4 rounded-xl overflow-hidden border border-amber-200/80 bg-gray-900/5 shadow-inner"
+            className="mt-4 overflow-hidden border border-cream-400 dark:border-haven-700 bg-haven-950/5"
             onClick={(e) => e.stopPropagation()}
             onKeyDown={(e) => e.stopPropagation()}
             role="presentation"
           >
-            <div className="flex items-center gap-2 px-3 py-2 bg-amber-50/90 border-b border-amber-100">
+            <div className="flex items-center gap-2 px-3 py-2 bg-cream-200 dark:bg-haven-800 border-b border-cream-400 dark:border-haven-700">
               <Youtube className="w-4 h-4 text-red-600 shrink-0" aria-hidden />
-              <span className="text-xs font-semibold text-amber-900">Video tour</span>
+              <span className="text-xs font-semibold text-haven-900 dark:text-cream-100">Video tour</span>
             </div>
             <div className="relative w-full aspect-video max-h-[220px] bg-black">
               <iframe

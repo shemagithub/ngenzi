@@ -284,7 +284,7 @@ const Update = () => {
   const youtubePreviewSrc = getYoutubePreviewSrc(formData.youtubeUrl);
 
   return (
-    <div className="min-h-screen pt-32 px-4 bg-gray-50 pb-16">
+    <div className="admin-page pb-16">
       <div className="max-w-2xl mx-auto rounded-lg shadow-xl bg-white p-6">
         <div className="mb-6 pb-4 border-b border-gray-100">
           <p className="text-sm font-medium text-indigo-600">Property #{id}</p>
@@ -575,7 +575,7 @@ const Update = () => {
                     <X size={16} />
                   </button>
                   {index < existingImages.length && (
-                    <span className="absolute top-2 left-2 px-2 py-1 bg-blue-500 text-white text-xs rounded">
+                    <span className="absolute top-2 left-2 px-2 py-1 bg-haven-700 text-white text-xs rounded">
                       Existing
                     </span>
                   )}

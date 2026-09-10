@@ -3,21 +3,14 @@ import { Toaster } from "react-hot-toast";
 import { ErrorBoundary } from "react-error-boundary";
 import { motion, AnimatePresence } from "framer-motion";
 
-
-
-
-
-// Context
 import { AuthProvider } from "./contexts/AuthContext";
 import { CurrencyProvider } from "./contexts/CurrencyContext";
 
-// Components
-import Navbar from "./components/Navbar";
+import AdminShell from "./components/AdminShell";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorFallback from "./components/ErrorFallback";
 import DynamicHead from "./components/DynamicHead";
 
-// Pages
 import Login from "./components/login";
 import Dashboard from "./pages/Dashboard";
 import PropertyListings from "./pages/List";
@@ -40,71 +33,66 @@ import TeamManagement from "./pages/TeamManagement";
 import TestimonialsManagement from "./pages/TestimonialsManagement";
 import UsersManagement from "./pages/UsersManagement";
 
-// Config
 import { APP_CONSTANTS } from "./config/constants";
 
-// Page transition variants
 const pageVariants = {
-  initial: { opacity: 0, y: 20 },
+  initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -20 }
+  exit: { opacity: 0, y: -8 },
 };
 
-// App Layout component
 const AppLayout = () => {
   const location = useLocation();
-  const isLoginPage = location.pathname === '/login';
+  const isLoginPage = location.pathname === "/login";
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {!isLoginPage && <Navbar />}
-      
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={location.pathname}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          variants={pageVariants}
-          transition={{ duration: 0.3 }}
-          className={!isLoginPage ? "pt-16" : ""}
-        >
-          <Routes location={location}>
-            {/* Public Routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+  const routes = (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={location.pathname}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        variants={pageVariants}
+        transition={{ duration: 0.22 }}
+      >
+        <Routes location={location}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-            {/* Protected Routes */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/list" element={<PropertyListings />} />
-              <Route path="/view-property/:id" element={<ViewProperty />} />
-              <Route path="/add" element={<Add />} />
-              <Route path="/list-plots" element={<PlotListings />} />
-              <Route path="/list-cars" element={<CarListings />} />
-              <Route path="/view-plot/:id" element={<ViewPlot />} />
-              <Route path="/view-car/:id" element={<ViewCar />} />
-              <Route path="/add-plots" element={<AddPlots />} />
-              <Route path="/add-cars" element={<AddCars />} />
-              <Route path="/update-plot/:id" element={<UpdatePlots />} />
-              <Route path="/update-car/:id" element={<UpdateCars />} />
-              <Route path="/services" element={<ServicesManagement />} />
-              <Route path="/blogs" element={<BlogsManagement />} />
-              <Route path="/team" element={<TeamManagement />} />
-              <Route path="/testimonials" element={<TestimonialsManagement />} />
-              <Route path="/users" element={<UsersManagement />} />
-              <Route path="/update/:id" element={<Update />} />
-              <Route path="/appointments" element={<Appointments />} />
-              <Route path="/settings" element={<SettingsPage />} />
-            </Route>
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/list" element={<PropertyListings />} />
+            <Route path="/view-property/:id" element={<ViewProperty />} />
+            <Route path="/add" element={<Add />} />
+            <Route path="/list-plots" element={<PlotListings />} />
+            <Route path="/list-cars" element={<CarListings />} />
+            <Route path="/view-plot/:id" element={<ViewPlot />} />
+            <Route path="/view-car/:id" element={<ViewCar />} />
+            <Route path="/add-plots" element={<AddPlots />} />
+            <Route path="/add-cars" element={<AddCars />} />
+            <Route path="/update-plot/:id" element={<UpdatePlots />} />
+            <Route path="/update-car/:id" element={<UpdateCars />} />
+            <Route path="/services" element={<ServicesManagement />} />
+            <Route path="/blogs" element={<BlogsManagement />} />
+            <Route path="/team" element={<TeamManagement />} />
+            <Route path="/testimonials" element={<TestimonialsManagement />} />
+            <Route path="/users" element={<UsersManagement />} />
+            <Route path="/update/:id" element={<Update />} />
+            <Route path="/appointments" element={<Appointments />} />
+            <Route path="/settings" element={<SettingsPage />} />
+          </Route>
 
-            {/* 404 Route */}
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
-        </motion.div>
-      </AnimatePresence>
-    </div>
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+      </motion.div>
+    </AnimatePresence>
   );
+
+  if (isLoginPage) {
+    return routes;
+  }
+
+  return <AdminShell>{routes}</AdminShell>;
 };
 
 const App = () => {
@@ -118,28 +106,28 @@ const App = () => {
           <DynamicHead />
           <AppLayout />
         </CurrencyProvider>
-        
-        {/* Toast Notifications */}
-        <Toaster 
+
+        <Toaster
           position="top-right"
           toastOptions={{
             duration: APP_CONSTANTS.DEFAULT_TOAST_DURATION,
             style: {
-              background: '#333',
-              color: '#fff',
-              borderRadius: '8px',
-              fontSize: '14px',
+              background: "#122620",
+              color: "#f7f5f0",
+              borderRadius: "12px",
+              fontSize: "14px",
+              border: "1px solid rgba(196,165,116,0.35)",
             },
             success: {
               iconTheme: {
-                primary: '#10B981',
-                secondary: '#fff',
+                primary: "#c4a574",
+                secondary: "#122620",
               },
             },
             error: {
               iconTheme: {
-                primary: '#EF4444',
-                secondary: '#fff',
+                primary: "#f87171",
+                secondary: "#fff",
               },
             },
           }}

@@ -45,10 +45,10 @@ export default function Team() {
 
   if (loading) {
     return (
-      <section className="py-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-200">
+      <section className="py-24 bg-cream-200/70 dark:bg-haven-900 transition-colors duration-200">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center py-20">
-            <Loader className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400" />
+            <Loader className="w-8 h-8 animate-spin text-accent-500" />
           </div>
         </div>
       </section>
@@ -57,7 +57,7 @@ export default function Team() {
 
   if (error || teamMembers.length === 0) {
     return (
-      <section className="py-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-200">
+      <section className="py-24 bg-cream-200/70 dark:bg-haven-900 transition-colors duration-200">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ y: 20, opacity: 0 }}
@@ -65,9 +65,10 @@ export default function Team() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100">Meet Our Team</h2>
-            <div className="w-24 h-1 bg-blue-600 dark:bg-blue-500 mx-auto mb-6"></div>
-            <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
+            <p className="section-eyebrow">The People</p>
+            <h2 className="section-title mt-3 mb-2">Meet Our Team</h2>
+            <div className="section-divider" />
+            <p className="text-haven-700/70 dark:text-cream-200/60 text-lg max-w-2xl mx-auto leading-relaxed">
               {error || "Our team members will be displayed here soon."}
             </p>
           </motion.div>
@@ -77,7 +78,7 @@ export default function Team() {
   }
 
   return (
-    <section className="py-24 bg-gradient-to-b from-white to-gray-50">
+    <section className="py-24 bg-cream-200/70 dark:bg-haven-900 transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
@@ -85,9 +86,10 @@ export default function Team() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold mb-4">Meet Our Team</h2>
-          <div className="w-24 h-1 bg-blue-600 mx-auto mb-6"></div>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          <p className="section-eyebrow">The People</p>
+          <h2 className="section-title mt-3 mb-2">Meet Our Team</h2>
+          <div className="section-divider" />
+          <p className="text-haven-700/70 dark:text-cream-200/60 text-lg max-w-2xl mx-auto leading-relaxed">
             The passionate individuals behind NGENZI REALESTATE's success
           </p>
         </motion.div>
